@@ -1,0 +1,235 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+{{ include "service.labels.standard" . | indent 4 }}
+{{ include "service.logging.deployment.label" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+{{ include "service.labels.standard" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+{{ include "service.labels.standard" . | indent 8 }}
+{{ include "service.microservice.labels" . | indent 8 }}
+      annotations:
+{{ include "service.monitoring.pod.annotations" . | indent 8 }}
+    spec:
+{{- if .Values.apm.enabled }}
+      initContainers:
+       {{- range $apm := .Values.apm.plugins }}
+       {{- if and (eq $apm.name "glowroot") $apm.enabled }}
+        - name: glowroot
+          image: {{ $apm.image }}
+          command: ["cp","-r","/glowroot.jar","/Charts/"]
+          volumeMounts:
+          - name: data
+            mountPath: /Charts
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+       {{- end }}
+       {{- if and (eq $apm.name "skywalking") $apm.enabled }}
+        - name: skywalking
+          image: {{ $apm.image }}
+          command:
+            - sh
+          args:
+            - '-c'
+            - cp -r /usr/skywalking/* /Charts/skywalking
+          volumeMounts:
+          - name: data
+            mountPath: /Charts
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+        {{- end }}
+        {{- if and (eq $apm.name "pinpoint") $apm.enabled }}
+        - name: pinpoint
+          image: {{ $apm.image }}
+          command:
+            - sh
+          args:
+            - '-c'
+            - cp -r /usr/pinpoint/* /Charts/pinpoint
+          volumeMounts:
+          - name: data
+            mountPath: /Charts
+          - name: pinpoint-configmap
+            mountPath: /usr/pinpoint/agent/pinpoint.config
+            subPath: pinpoint.config
+          - name: pinpoint-configmap
+            mountPath: /usr/pinpoint/agent/lib/log4j.xml
+            subPath: log4j.xml
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+        {{- end }}
+        {{- end }}
+{{- end }}
+      containers:
+        - name: {{ .Release.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.Version }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+{{- range $configMap := .Values.envFrom }}
+{{- if not (empty $configMap) }}
+          - configMapRef:
+              name: {{ $configMap }}
+{{- end}}
+{{- end}}
+          env:
+          - name: PASS_APP_NAME
+            value: {{ .Chart.Name }}
+          - name: PASS_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: PASS_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: PASS_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: PASS_POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: PASS_UUID
+            value: {{ uuidv4 | replace "-" "" | trunc 24 }}
+          {{- if .Values.apm.enabled }}
+          - name: APM_OPTS
+            value: "{{- range $apm := .Values.apm.plugins }} {{- if $apm.enabled }} {{ $apm.java_opts }} {{- end }} {{- end }}"
+          {{- end }}
+{{- range $name, $value := .Values.env.open }}
+{{- if not (empty $value) }}
+          - name: {{ $name | quote }}
+            value: {{ $value | quote }}
+{{- end }}
+{{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          {{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            {{- if eq .Values.readinessProbe.type "exec" }}
+            exec:
+              command:
+                {{- range $command := .Values.readinessProbe.command }}
+                - {{ $command }}
+                {{- end }}
+            {{- end }}
+            {{- if eq .Values.readinessProbe.type "tcpSocket" }}
+            port: {{ .Values.readinessProbe.port | default .Values.deployment.managementPort }}
+            {{- end }}
+            {{- if eq .Values.readinessProbe.type "httpGet" }}
+            path: {{ .Values.readinessProbe.path | default "/actuator/health" }}
+            port: {{ .Values.readinessProbe.port | default .Values.deployment.managementPort }}
+            scheme: {{ .Values.readinessProbe.scheme | default "HTTP" }}
+            {{- if .Values.readinessProbe.host }}
+            host: {{ .Values.readinessProbe.host }}
+            {{- end}}
+            {{- end }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            {{- if eq .Values.livenessProbe.type "exec" }}
+            exec:
+              command:
+                {{- range $command := .Values.livenessProbe.command }}
+                - {{ $command }}
+                {{- end }}
+            {{- end }}
+            {{- if eq .Values.livenessProbe.type "tcpSocket" }}
+            port: {{ .Values.livenessProbe.port | default .Values.deployment.managementPort }}
+            {{- end }}
+            {{- if eq .Values.livenessProbe.type "httpGet" }}
+            path: {{ .Values.livenessProbe.path | default "/actuator/health" }}
+            port: {{ .Values.livenessProbe.port | default .Values.deployment.managementPort }}
+            scheme: {{ .Values.livenessProbe.scheme | default "HTTP" }}
+            {{- if .Values.livenessProbe.host }}
+            host: {{ .Values.livenessProbe.host }}
+            {{- end}}
+            {{- end }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe:
+            {{- if eq .Values.startupProbe.type "exec" }}
+            exec:
+              command:
+                {{- range $command := .Values.startupProbe.command }}
+                - {{ $command }}
+                {{- end }}
+            {{- end }}
+            {{- if eq .Values.startupProbe.type "tcpSocket" }}
+            port: {{ .Values.startupProbe.port | default .Values.deployment.managementPort }}
+            {{- end }}
+            {{- if eq .Values.startupProbe.type "httpGet" }}
+            path: {{ .Values.startupProbe.path | default "/actuator/health" }}
+            port: {{ .Values.startupProbe.port | default .Values.deployment.managementPort }}
+            scheme: {{ .Values.startupProbe.scheme | default "HTTP" }}
+            {{- if .Values.startupProbe.host }}
+            host: {{ .Values.startupProbe.host }}
+            {{- end}}
+            {{- end }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+            successThreshold: {{ .Values.startupProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
+          {{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+          - mountPath: /Charts
+            name: data
+{{- if not (empty .Values.persistence.subPath) }}
+            subPath: {{ .Values.persistence.subPath }}
+{{- end }}
+      volumes:
+        - name: data
+          {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default ( .Release.Name ) }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        {{- if .Values.apm.enabled }}
+        {{- range $apm := .Values.apm.plugins }}
+        {{- if and (eq $apm.name "pinpoint") $apm.enabled }}
+        - name: pinpoint-configmap
+          configMap:
+            name: {{ $apm.configmap }}
+            items:
+              - key: pinpoint.config
+                path: pinpoint.config
+              - key: log4j.xml
+                path: log4j.xml
+            defaultMode: 420
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.imagePullSecrets.enabled }}
+      imagePullSecrets:
+        {{- range $secret := .Values.imagePullSecrets.secrets }}
+        - name: {{ $secret.name }}
+        {{- end }}
+      {{- end }}  
