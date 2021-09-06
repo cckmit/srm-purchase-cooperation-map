@@ -18,6 +18,8 @@ import org.srm.purchasecooperation.cux.app.service.ZhnyPoPlanService;
 import org.srm.purchasecooperation.cux.domain.entity.ZhnyPoPlanHeader;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 /**
  * 采购计划 管理 API
  *
@@ -44,7 +46,7 @@ public class ZhnyPoPlanController extends BaseController {
         return Results.success(list);
     }
 
-    @ApiOperation(value = "新增采购计划")
+    @ApiOperation(value = "新增/修改采购计划")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/addPoPlan")
     public ResponseEntity<Void> addPoPlan(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt ZhnyPoPlanHeaderDTO dto) {
@@ -53,5 +55,20 @@ public class ZhnyPoPlanController extends BaseController {
         return Results.success();
     }
 
+    @ApiOperation(value = "删除采购计划头表")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @DeleteMapping("/delHeader")
+    public ResponseEntity<Void> delHeader(@RequestBody @Encrypt List<Long> ids) {
+        zhnyPoPlanHeaderService.delHeader(ids);
+        return Results.success();
+    }
+
+    @ApiOperation(value = "删除采购计划行表")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @DeleteMapping("/delLine")
+    public ResponseEntity<Void> delLine(@RequestBody @Encrypt List<Long> ids) {
+        zhnyPoPlanHeaderService.delLine(ids);
+        return Results.success();
+    }
 
 }

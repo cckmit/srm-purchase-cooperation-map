@@ -6,6 +6,8 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.srm.purchasecooperation.cux.api.dto.ZhnyPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.domain.entity.ZhnyPoPlanHeader;
 
+import java.util.List;
+
 /**
  * 采购计划应用服务
  *
@@ -28,4 +30,18 @@ public interface ZhnyPoPlanService {
      * @param dto 采购计划头表和行表数据
      */
     void addPoPlan(ZhnyPoPlanHeaderDTO dto);
+
+    /**
+     * 删除采购计划头表
+     *
+     * @param ids 头表id集合
+     */
+    void delHeader(List<Long> ids);
+
+    /**
+     * 删除采购计划行表
+     *
+     * @param ids 行表id集合
+     */
+    void delLine(List<Long> ids);
 }
