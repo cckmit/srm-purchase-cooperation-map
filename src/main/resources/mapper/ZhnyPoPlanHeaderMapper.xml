@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.srm.purchasecooperation.cux.infra.mapper.ZhnyPoPlanHeaderMapper">
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap id="BaseResultMap" type="org.srm.purchasecooperation.cux.domain.entity.ZhnyPoPlanHeader">
+        <result column="po_plan_header_id" property="poPlanHeaderId" jdbcType="DECIMAL"/>
+        <result column="tenant_id" property="tenantId" jdbcType="DECIMAL"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="plan_type" property="planType" jdbcType="VARCHAR"/>
+        <result column="po_plan_number" property="poPlanNumber" jdbcType="VARCHAR"/>
+        <result column="application_sum" property="applicationSum" jdbcType="DECIMAL"/>
+        <result column="create_id" property="createId" jdbcType="DECIMAL"/>
+        <result column="create_name" property="createName" jdbcType="VARCHAR"/>
+        <result column="deadline" property="deadline" jdbcType="DATE"/>
+        <result column="company_code" property="companyCode" jdbcType="VARCHAR"/>
+        <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
+        <result column="business_code" property="businessCode" jdbcType="VARCHAR"/>
+        <result column="business_name" property="businessName" jdbcType="VARCHAR"/>
+        <result column="purchase_org_code" property="purchaseOrgCode" jdbcType="VARCHAR"/>
+        <result column="purchase_org_name" property="purchaseOrgName" jdbcType="VARCHAR"/>
+        <result column="purchase_code" property="purchaseCode" jdbcType="VARCHAR"/>
+        <result column="purchase_name" property="purchaseName" jdbcType="VARCHAR"/>
+        <result column="po_source" property="poSource" jdbcType="VARCHAR"/>
+        <result column="applicant" property="applicant" jdbcType="VARCHAR"/>
+        <result column="department_code" property="departmentCode" jdbcType="VARCHAR"/>
+        <result column="Department_name" property="departmentName" jdbcType="VARCHAR"/>
+        <result column="application_date" property="applicationDate" jdbcType="DATE"/>
+        <result column="original_currency" property="originalCurrency" jdbcType="VARCHAR"/>
+        <result column="plan_illustrate" property="planIllustrate" jdbcType="VARCHAR"/>
+        <result column="object_version_number" property="objectVersionNumber" jdbcType="DECIMAL"/>
+        <result column="creation_date" property="creationDate" jdbcType="DATE"/>
+        <result column="created_by" property="createdBy" jdbcType="DECIMAL"/>
+        <result column="last_updated_by" property="lastUpdatedBy" jdbcType="DECIMAL"/>
+        <result column="last_update_date" property="lastUpdateDate" jdbcType="DATE"/>
+    </resultMap>
+
+    <!--    采购计划头表查询参数-->
+    <select id="list" resultType="org.srm.purchasecooperation.cux.domain.entity.ZhnyPoPlanHeader">
+        SELECT status,
+        applicant,
+        application_date,
+        po_plan_number,
+        title,
+        company_name,
+        business_name,
+        purchase_org_name,
+        purchase_name,
+        create_name,
+        creation_date,
+        Department_name,
+        po_source,
+        plan_illustrate
+        FROM scux_zhny_po_plan_header
+        WHERE tenant_id = #{tenantId}
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND po_plan_number like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND title like #{titleLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+    </select>
+
+</mapper>
