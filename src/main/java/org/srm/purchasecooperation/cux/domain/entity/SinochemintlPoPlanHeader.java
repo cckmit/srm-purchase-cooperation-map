@@ -6,10 +6,12 @@ import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.boot.platform.lov.annotation.LovValue;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -61,7 +63,6 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
 // 数据库字段
 // ------------------------------------------------------------------------------
 
-
     @ApiModelProperty("表ID，主键，供其他表做外键")
     @Id
     @GeneratedValue
@@ -72,7 +73,8 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
     @ApiModelProperty(value = "标题", required = true)
     @NotBlank
     private String title;
-    @ApiModelProperty(value = "状态", required = true)
+    @ApiModelProperty(value = "状态(SCUX.SINOCHEMINTL.PO_PLAN_NUMBER)", required = true)
+    @LovValue(lovCode = "SCUX.SINOCHEMINTL.PO_PLAN_NUMBER", meaningField = "statusName")
     @NotBlank
     private String status;
     @ApiModelProperty(value = "计划类型", required = true)
@@ -92,24 +94,24 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
     @ApiModelProperty(value = "拼单截至时间", required = true)
     @NotNull
     private Date deadline;
-    @ApiModelProperty(value = "公司代码")
+    @ApiModelProperty(value = "公司编码")
     private String companyCode;
-    @ApiModelProperty(value = "公司", required = true)
+    @ApiModelProperty(value = "公司(HPFM.COMPANY)", required = true)
     @NotBlank
     private String companyName;
-    @ApiModelProperty(value = "业务实体代码")
+    @ApiModelProperty(value = "业务实体编码")
     private String businessCode;
-    @ApiModelProperty(value = "业务实体", required = true)
+    @ApiModelProperty(value = "业务实体(HPFM.OU)", required = true)
     @NotBlank
     private String businessName;
-    @ApiModelProperty(value = "采购组织代码")
+    @ApiModelProperty(value = "采购组织编码")
     private String purchaseOrgCode;
-    @ApiModelProperty(value = "采购组织", required = true)
+    @ApiModelProperty(value = "采购组织(HPFM.PURCHASE_ORGANIZATION)", required = true)
     @NotBlank
     private String purchaseOrgName;
-    @ApiModelProperty(value = "采购员代码")
+    @ApiModelProperty(value = "采购员编码")
     private String purchaseCode;
-    @ApiModelProperty(value = "采购员", required = true)
+    @ApiModelProperty(value = "采购员(HPFM.PURCHASE_AGENT)", required = true)
     @NotBlank
     private String purchaseName;
     @ApiModelProperty(value = "单据来源", required = true)
@@ -118,9 +120,9 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
     @ApiModelProperty(value = "申请人", required = true)
     @NotBlank
     private String applicant;
-    @ApiModelProperty(value = "部门代码")
+    @ApiModelProperty(value = "部门编码")
     private String departmentCode;
-    @ApiModelProperty(value = "所属部门", required = true)
+    @ApiModelProperty(value = "所属部门(SPRM.USER_UNIT)", required = true)
     @NotBlank
     private String departmentName;
     @ApiModelProperty(value = "申请日期", required = true)
@@ -135,11 +137,22 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
 // 非数据库字段
 // ------------------------------------------------------------------------------
 
+    @Transient
+    @ApiModelProperty(value = "状态名")
+    private String statusName;
+
 //
 // getter/setter
 // ------------------------------------------------------------------------------
 
 
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
 
     public String getStatus() {
         return status;
@@ -259,7 +272,7 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
     }
 
     /**
-     * @return 公司代码
+     * @return 公司编码
      */
     public String getCompanyCode() {
         return companyCode;
@@ -283,7 +296,7 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
     }
 
     /**
-     * @return 业务实体代码
+     * @return 业务实体编码
      */
     public String getBusinessCode() {
         return businessCode;
@@ -307,7 +320,7 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
     }
 
     /**
-     * @return 采购组织代码
+     * @return 采购组织编码
      */
     public String getPurchaseOrgCode() {
         return purchaseOrgCode;
@@ -331,7 +344,7 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
     }
 
     /**
-     * @return 采购员代码
+     * @return 采购员编码
      */
     public String getPurchaseCode() {
         return purchaseCode;
@@ -379,7 +392,7 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
     }
 
     /**
-     * @return 部门代码
+     * @return 部门编码
      */
     public String getDepartmentCode() {
         return departmentCode;

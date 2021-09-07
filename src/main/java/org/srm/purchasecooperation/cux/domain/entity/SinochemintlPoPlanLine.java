@@ -6,6 +6,7 @@ import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.boot.platform.lov.annotation.LovValue;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -78,7 +79,8 @@ public class SinochemintlPoPlanLine extends AuditDomain {
     @ApiModelProperty(value = "头表id", required = true)
     @NotNull
     private Long poPlanHeaderId;
-    @ApiModelProperty(value = "状态", required = true)
+    @ApiModelProperty(value = "状态(SCUX.SINOCHEMINTL.PO_PLAN_NUMBER)", required = true)
+    @LovValue(lovCode = "SCUX.SINOCHEMINTL.PO_PLAN_NUMBER", meaningField = "statusName")
     @NotBlank
     private String status;
     @ApiModelProperty(value = "已拼单省区数量", required = true)
@@ -155,9 +157,21 @@ public class SinochemintlPoPlanLine extends AuditDomain {
     @ApiModelProperty(value = "序号")
     private Integer serialNum;
 
+    @Transient
+    @ApiModelProperty(value = "状态名")
+    private String statusName;
+
 //
 // getter/setter
 // ------------------------------------------------------------------------------
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
 
     public Integer getSerialNum() {
         return serialNum;

@@ -7,6 +7,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.swagger.annotation.Permission;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.boot.platform.lov.annotation.ProcessLovValue;
 import org.hzero.core.base.BaseController;
 import org.hzero.core.util.Results;
 import org.hzero.starter.keyencrypt.core.Encrypt;
@@ -39,6 +40,7 @@ public class SinochemintlPoPlanController extends BaseController {
     @ApiOperation(value = "采购计划头表列表")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/list")
+    @ProcessLovValue
     public ResponseEntity<Page<SinochemintlPoPlanHeader>> list(@PathVariable("organizationId") Long organizationId, SinochemintlPoPlanHeader sinochemintlPoPlanHeader, @ApiIgnore @SortDefault(value = SinochemintlPoPlanHeader.FIELD_PO_PLAN_HEADER_ID,
             direction = Sort.Direction.DESC) PageRequest pageRequest) {
         sinochemintlPoPlanHeader.setTenantId(organizationId);
@@ -49,6 +51,7 @@ public class SinochemintlPoPlanController extends BaseController {
     @ApiOperation(value = "新增/保存/修改采购计划")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/addPoPlan")
+    @ProcessLovValue
     public ResponseEntity<SinochemintlPoPlanHeader> addPoPlan(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto) {
         dto.setTenantId(organizationId);
         SinochemintlPoPlanHeader sinochemintlPoPlanHeader = sinochemintlPoPlanHeaderService.addPoPlan(dto);
@@ -58,6 +61,7 @@ public class SinochemintlPoPlanController extends BaseController {
     @ApiOperation(value = "获取头行单表")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/getPoPlan/{poPlanHeaderId}")
+    @ProcessLovValue
     public ResponseEntity<SinochemintlPoPlanHeaderDTO> getPoPlan(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId, @ApiIgnore @SortDefault(value = SinochemintlPoPlanHeader.FIELD_PO_PLAN_HEADER_ID,
             direction = Sort.Direction.DESC) PageRequest pageRequest) {
         SinochemintlPoPlanHeaderDTO result = sinochemintlPoPlanHeaderService.getPoPlan(organizationId, poPlanHeaderId, pageRequest);

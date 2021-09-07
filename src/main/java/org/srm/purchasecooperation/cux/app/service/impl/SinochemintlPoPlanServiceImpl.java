@@ -51,7 +51,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
      * 采购计划头表查询参数
      *
      * @param sinochemintlPoPlanHeader 采购计划头表
-     * @param pageRequest      分页
+     * @param pageRequest              分页
      * @return 采购计划头表列表
      */
     @Override
@@ -204,6 +204,9 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
     @Override
     public void submit(Long poPlanHeaderId) {
         //TODO 提交采购计划
+        SinochemintlPoPlanHeader sinochemintlPoPlanHeader = sinochemintlPoPlanHeaderRepository.selectByPrimaryKey(poPlanHeaderId);
+        sinochemintlPoPlanHeader.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_MIDDLE);
+        sinochemintlPoPlanHeaderRepository.updateByPrimaryKey(sinochemintlPoPlanHeader);
     }
 
     /**
@@ -214,6 +217,13 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
     @Override
     public void cancel(Long poPlanHeaderId) {
         //TODO 取消采购计划
+        SinochemintlPoPlanHeader sinochemintlPoPlanHeader = sinochemintlPoPlanHeaderRepository.selectByPrimaryKey(poPlanHeaderId);
+        if (sinochemintlPoPlanHeader.getStatus().equals(SinochemintlConstant.StatusCode.STATUS_NEW)) {
+            //非新建状态无法取消
+            throw new CommonException(SinochemintlConstant.ErrorCode.ERROR_NON_NEW_NOT_CANCEL);
+        }
+        sinochemintlPoPlanHeader.setStatus(SinochemintlConstant.StatusCode.STATUS_CANCELLED);
+        sinochemintlPoPlanHeaderRepository.updateByPrimaryKey(sinochemintlPoPlanHeader);
     }
 
 }
