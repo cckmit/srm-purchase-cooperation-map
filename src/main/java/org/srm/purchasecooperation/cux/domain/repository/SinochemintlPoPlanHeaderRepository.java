@@ -3,7 +3,7 @@ package org.srm.purchasecooperation.cux.domain.repository;
 
 import org.hzero.mybatis.base.BaseRepository;
 import org.springframework.stereotype.Component;
-import org.srm.purchasecooperation.cux.domain.entity.ZhnyPoPlanHeader;
+import org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanHeader;
 
 import java.util.List;
 
@@ -13,13 +13,13 @@ import java.util.List;
  * @author tianjing.gui@hand-china.com 2021-09-06 09:59:20
  */
 @Component
-public interface ZhnyPoPlanHeaderRepository extends BaseRepository<ZhnyPoPlanHeader> {
+public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<SinochemintlPoPlanHeader> {
 
     /**
      * 采购计划头表查询参数
      *
-     * @param zhnyPoPlanHeader 采购计划头表
+     * @param sinochemintlPoPlanHeader 采购计划头表
      * @return 采购计划头表列表
      */
-    List<ZhnyPoPlanHeader> list(ZhnyPoPlanHeader zhnyPoPlanHeader);
+    List<SinochemintlPoPlanHeader> list(SinochemintlPoPlanHeader sinochemintlPoPlanHeader);
 }

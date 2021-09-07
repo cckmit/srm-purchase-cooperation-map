@@ -1,7 +1,7 @@
 package org.srm.purchasecooperation.cux.api.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.srm.purchasecooperation.cux.domain.entity.ZhnyPoPlanLine;
+import org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanLine;
 
 import java.util.Date;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * @author gui-tian-jing
  * @date 2021/9/6 16:45
  */
-public class ZhnyPoPlanHeaderDTO {
+public class SinochemintlPoPlanHeaderDTO {
 
     @ApiModelProperty("表ID，主键，供其他表做外键")
     private Long poPlanHeaderId;
@@ -65,14 +65,14 @@ public class ZhnyPoPlanHeaderDTO {
     @ApiModelProperty(value = "创建日期")
     private String creationDate;
     @ApiModelProperty(value = "行表数据")
-    private List<ZhnyPoPlanLine> zhnyPoPlanLineList;
+    private List<SinochemintlPoPlanLine> sinochemintlPoPlanLineList;
 
-    public List<ZhnyPoPlanLine> getZhnyPoPlanLineList() {
-        return zhnyPoPlanLineList;
+    public List<SinochemintlPoPlanLine> getSinochemintlPoPlanLineList() {
+        return sinochemintlPoPlanLineList;
     }
 
-    public void setZhnyPoPlanLineList(List<ZhnyPoPlanLine> zhnyPoPlanLineList) {
-        this.zhnyPoPlanLineList = zhnyPoPlanLineList;
+    public void setSinochemintlPoPlanLineList(List<SinochemintlPoPlanLine> sinochemintlPoPlanLineList) {
+        this.sinochemintlPoPlanLineList = sinochemintlPoPlanLineList;
     }
 
     public String getCreationDate() {

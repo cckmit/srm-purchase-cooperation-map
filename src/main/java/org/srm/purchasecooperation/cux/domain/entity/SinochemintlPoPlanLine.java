@@ -25,8 +25,8 @@ import java.util.Date;
 @VersionAudit
 @ModifyAudit
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
-@Table(name = "scux_zhny_po_plan_line")
-public class ZhnyPoPlanLine extends AuditDomain {
+@Table(name = "scux_sinochemintl_po_plan_line")
+public class SinochemintlPoPlanLine extends AuditDomain {
 
     public static final String FIELD_PO_PLAN_LINE_ID = "poPlanLineId";
     public static final String FIELD_TENANT_ID = "tenantId";
@@ -171,7 +171,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return status;
     }
 
-    public ZhnyPoPlanLine setStatus(String status) {
+    public SinochemintlPoPlanLine setStatus(String status) {
         this.status = status;
         return this;
     }
@@ -183,7 +183,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return poPlanLineId;
     }
 
-    public ZhnyPoPlanLine setPoPlanLineId(Long poPlanLineId) {
+    public SinochemintlPoPlanLine setPoPlanLineId(Long poPlanLineId) {
         this.poPlanLineId = poPlanLineId;
         return this;
     }
@@ -195,7 +195,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return tenantId;
     }
 
-    public ZhnyPoPlanLine setTenantId(Long tenantId) {
+    public SinochemintlPoPlanLine setTenantId(Long tenantId) {
         this.tenantId = tenantId;
         return this;
     }
@@ -207,7 +207,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return poPlanHeaderId;
     }
 
-    public ZhnyPoPlanLine setPoPlanHeaderId(Long poPlanHeaderId) {
+    public SinochemintlPoPlanLine setPoPlanHeaderId(Long poPlanHeaderId) {
         this.poPlanHeaderId = poPlanHeaderId;
         return this;
     }
@@ -219,7 +219,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return spellDocProvince;
     }
 
-    public ZhnyPoPlanLine setSpellDocProvince(Long spellDocProvince) {
+    public SinochemintlPoPlanLine setSpellDocProvince(Long spellDocProvince) {
         this.spellDocProvince = spellDocProvince;
         return this;
     }
@@ -231,7 +231,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return needDate;
     }
 
-    public ZhnyPoPlanLine setNeedDate(Date needDate) {
+    public SinochemintlPoPlanLine setNeedDate(Date needDate) {
         this.needDate = needDate;
         return this;
     }
@@ -243,7 +243,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return planSharedProvince;
     }
 
-    public ZhnyPoPlanLine setPlanSharedProvince(String planSharedProvince) {
+    public SinochemintlPoPlanLine setPlanSharedProvince(String planSharedProvince) {
         this.planSharedProvince = planSharedProvince;
         return this;
     }
@@ -255,7 +255,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return provinceCompany;
     }
 
-    public ZhnyPoPlanLine setProvinceCompany(String provinceCompany) {
+    public SinochemintlPoPlanLine setProvinceCompany(String provinceCompany) {
         this.provinceCompany = provinceCompany;
         return this;
     }
@@ -267,7 +267,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return productName;
     }
 
-    public ZhnyPoPlanLine setProductName(String productName) {
+    public SinochemintlPoPlanLine setProductName(String productName) {
         this.productName = productName;
         return this;
     }
@@ -279,7 +279,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return specification;
     }
 
-    public ZhnyPoPlanLine setSpecification(String specification) {
+    public SinochemintlPoPlanLine setSpecification(String specification) {
         this.specification = specification;
         return this;
     }
@@ -291,7 +291,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return pack;
     }
 
-    public ZhnyPoPlanLine setPack(String pack) {
+    public SinochemintlPoPlanLine setPack(String pack) {
         this.pack = pack;
         return this;
     }
@@ -303,7 +303,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return initialSupplier;
     }
 
-    public ZhnyPoPlanLine setInitialSupplier(String initialSupplier) {
+    public SinochemintlPoPlanLine setInitialSupplier(String initialSupplier) {
         this.initialSupplier = initialSupplier;
         return this;
     }
@@ -315,7 +315,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return finalSupplier;
     }
 
-    public ZhnyPoPlanLine setFinalSupplier(String finalSupplier) {
+    public SinochemintlPoPlanLine setFinalSupplier(String finalSupplier) {
         this.finalSupplier = finalSupplier;
         return this;
     }
@@ -327,7 +327,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return factoryPrice;
     }
 
-    public ZhnyPoPlanLine setFactoryPrice(BigDecimal factoryPrice) {
+    public SinochemintlPoPlanLine setFactoryPrice(BigDecimal factoryPrice) {
         this.factoryPrice = factoryPrice;
         return this;
     }
@@ -339,7 +339,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return finalPrice;
     }
 
-    public ZhnyPoPlanLine setFinalPrice(BigDecimal finalPrice) {
+    public SinochemintlPoPlanLine setFinalPrice(BigDecimal finalPrice) {
         this.finalPrice = finalPrice;
         return this;
     }
@@ -351,7 +351,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return deliveryAddress;
     }
 
-    public ZhnyPoPlanLine setDeliveryAddress(String deliveryAddress) {
+    public SinochemintlPoPlanLine setDeliveryAddress(String deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
         return this;
     }
@@ -363,7 +363,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return materialCoding;
     }
 
-    public ZhnyPoPlanLine setMaterialCoding(String materialCoding) {
+    public SinochemintlPoPlanLine setMaterialCoding(String materialCoding) {
         this.materialCoding = materialCoding;
         return this;
     }
@@ -375,7 +375,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return materialClass;
     }
 
-    public ZhnyPoPlanLine setMaterialClass(String materialClass) {
+    public SinochemintlPoPlanLine setMaterialClass(String materialClass) {
         this.materialClass = materialClass;
         return this;
     }
@@ -387,7 +387,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return requiredQuantity;
     }
 
-    public ZhnyPoPlanLine setRequiredQuantity(Long requiredQuantity) {
+    public SinochemintlPoPlanLine setRequiredQuantity(Long requiredQuantity) {
         this.requiredQuantity = requiredQuantity;
         return this;
     }
@@ -399,7 +399,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return unit;
     }
 
-    public ZhnyPoPlanLine setUnit(String unit) {
+    public SinochemintlPoPlanLine setUnit(String unit) {
         this.unit = unit;
         return this;
     }
@@ -411,7 +411,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return totalPurchasePrice;
     }
 
-    public ZhnyPoPlanLine setTotalPurchasePrice(BigDecimal totalPurchasePrice) {
+    public SinochemintlPoPlanLine setTotalPurchasePrice(BigDecimal totalPurchasePrice) {
         this.totalPurchasePrice = totalPurchasePrice;
         return this;
     }
@@ -423,7 +423,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return currencyType;
     }
 
-    public ZhnyPoPlanLine setCurrencyType(String currencyType) {
+    public SinochemintlPoPlanLine setCurrencyType(String currencyType) {
         this.currencyType = currencyType;
         return this;
     }
@@ -435,7 +435,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return freightSupplier;
     }
 
-    public ZhnyPoPlanLine setFreightSupplier(String freightSupplier) {
+    public SinochemintlPoPlanLine setFreightSupplier(String freightSupplier) {
         this.freightSupplier = freightSupplier;
         return this;
     }
@@ -447,7 +447,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return freightPrice;
     }
 
-    public ZhnyPoPlanLine setFreightPrice(BigDecimal freightPrice) {
+    public SinochemintlPoPlanLine setFreightPrice(BigDecimal freightPrice) {
         this.freightPrice = freightPrice;
         return this;
     }
@@ -459,7 +459,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return priceTerms;
     }
 
-    public ZhnyPoPlanLine setPriceTerms(String priceTerms) {
+    public SinochemintlPoPlanLine setPriceTerms(String priceTerms) {
         this.priceTerms = priceTerms;
         return this;
     }
@@ -471,7 +471,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return remark;
     }
 
-    public ZhnyPoPlanLine setRemark(String remark) {
+    public SinochemintlPoPlanLine setRemark(String remark) {
         this.remark = remark;
         return this;
     }
@@ -483,7 +483,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return taxType;
     }
 
-    public ZhnyPoPlanLine setTaxType(String taxType) {
+    public SinochemintlPoPlanLine setTaxType(String taxType) {
         this.taxType = taxType;
         return this;
     }
@@ -495,7 +495,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return taxRate;
     }
 
-    public ZhnyPoPlanLine setTaxRate(BigDecimal taxRate) {
+    public SinochemintlPoPlanLine setTaxRate(BigDecimal taxRate) {
         this.taxRate = taxRate;
         return this;
     }
@@ -507,7 +507,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return applicant;
     }
 
-    public ZhnyPoPlanLine setApplicant(String applicant) {
+    public SinochemintlPoPlanLine setApplicant(String applicant) {
         this.applicant = applicant;
         return this;
     }
@@ -519,7 +519,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
         return appendixId;
     }
 
-    public ZhnyPoPlanLine setAppendixId(Long appendixId) {
+    public SinochemintlPoPlanLine setAppendixId(Long appendixId) {
         this.appendixId = appendixId;
         return this;
     }

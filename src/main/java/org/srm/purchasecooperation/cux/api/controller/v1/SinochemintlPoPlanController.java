@@ -13,9 +13,9 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.srm.purchasecooperation.cux.api.dto.ZhnyPoPlanHeaderDTO;
-import org.srm.purchasecooperation.cux.app.service.ZhnyPoPlanService;
-import org.srm.purchasecooperation.cux.domain.entity.ZhnyPoPlanHeader;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
+import org.srm.purchasecooperation.cux.app.service.SinochemintlPoPlanService;
+import org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanHeader;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
@@ -25,42 +25,42 @@ import java.util.List;
  *
  * @author tianjing.gui@hand-china.com 2021-09-06 09:59:20
  */
-@RestController("zhnyPoPlanHeaderController.v1")
-@RequestMapping("/v1/{organizationId}/zhny-po-plan-headers")
-public class ZhnyPoPlanController extends BaseController {
+@RestController("sinochemintlPoPlanHeaderController.v1")
+@RequestMapping("/v1/{organizationId}/sinochemintl-po-plan-headers")
+public class SinochemintlPoPlanController extends BaseController {
 
-    private final ZhnyPoPlanService zhnyPoPlanHeaderService;
+    private final SinochemintlPoPlanService sinochemintlPoPlanHeaderService;
 
     @Autowired
-    public ZhnyPoPlanController(ZhnyPoPlanService zhnyPoPlanHeaderService) {
-        this.zhnyPoPlanHeaderService = zhnyPoPlanHeaderService;
+    public SinochemintlPoPlanController(SinochemintlPoPlanService sinochemintlPoPlanHeaderService) {
+        this.sinochemintlPoPlanHeaderService = sinochemintlPoPlanHeaderService;
     }
 
     @ApiOperation(value = "采购计划头表列表")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/list")
-    public ResponseEntity<Page<ZhnyPoPlanHeader>> list(@PathVariable("organizationId") Long organizationId, ZhnyPoPlanHeader zhnyPoPlanHeader, @ApiIgnore @SortDefault(value = ZhnyPoPlanHeader.FIELD_PO_PLAN_HEADER_ID,
+    public ResponseEntity<Page<SinochemintlPoPlanHeader>> list(@PathVariable("organizationId") Long organizationId, SinochemintlPoPlanHeader sinochemintlPoPlanHeader, @ApiIgnore @SortDefault(value = SinochemintlPoPlanHeader.FIELD_PO_PLAN_HEADER_ID,
             direction = Sort.Direction.DESC) PageRequest pageRequest) {
-        zhnyPoPlanHeader.setTenantId(organizationId);
-        Page<ZhnyPoPlanHeader> list = zhnyPoPlanHeaderService.list(zhnyPoPlanHeader, pageRequest);
+        sinochemintlPoPlanHeader.setTenantId(organizationId);
+        Page<SinochemintlPoPlanHeader> list = sinochemintlPoPlanHeaderService.list(sinochemintlPoPlanHeader, pageRequest);
         return Results.success(list);
     }
 
     @ApiOperation(value = "新增/保存/修改采购计划")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/addPoPlan")
-    public ResponseEntity<ZhnyPoPlanHeader> addPoPlan(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt ZhnyPoPlanHeaderDTO dto) {
+    public ResponseEntity<SinochemintlPoPlanHeader> addPoPlan(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto) {
         dto.setTenantId(organizationId);
-        ZhnyPoPlanHeader zhnyPoPlanHeader = zhnyPoPlanHeaderService.addPoPlan(dto);
-        return Results.success(zhnyPoPlanHeader);
+        SinochemintlPoPlanHeader sinochemintlPoPlanHeader = sinochemintlPoPlanHeaderService.addPoPlan(dto);
+        return Results.success(sinochemintlPoPlanHeader);
     }
 
     @ApiOperation(value = "获取头行单表")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/getPoPlan/{poPlanHeaderId}")
-    public ResponseEntity<ZhnyPoPlanHeaderDTO> getPoPlan(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId, @ApiIgnore @SortDefault(value = ZhnyPoPlanHeader.FIELD_PO_PLAN_HEADER_ID,
+    public ResponseEntity<SinochemintlPoPlanHeaderDTO> getPoPlan(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId, @ApiIgnore @SortDefault(value = SinochemintlPoPlanHeader.FIELD_PO_PLAN_HEADER_ID,
             direction = Sort.Direction.DESC) PageRequest pageRequest) {
-        ZhnyPoPlanHeaderDTO result = zhnyPoPlanHeaderService.getPoPlan(organizationId, poPlanHeaderId, pageRequest);
+        SinochemintlPoPlanHeaderDTO result = sinochemintlPoPlanHeaderService.getPoPlan(organizationId, poPlanHeaderId, pageRequest);
         return Results.success(result);
     }
 
@@ -68,7 +68,7 @@ public class ZhnyPoPlanController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @DeleteMapping("/delHeader")
     public ResponseEntity<Void> delHeader(@RequestBody @Encrypt List<Long> ids) {
-        zhnyPoPlanHeaderService.delHeader(ids);
+        sinochemintlPoPlanHeaderService.delHeader(ids);
         return Results.success();
     }
 
@@ -76,7 +76,7 @@ public class ZhnyPoPlanController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @DeleteMapping("/delLine")
     public ResponseEntity<Void> delLine(@RequestBody @Encrypt List<Long> ids) {
-        zhnyPoPlanHeaderService.delLine(ids);
+        sinochemintlPoPlanHeaderService.delLine(ids);
         return Results.success();
     }
 
@@ -84,7 +84,7 @@ public class ZhnyPoPlanController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/submit/{poPlanHeaderId}")
     public ResponseEntity<Void> submit(@Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId) {
-        zhnyPoPlanHeaderService.submit(poPlanHeaderId);
+        sinochemintlPoPlanHeaderService.submit(poPlanHeaderId);
         return Results.success();
     }
 
@@ -92,7 +92,7 @@ public class ZhnyPoPlanController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/cancel/{poPlanHeaderId}")
     public ResponseEntity<Void> cancel(@Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId) {
-        zhnyPoPlanHeaderService.cancel(poPlanHeaderId);
+        sinochemintlPoPlanHeaderService.cancel(poPlanHeaderId);
         return Results.success();
     }
 }

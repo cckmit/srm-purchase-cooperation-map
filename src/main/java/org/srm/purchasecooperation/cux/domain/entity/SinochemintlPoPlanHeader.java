@@ -24,8 +24,8 @@ import java.util.Date;
 @VersionAudit
 @ModifyAudit
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
-@Table(name = "scux_zhny_po_plan_header")
-public class ZhnyPoPlanHeader extends AuditDomain {
+@Table(name = "scux_sinochemintl_po_plan_header")
+public class SinochemintlPoPlanHeader extends AuditDomain {
 
     public static final String FIELD_PO_PLAN_HEADER_ID = "poPlanHeaderId";
     public static final String FIELD_TENANT_ID = "tenantId";
@@ -145,7 +145,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return status;
     }
 
-    public ZhnyPoPlanHeader setStatus(String status) {
+    public SinochemintlPoPlanHeader setStatus(String status) {
         this.status = status;
         return this;
     }
@@ -157,7 +157,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return poPlanHeaderId;
     }
 
-    public ZhnyPoPlanHeader setPoPlanHeaderId(Long poPlanHeaderId) {
+    public SinochemintlPoPlanHeader setPoPlanHeaderId(Long poPlanHeaderId) {
         this.poPlanHeaderId = poPlanHeaderId;
         return this;
     }
@@ -169,7 +169,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return tenantId;
     }
 
-    public ZhnyPoPlanHeader setTenantId(Long tenantId) {
+    public SinochemintlPoPlanHeader setTenantId(Long tenantId) {
         this.tenantId = tenantId;
         return this;
     }
@@ -181,7 +181,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return title;
     }
 
-    public ZhnyPoPlanHeader setTitle(String title) {
+    public SinochemintlPoPlanHeader setTitle(String title) {
         this.title = title;
         return this;
     }
@@ -193,7 +193,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return planType;
     }
 
-    public ZhnyPoPlanHeader setPlanType(String planType) {
+    public SinochemintlPoPlanHeader setPlanType(String planType) {
         this.planType = planType;
         return this;
     }
@@ -205,7 +205,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return poPlanNumber;
     }
 
-    public ZhnyPoPlanHeader setPoPlanNumber(String poPlanNumber) {
+    public SinochemintlPoPlanHeader setPoPlanNumber(String poPlanNumber) {
         this.poPlanNumber = poPlanNumber;
         return this;
     }
@@ -217,7 +217,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return applicationSum;
     }
 
-    public ZhnyPoPlanHeader setApplicationSum(BigDecimal applicationSum) {
+    public SinochemintlPoPlanHeader setApplicationSum(BigDecimal applicationSum) {
         this.applicationSum = applicationSum;
         return this;
     }
@@ -229,7 +229,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return createId;
     }
 
-    public ZhnyPoPlanHeader setCreateId(Long createId) {
+    public SinochemintlPoPlanHeader setCreateId(Long createId) {
         this.createId = createId;
         return this;
     }
@@ -241,7 +241,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return createName;
     }
 
-    public ZhnyPoPlanHeader setCreateName(String createName) {
+    public SinochemintlPoPlanHeader setCreateName(String createName) {
         this.createName = createName;
         return this;
     }
@@ -253,7 +253,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return deadline;
     }
 
-    public ZhnyPoPlanHeader setDeadline(Date deadline) {
+    public SinochemintlPoPlanHeader setDeadline(Date deadline) {
         this.deadline = deadline;
         return this;
     }
@@ -265,7 +265,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return companyCode;
     }
 
-    public ZhnyPoPlanHeader setCompanyCode(String companyCode) {
+    public SinochemintlPoPlanHeader setCompanyCode(String companyCode) {
         this.companyCode = companyCode;
         return this;
     }
@@ -277,7 +277,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return companyName;
     }
 
-    public ZhnyPoPlanHeader setCompanyName(String companyName) {
+    public SinochemintlPoPlanHeader setCompanyName(String companyName) {
         this.companyName = companyName;
         return this;
     }
@@ -289,7 +289,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return businessCode;
     }
 
-    public ZhnyPoPlanHeader setBusinessCode(String businessCode) {
+    public SinochemintlPoPlanHeader setBusinessCode(String businessCode) {
         this.businessCode = businessCode;
         return this;
     }
@@ -301,7 +301,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return businessName;
     }
 
-    public ZhnyPoPlanHeader setBusinessName(String businessName) {
+    public SinochemintlPoPlanHeader setBusinessName(String businessName) {
         this.businessName = businessName;
         return this;
     }
@@ -313,7 +313,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return purchaseOrgCode;
     }
 
-    public ZhnyPoPlanHeader setPurchaseOrgCode(String purchaseOrgCode) {
+    public SinochemintlPoPlanHeader setPurchaseOrgCode(String purchaseOrgCode) {
         this.purchaseOrgCode = purchaseOrgCode;
         return this;
     }
@@ -325,7 +325,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return purchaseOrgName;
     }
 
-    public ZhnyPoPlanHeader setPurchaseOrgName(String purchaseOrgName) {
+    public SinochemintlPoPlanHeader setPurchaseOrgName(String purchaseOrgName) {
         this.purchaseOrgName = purchaseOrgName;
         return this;
     }
@@ -337,7 +337,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return purchaseCode;
     }
 
-    public ZhnyPoPlanHeader setPurchaseCode(String purchaseCode) {
+    public SinochemintlPoPlanHeader setPurchaseCode(String purchaseCode) {
         this.purchaseCode = purchaseCode;
         return this;
     }
@@ -349,7 +349,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return purchaseName;
     }
 
-    public ZhnyPoPlanHeader setPurchaseName(String purchaseName) {
+    public SinochemintlPoPlanHeader setPurchaseName(String purchaseName) {
         this.purchaseName = purchaseName;
         return this;
     }
@@ -361,7 +361,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return poSource;
     }
 
-    public ZhnyPoPlanHeader setPoSource(String poSource) {
+    public SinochemintlPoPlanHeader setPoSource(String poSource) {
         this.poSource = poSource;
         return this;
     }
@@ -373,7 +373,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return applicant;
     }
 
-    public ZhnyPoPlanHeader setApplicant(String applicant) {
+    public SinochemintlPoPlanHeader setApplicant(String applicant) {
         this.applicant = applicant;
         return this;
     }
@@ -385,7 +385,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return departmentCode;
     }
 
-    public ZhnyPoPlanHeader setDepartmentCode(String departmentCode) {
+    public SinochemintlPoPlanHeader setDepartmentCode(String departmentCode) {
         this.departmentCode = departmentCode;
         return this;
     }
@@ -397,7 +397,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return departmentName;
     }
 
-    public ZhnyPoPlanHeader setDepartmentName(String departmentName) {
+    public SinochemintlPoPlanHeader setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
         return this;
     }
@@ -409,7 +409,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return applicationDate;
     }
 
-    public ZhnyPoPlanHeader setApplicationDate(Date applicationDate) {
+    public SinochemintlPoPlanHeader setApplicationDate(Date applicationDate) {
         this.applicationDate = applicationDate;
         return this;
     }
@@ -421,7 +421,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return originalCurrency;
     }
 
-    public ZhnyPoPlanHeader setOriginalCurrency(String originalCurrency) {
+    public SinochemintlPoPlanHeader setOriginalCurrency(String originalCurrency) {
         this.originalCurrency = originalCurrency;
         return this;
     }
@@ -433,7 +433,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
         return planIllustrate;
     }
 
-    public ZhnyPoPlanHeader setPlanIllustrate(String planIllustrate) {
+    public SinochemintlPoPlanHeader setPlanIllustrate(String planIllustrate) {
         this.planIllustrate = planIllustrate;
         return this;
     }

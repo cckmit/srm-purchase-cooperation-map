@@ -8,8 +8,8 @@ import org.hzero.boot.imported.infra.validator.annotation.ImportValidators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.srm.purchasecooperation.cux.domain.entity.ZhnyPoPlanLine;
-import org.srm.purchasecooperation.cux.domain.repository.ZhnyPoPlanLineRepository;
+import org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanLine;
+import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 
 /**
  * 采购计划行表导入校验
@@ -19,24 +19,24 @@ import org.srm.purchasecooperation.cux.domain.repository.ZhnyPoPlanLineRepositor
 @ImportValidators({
         @ImportValidator(templateCode = "SCUX.ZHNY.IMPORT.PO-PLAN")
 })
-public class ZhnyPoPlanImportValidator extends ValidatorHandler {
+public class SinochemintlPoPlanImportValidator extends ValidatorHandler {
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
-    private ZhnyPoPlanLineRepository zhnyPoPlanLineRepository;
+    private SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZhnyPoPlanImportValidator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SinochemintlPoPlanImportValidator.class);
 
     @Override
     public boolean validate(String data) {
         LOGGER.info("param detail import data examine: [{}]", data);
         boolean isBlank = true;
         try {
-            ZhnyPoPlanLine zhnyPoPlanLine = objectMapper.readValue(data, ZhnyPoPlanLine.class);
-            zhnyPoPlanLine.setTenantId(DetailsHelper.getUserDetails().getTenantId());
-            isBlank = checkData(zhnyPoPlanLine);
+            SinochemintlPoPlanLine sinochemintlPoPlanLine = objectMapper.readValue(data, SinochemintlPoPlanLine.class);
+            sinochemintlPoPlanLine.setTenantId(DetailsHelper.getUserDetails().getTenantId());
+            isBlank = checkData(sinochemintlPoPlanLine);
         } catch (Exception e) {
             LOGGER.error("import data examine error: [{}] ,data: [{}]", e, data);
             return false;
@@ -49,9 +49,9 @@ public class ZhnyPoPlanImportValidator extends ValidatorHandler {
      *
      * @return 校验结果
      */
-    private boolean checkData(ZhnyPoPlanLine zhnyPoPlanLine) {
+    private boolean checkData(SinochemintlPoPlanLine sinochemintlPoPlanLine) {
         //供应商名称必填
-        return zhnyPoPlanLine != null;
+        return sinochemintlPoPlanLine != null;
     }
 
 }

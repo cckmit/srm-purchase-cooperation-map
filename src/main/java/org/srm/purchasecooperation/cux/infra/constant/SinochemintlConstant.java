@@ -4,7 +4,7 @@ package org.srm.purchasecooperation.cux.infra.constant;
  * @author gui-tian-jing
  * @date 2021/9/6 20:34
  */
-public class ZhnyConstant {
+public class SinochemintlConstant {
 
     /**
      * 错误提醒

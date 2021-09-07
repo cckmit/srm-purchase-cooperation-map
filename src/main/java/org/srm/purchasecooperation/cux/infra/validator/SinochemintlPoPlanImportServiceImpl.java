@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.srm.purchasecooperation.cux.domain.entity.ZhnyPoPlanLine;
-import org.srm.purchasecooperation.cux.domain.repository.ZhnyPoPlanLineRepository;
+import org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanLine;
+import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,15 +22,15 @@ import java.util.List;
  */
 @Service
 @ImportService(templateCode = "SCUX.ZHNY.IMPORT.PO-PLAN")
-public class ZhnyPoPlanImportServiceImpl extends BatchImportHandler {
+public class SinochemintlPoPlanImportServiceImpl extends BatchImportHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(ZhnyPoPlanImportServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SinochemintlPoPlanImportServiceImpl.class);
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
-    private ZhnyPoPlanLineRepository zhnyPoPlanLineRepository;
+    private SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -41,12 +41,12 @@ public class ZhnyPoPlanImportServiceImpl extends BatchImportHandler {
         }
         try {
             //获取参数
-            String poPlanHeaderId = getArgs(ZhnyPoPlanLine.FIELD_PO_PLAN_HEADER_ID);
+            String poPlanHeaderId = getArgs(SinochemintlPoPlanLine.FIELD_PO_PLAN_HEADER_ID);
             for (String data : datas) {
-                ZhnyPoPlanLine zhnyPoPlanLine = objectMapper.readValue(data, ZhnyPoPlanLine.class);
-                zhnyPoPlanLine.setPoPlanHeaderId(Long.valueOf(poPlanHeaderId));
+                SinochemintlPoPlanLine sinochemintlPoPlanLine = objectMapper.readValue(data, SinochemintlPoPlanLine.class);
+                sinochemintlPoPlanLine.setPoPlanHeaderId(Long.valueOf(poPlanHeaderId));
                 //业务需求
-                zhnyPoPlanLineRepository.insert(zhnyPoPlanLine);
+                sinochemintlPoPlanLineRepository.insert(sinochemintlPoPlanLine);
             }
         } catch (IOException e) {
             logger.error("import data error: [{}] ,data: [{}]", e, datas);
