@@ -10,8 +10,10 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -106,9 +108,9 @@ public class ZhnyPoPlanLine extends AuditDomain {
     private String finalSupplier;
     @ApiModelProperty(value = "出厂价", required = true)
     @NotNull
-    private Long factoryPrice;
+    private BigDecimal factoryPrice;
     @ApiModelProperty(value = "最终价格")
-    private Long finalPrice;
+    private BigDecimal finalPrice;
     @ApiModelProperty(value = "发货地址", required = true)
     @NotBlank
     private String deliveryAddress;
@@ -124,14 +126,14 @@ public class ZhnyPoPlanLine extends AuditDomain {
     private String unit;
     @ApiModelProperty(value = "采购总价", required = true)
     @NotNull
-    private Long totalPurchasePrice;
+    private BigDecimal totalPurchasePrice;
     @ApiModelProperty(value = "币种", required = true)
     @NotBlank
     private String currencyType;
     @ApiModelProperty(value = "运费供应商")
     private String freightSupplier;
     @ApiModelProperty(value = "运费价格")
-    private Long freightPrice;
+    private BigDecimal freightPrice;
     @ApiModelProperty(value = "价格条款")
     private String priceTerms;
     @ApiModelProperty(value = "备注")
@@ -139,7 +141,7 @@ public class ZhnyPoPlanLine extends AuditDomain {
     @ApiModelProperty(value = "税种")
     private String taxType;
     @ApiModelProperty(value = "税率")
-    private Long taxRate;
+    private BigDecimal taxRate;
     @ApiModelProperty(value = "申请人")
     private String applicant;
     @ApiModelProperty(value = "附件id")
@@ -149,10 +151,21 @@ public class ZhnyPoPlanLine extends AuditDomain {
 // 非数据库字段
 // ------------------------------------------------------------------------------
 
+    @Transient
+    @ApiModelProperty(value = "序号")
+    private Integer serialNum;
+
 //
 // getter/setter
 // ------------------------------------------------------------------------------
 
+    public Integer getSerialNum() {
+        return serialNum;
+    }
+
+    public void setSerialNum(Integer serialNum) {
+        this.serialNum = serialNum;
+    }
 
     public String getStatus() {
         return status;
@@ -310,11 +323,11 @@ public class ZhnyPoPlanLine extends AuditDomain {
     /**
      * @return 出厂价
      */
-    public Long getFactoryPrice() {
+    public BigDecimal getFactoryPrice() {
         return factoryPrice;
     }
 
-    public ZhnyPoPlanLine setFactoryPrice(Long factoryPrice) {
+    public ZhnyPoPlanLine setFactoryPrice(BigDecimal factoryPrice) {
         this.factoryPrice = factoryPrice;
         return this;
     }
@@ -322,11 +335,11 @@ public class ZhnyPoPlanLine extends AuditDomain {
     /**
      * @return 最终价格
      */
-    public Long getFinalPrice() {
+    public BigDecimal getFinalPrice() {
         return finalPrice;
     }
 
-    public ZhnyPoPlanLine setFinalPrice(Long finalPrice) {
+    public ZhnyPoPlanLine setFinalPrice(BigDecimal finalPrice) {
         this.finalPrice = finalPrice;
         return this;
     }
@@ -394,11 +407,11 @@ public class ZhnyPoPlanLine extends AuditDomain {
     /**
      * @return 采购总价
      */
-    public Long getTotalPurchasePrice() {
+    public BigDecimal getTotalPurchasePrice() {
         return totalPurchasePrice;
     }
 
-    public ZhnyPoPlanLine setTotalPurchasePrice(Long totalPurchasePrice) {
+    public ZhnyPoPlanLine setTotalPurchasePrice(BigDecimal totalPurchasePrice) {
         this.totalPurchasePrice = totalPurchasePrice;
         return this;
     }
@@ -430,11 +443,11 @@ public class ZhnyPoPlanLine extends AuditDomain {
     /**
      * @return 运费价格
      */
-    public Long getFreightPrice() {
+    public BigDecimal getFreightPrice() {
         return freightPrice;
     }
 
-    public ZhnyPoPlanLine setFreightPrice(Long freightPrice) {
+    public ZhnyPoPlanLine setFreightPrice(BigDecimal freightPrice) {
         this.freightPrice = freightPrice;
         return this;
     }
@@ -478,11 +491,11 @@ public class ZhnyPoPlanLine extends AuditDomain {
     /**
      * @return 税率
      */
-    public Long getTaxRate() {
+    public BigDecimal getTaxRate() {
         return taxRate;
     }
 
-    public ZhnyPoPlanLine setTaxRate(Long taxRate) {
+    public ZhnyPoPlanLine setTaxRate(BigDecimal taxRate) {
         this.taxRate = taxRate;
         return this;
     }

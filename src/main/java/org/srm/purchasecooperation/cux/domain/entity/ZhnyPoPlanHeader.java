@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -82,7 +83,7 @@ public class ZhnyPoPlanHeader extends AuditDomain {
     private String poPlanNumber;
     @ApiModelProperty(value = "申请总额", required = true)
     @NotNull
-    private Long applicationSum;
+    private BigDecimal applicationSum;
     @ApiModelProperty(value = "创建人id")
     private Long createId;
     @ApiModelProperty(value = "创建人", required = true)
@@ -137,6 +138,8 @@ public class ZhnyPoPlanHeader extends AuditDomain {
 //
 // getter/setter
 // ------------------------------------------------------------------------------
+
+
 
     public String getStatus() {
         return status;
@@ -210,11 +213,11 @@ public class ZhnyPoPlanHeader extends AuditDomain {
     /**
      * @return 申请总额
      */
-    public Long getApplicationSum() {
+    public BigDecimal getApplicationSum() {
         return applicationSum;
     }
 
-    public ZhnyPoPlanHeader setApplicationSum(Long applicationSum) {
+    public ZhnyPoPlanHeader setApplicationSum(BigDecimal applicationSum) {
         this.applicationSum = applicationSum;
         return this;
     }

@@ -2,8 +2,12 @@ package org.srm.purchasecooperation.cux.app.service.impl;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import org.hzero.boot.platform.code.builder.CodeRuleBuilder;
+import org.hzero.boot.platform.code.constant.CodeConstants;
 import org.hzero.core.base.BaseAppService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,8 @@ import org.srm.purchasecooperation.cux.domain.repository.ZhnyPoPlanHeaderReposit
 import org.srm.purchasecooperation.cux.domain.repository.ZhnyPoPlanLineRepository;
 import org.srm.purchasecooperation.cux.infra.constant.ZhnyConstant;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +37,9 @@ public class ZhnyPoPlanServiceImpl extends BaseAppService implements ZhnyPoPlanS
     private final ZhnyPoPlanHeaderRepository zhnyPoPlanHeaderRepository;
 
     private final ZhnyPoPlanLineRepository zhnyPoPlanLineRepository;
+
+    @Autowired
+    private CodeRuleBuilder codeRuleBuilder;
 
     @Autowired
     public ZhnyPoPlanServiceImpl(ZhnyPoPlanHeaderRepository zhnyPoPlanHeaderRepository, ZhnyPoPlanLineRepository zhnyPoPlanLineRepository) {
@@ -47,39 +56,65 @@ public class ZhnyPoPlanServiceImpl extends BaseAppService implements ZhnyPoPlanS
      */
     @Override
     public Page<ZhnyPoPlanHeader> list(ZhnyPoPlanHeader zhnyPoPlanHeader, PageRequest pageRequest) {
+        //TODO 当自己为采购创建人时，只能查询到状态为新建或拼单中的采购计划  当自己为共享省区对应人时，只能查询到状态为拼单中的采购计划数据
         return PageHelper.doPage(pageRequest, () -> zhnyPoPlanHeaderRepository.list(zhnyPoPlanHeader));
     }
 
     /**
-     * 新增采购计划
+     * 新增/保存/修改采购计划
      *
      * @param dto 采购计划头表和行表数据
      */
     @Override
-    public void addPoPlan(ZhnyPoPlanHeaderDTO dto) {
+    public ZhnyPoPlanHeader addPoPlan(ZhnyPoPlanHeaderDTO dto) {
         //创建头表并保存
         ZhnyPoPlanHeader zhnyPoPlanHeader = new ZhnyPoPlanHeader();
         BeanUtils.copyProperties(dto, zhnyPoPlanHeader);
         if (StringUtils.isEmpty(zhnyPoPlanHeader.getPoPlanHeaderId())) {
-            //id无值 新增操作
-            zhnyPoPlanHeader.setStatus(ZhnyConstant.StatusCode.STATUS_NEW);
+            //id无值 状态无值 新增操作
+            if (StringUtils.isEmpty(dto.getStatus()) && StringUtils.isEmpty(dto.getCreateName())) {
+                //获取采购计划单号
+                String poPlanNumber = codeRuleBuilder.generateCode(dto.getTenantId(), ZhnyConstant.CodingCode.SCUX_ZHNY_RULES_PO_PLAN,
+                        CodeConstants.CodeRuleLevelCode.GLOBAL, CodeConstants.CodeRuleLevelCode.GLOBAL, null);
+                zhnyPoPlanHeader.setPoPlanNumber(poPlanNumber);
+                zhnyPoPlanHeader.setStatus(ZhnyConstant.StatusCode.STATUS_NEW);
+                //获取当前登录人信息
+                CustomUserDetails user = DetailsHelper.getUserDetails();
+                zhnyPoPlanHeader.setCreateName(user.getRealName());
+                zhnyPoPlanHeader.setCompanyCode(user.getUserId().toString());
+                zhnyPoPlanHeader.setCreationDate(new Date());
+                //系统自动带出当前申请人
+                zhnyPoPlanHeader.setApplicant(user.getRealName());
+                //系统自动带出单据来源于哪个系统
+                //zhnyPoPlanHeader.setPoSource();
+                return zhnyPoPlanHeader;
+            }
+            //id无值 保存操作
             zhnyPoPlanHeaderRepository.insert(zhnyPoPlanHeader);
         } else {
             //有值 修改操作
+            zhnyPoPlanHeader.setObjectVersionNumber(zhnyPoPlanHeaderRepository
+                    .selectByPrimaryKey(zhnyPoPlanHeader.getPoPlanHeaderId()).getObjectVersionNumber());
             zhnyPoPlanHeaderRepository.updateByPrimaryKey(zhnyPoPlanHeader);
         }
         //获取行表数据
-        for (ZhnyPoPlanLine zhnyPoPlanLine : dto.getZhnyPoPlanLineList()) {
-            if (StringUtils.isEmpty(zhnyPoPlanLine.getPoPlanLineId())) {
-                //id无值 新增操作
-                zhnyPoPlanLine.setPoPlanHeaderId(zhnyPoPlanHeader.getPoPlanHeaderId());
-                zhnyPoPlanLine.setStatus(ZhnyConstant.StatusCode.STATUS_NEW);
-                zhnyPoPlanLineRepository.insert(zhnyPoPlanLine);
-            } else {
-                //有值 修改操作
-                zhnyPoPlanLineRepository.updateByPrimaryKey(zhnyPoPlanLine);
+        List<ZhnyPoPlanLine> zhnyPoPlanLineList = dto.getZhnyPoPlanLineList();
+        if (zhnyPoPlanLineList != null && !zhnyPoPlanLineList.isEmpty()) {
+            for (ZhnyPoPlanLine zhnyPoPlanLine : zhnyPoPlanLineList) {
+                if (StringUtils.isEmpty(zhnyPoPlanLine.getPoPlanLineId())) {
+                    //id无值 新增操作
+                    zhnyPoPlanLine.setPoPlanHeaderId(zhnyPoPlanHeader.getPoPlanHeaderId());
+                    zhnyPoPlanLine.setStatus(ZhnyConstant.StatusCode.STATUS_NEW);
+                    zhnyPoPlanLineRepository.insert(zhnyPoPlanLine);
+                } else {
+                    //有值 修改操作
+                    zhnyPoPlanLine.setObjectVersionNumber(zhnyPoPlanLineRepository
+                            .selectByPrimaryKey(zhnyPoPlanLine.getPoPlanLineId()).getObjectVersionNumber());
+                    zhnyPoPlanLineRepository.updateByPrimaryKey(zhnyPoPlanLine);
+                }
             }
         }
+        return zhnyPoPlanHeader;
     }
 
     /**
@@ -126,6 +161,59 @@ public class ZhnyPoPlanServiceImpl extends BaseAppService implements ZhnyPoPlanS
                 zhnyPoPlanLineRepository.deleteByPrimaryKey(zhnyPoPlanLine);
             }
         }
+    }
+
+    /**
+     * 获取头行单表
+     *
+     * @param organizationId 租户id
+     * @param poPlanHeaderId 头表id
+     */
+    @Override
+    public ZhnyPoPlanHeaderDTO getPoPlan(Long organizationId, Long poPlanHeaderId, PageRequest pageRequest) {
+        ZhnyPoPlanHeaderDTO zhnyPoPlanHeaderDTO = new ZhnyPoPlanHeaderDTO();
+        //获取头数据
+        ZhnyPoPlanHeader zhnyPoPlanHeader = zhnyPoPlanHeaderRepository.selectByPrimaryKey(poPlanHeaderId);
+        if (zhnyPoPlanHeader == null) {
+            throw new CommonException(ZhnyConstant.ErrorCode.ERROR_PARAMETER_ERROR);
+        }
+        BeanUtils.copyProperties(zhnyPoPlanHeader, zhnyPoPlanHeaderDTO);
+        //获取行数据
+        Page<ZhnyPoPlanLine> zhnyPoPlanLineList = PageHelper.doPage(pageRequest, () -> zhnyPoPlanLineRepository.select(new ZhnyPoPlanLine().setPoPlanLineId(poPlanHeaderId).setTenantId(organizationId)));
+        if (zhnyPoPlanLineList == null || zhnyPoPlanLineList.isEmpty()) {
+            zhnyPoPlanHeaderDTO.setZhnyPoPlanLineList(new ArrayList<>());
+        } else {
+            // 处理页面数据的序号
+            int size = pageRequest.getSize();
+            int page = pageRequest.getPage();
+            int firstNumber = page * size + 1;
+            for (ZhnyPoPlanLine result : zhnyPoPlanLineList) {
+                result.setSerialNum(firstNumber);
+                firstNumber++;
+            }
+            zhnyPoPlanHeaderDTO.setZhnyPoPlanLineList(zhnyPoPlanLineList);
+        }
+        return zhnyPoPlanHeaderDTO;
+    }
+
+    /**
+     * 提交采购计划
+     *
+     * @param poPlanHeaderId 头表id
+     */
+    @Override
+    public void submit(Long poPlanHeaderId) {
+        //TODO 提交采购计划
+    }
+
+    /**
+     * 取消采购计划
+     *
+     * @param poPlanHeaderId 头表id
+     */
+    @Override
+    public void cancel(Long poPlanHeaderId) {
+        //TODO 取消采购计划
     }
 
 }

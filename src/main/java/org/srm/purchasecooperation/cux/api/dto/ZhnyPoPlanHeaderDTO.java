@@ -62,6 +62,8 @@ public class ZhnyPoPlanHeaderDTO {
     private String originalCurrency;
     @ApiModelProperty(value = "计划说明")
     private String planIllustrate;
+    @ApiModelProperty(value = "创建日期")
+    private String creationDate;
     @ApiModelProperty(value = "行表数据")
     private List<ZhnyPoPlanLine> zhnyPoPlanLineList;
 
@@ -71,6 +73,14 @@ public class ZhnyPoPlanHeaderDTO {
 
     public void setZhnyPoPlanLineList(List<ZhnyPoPlanLine> zhnyPoPlanLineList) {
         this.zhnyPoPlanLineList = zhnyPoPlanLineList;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Long getPoPlanHeaderId() {

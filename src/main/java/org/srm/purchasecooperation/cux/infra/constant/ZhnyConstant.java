@@ -15,11 +15,18 @@ public class ZhnyConstant {
     }
 
     /**
-     * ·
      * 状态
      */
     public interface StatusCode {
         //新建状态
         String STATUS_NEW = "NEW！";
+    }
+
+    /**
+     * 编码
+     */
+    public interface CodingCode {
+        //采购计划单号
+        String SCUX_ZHNY_RULES_PO_PLAN = "SCUX.ZHNY.RULES.PO_PLAN！";
     }
 }

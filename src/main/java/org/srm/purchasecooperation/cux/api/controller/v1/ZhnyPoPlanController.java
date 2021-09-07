@@ -46,13 +46,22 @@ public class ZhnyPoPlanController extends BaseController {
         return Results.success(list);
     }
 
-    @ApiOperation(value = "新增/修改采购计划")
+    @ApiOperation(value = "新增/保存/修改采购计划")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/addPoPlan")
-    public ResponseEntity<Void> addPoPlan(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt ZhnyPoPlanHeaderDTO dto) {
+    public ResponseEntity<ZhnyPoPlanHeader> addPoPlan(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt ZhnyPoPlanHeaderDTO dto) {
         dto.setTenantId(organizationId);
-        zhnyPoPlanHeaderService.addPoPlan(dto);
-        return Results.success();
+        ZhnyPoPlanHeader zhnyPoPlanHeader = zhnyPoPlanHeaderService.addPoPlan(dto);
+        return Results.success(zhnyPoPlanHeader);
+    }
+
+    @ApiOperation(value = "获取头行单表")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/getPoPlan/{poPlanHeaderId}")
+    public ResponseEntity<ZhnyPoPlanHeaderDTO> getPoPlan(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId, @ApiIgnore @SortDefault(value = ZhnyPoPlanHeader.FIELD_PO_PLAN_HEADER_ID,
+            direction = Sort.Direction.DESC) PageRequest pageRequest) {
+        ZhnyPoPlanHeaderDTO result = zhnyPoPlanHeaderService.getPoPlan(organizationId, poPlanHeaderId, pageRequest);
+        return Results.success(result);
     }
 
     @ApiOperation(value = "删除采购计划头表")
@@ -71,4 +80,19 @@ public class ZhnyPoPlanController extends BaseController {
         return Results.success();
     }
 
+    @ApiOperation(value = "提交采购计划")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/submit/{poPlanHeaderId}")
+    public ResponseEntity<Void> submit(@Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId) {
+        zhnyPoPlanHeaderService.submit(poPlanHeaderId);
+        return Results.success();
+    }
+
+    @ApiOperation(value = "取消采购计划")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/cancel/{poPlanHeaderId}")
+    public ResponseEntity<Void> cancel(@Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId) {
+        zhnyPoPlanHeaderService.cancel(poPlanHeaderId);
+        return Results.success();
+    }
 }

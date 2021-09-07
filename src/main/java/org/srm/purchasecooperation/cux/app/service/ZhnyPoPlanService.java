@@ -25,11 +25,11 @@ public interface ZhnyPoPlanService {
     Page<ZhnyPoPlanHeader> list(ZhnyPoPlanHeader zhnyPoPlanHeader, PageRequest pageRequest);
 
     /**
-     * 新增采购计划
+     * 新增/保存/修改采购计划
      *
      * @param dto 采购计划头表和行表数据
      */
-    void addPoPlan(ZhnyPoPlanHeaderDTO dto);
+    ZhnyPoPlanHeader addPoPlan(ZhnyPoPlanHeaderDTO dto);
 
     /**
      * 删除采购计划头表
@@ -44,4 +44,26 @@ public interface ZhnyPoPlanService {
      * @param ids 行表id集合
      */
     void delLine(List<Long> ids);
+
+    /**
+     * 获取头行单表
+     *
+     * @param organizationId 租户id
+     * @param poPlanHeaderId 头表id
+     */
+    ZhnyPoPlanHeaderDTO getPoPlan(Long organizationId, Long poPlanHeaderId, PageRequest pageRequest);
+
+    /**
+     * 提交采购计划
+     *
+     * @param poPlanHeaderId 头表id
+     */
+    void submit(Long poPlanHeaderId);
+
+    /**
+     * 取消采购计划
+     *
+     * @param poPlanHeaderId 头表id
+     */
+    void cancel(Long poPlanHeaderId);
 }
