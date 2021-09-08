@@ -43,7 +43,6 @@ public class SinochemintlPoPlanLine extends AuditDomain {
     public static final String FIELD_INITIAL_SUPPLIER = "initialSupplier";
     public static final String FIELD_FINAL_SUPPLIER = "finalSupplier";
     public static final String FIELD_FACTORY_PRICE = "factoryPrice";
-    public static final String FIELD_FINAL_PRICE = "finalPrice";
     public static final String FIELD_DELIVERY_ADDRESS = "deliveryAddress";
     public static final String FIELD_MATERIAL_CODING = "materialCoding";
     public static final String FIELD_MATERIAL_CLASS = "materialClass";
@@ -111,25 +110,23 @@ public class SinochemintlPoPlanLine extends AuditDomain {
     @ApiModelProperty(value = "出厂价", required = true)
     @NotNull
     private BigDecimal factoryPrice;
-    @ApiModelProperty(value = "最终价格")
-    private BigDecimal finalPrice;
     @ApiModelProperty(value = "发货地址", required = true)
     @NotBlank
     private String deliveryAddress;
-    @ApiModelProperty(value = "物料编码")
+    @ApiModelProperty(value = "物料编码(SSRC.PRICE_LIB_ITEM)")
     private String materialCoding;
     @ApiModelProperty(value = "物料分类")
     private String materialClass;
     @ApiModelProperty(value = "需求数量", required = true)
     @NotNull
     private Long requiredQuantity;
-    @ApiModelProperty(value = "单位", required = true)
+    @ApiModelProperty(value = "单位(SPRM.UOM)", required = true)
     @NotBlank
     private String unit;
     @ApiModelProperty(value = "采购总价", required = true)
     @NotNull
     private BigDecimal totalPurchasePrice;
-    @ApiModelProperty(value = "币种", required = true)
+    @ApiModelProperty(value = "币种(SPCM.CURRENCY)", required = true)
     @NotBlank
     private String currencyType;
     @ApiModelProperty(value = "运费供应商")
@@ -140,7 +137,7 @@ public class SinochemintlPoPlanLine extends AuditDomain {
     private String priceTerms;
     @ApiModelProperty(value = "备注")
     private String remark;
-    @ApiModelProperty(value = "税种")
+    @ApiModelProperty(value = "税种(SPCM.TAX)")
     private String taxType;
     @ApiModelProperty(value = "税率")
     private BigDecimal taxRate;
@@ -343,18 +340,6 @@ public class SinochemintlPoPlanLine extends AuditDomain {
 
     public SinochemintlPoPlanLine setFactoryPrice(BigDecimal factoryPrice) {
         this.factoryPrice = factoryPrice;
-        return this;
-    }
-
-    /**
-     * @return 最终价格
-     */
-    public BigDecimal getFinalPrice() {
-        return finalPrice;
-    }
-
-    public SinochemintlPoPlanLine setFinalPrice(BigDecimal finalPrice) {
-        this.finalPrice = finalPrice;
         return this;
     }
 

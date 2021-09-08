@@ -128,7 +128,7 @@ public class SinochemintlPoPlanHeader extends AuditDomain {
     @ApiModelProperty(value = "申请日期", required = true)
     @NotNull
     private Date applicationDate;
-    @ApiModelProperty(value = "原币币种")
+    @ApiModelProperty(value = "原币币种(SPCM.CURRENCY)")
     private String originalCurrency;
     @ApiModelProperty(value = "计划说明")
     private String planIllustrate;
