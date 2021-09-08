@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanLineMapper">
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap id="BaseResultMap" type="org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanLine">
+        <result column="po_plan_line_id" property="poPlanLineId" jdbcType="DECIMAL"/>
+        <result column="tenant_id" property="tenantId" jdbcType="DECIMAL"/>
+        <result column="po_plan_header_id" property="poPlanHeaderId" jdbcType="DECIMAL"/>
+        <result column="spell_doc_province" property="spellDocProvince" jdbcType="DECIMAL"/>
+        <result column="need_date" property="needDate" jdbcType="DATE"/>
+        <result column="plan_shared_province" property="planSharedProvince" jdbcType="VARCHAR"/>
+        <result column="province_company" property="provinceCompany" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="specification" property="specification" jdbcType="VARCHAR"/>
+        <result column="pack" property="pack" jdbcType="VARCHAR"/>
+        <result column="initial_supplier" property="initialSupplier" jdbcType="VARCHAR"/>
+        <result column="final_supplier" property="finalSupplier" jdbcType="VARCHAR"/>
+        <result column="factory_price" property="factoryPrice" jdbcType="DECIMAL"/>
+        <result column="final_price" property="finalPrice" jdbcType="DECIMAL"/>
+        <result column="delivery_address" property="deliveryAddress" jdbcType="VARCHAR"/>
+        <result column="material_coding" property="materialCoding" jdbcType="VARCHAR"/>
+        <result column="material_class" property="materialClass" jdbcType="VARCHAR"/>
+        <result column="required_quantity" property="requiredQuantity" jdbcType="DECIMAL"/>
+        <result column="unit" property="unit" jdbcType="VARCHAR"/>
+        <result column="total_purchase_price" property="totalPurchasePrice" jdbcType="DECIMAL"/>
+        <result column="currency_type" property="currencyType" jdbcType="VARCHAR"/>
+        <result column="freight_supplier" property="freightSupplier" jdbcType="VARCHAR"/>
+        <result column="freight_price" property="freightPrice" jdbcType="DECIMAL"/>
+        <result column="price_terms" property="priceTerms" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="tax_type" property="taxType" jdbcType="VARCHAR"/>
+        <result column="tax_rate" property="taxRate" jdbcType="DECIMAL"/>
+        <result column="applicant" property="applicant" jdbcType="VARCHAR"/>
+        <result column="appendix_id" property="appendixId" jdbcType="DECIMAL"/>
+        <result column="object_version_number" property="objectVersionNumber" jdbcType="DECIMAL"/>
+        <result column="creation_date" property="creationDate" jdbcType="DATE"/>
+        <result column="created_by" property="createdBy" jdbcType="DECIMAL"/>
+        <result column="last_updated_by" property="lastUpdatedBy" jdbcType="DECIMAL"/>
+        <result column="last_update_date" property="lastUpdateDate" jdbcType="DATE"/>
+    </resultMap>
+
+
+</mapper>
