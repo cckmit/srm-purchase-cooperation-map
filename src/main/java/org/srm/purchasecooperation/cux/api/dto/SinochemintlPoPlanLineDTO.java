@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.boot.platform.lov.annotation.LovValue;
 
+import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.Date;
 public class SinochemintlPoPlanLineDTO{
 
     @ApiModelProperty("表ID，主键，供其他表做外键")
+    @Id
     private Long poPlanLineId;
     @ApiModelProperty(value = "采购方租户", required = true)
     private Long tenantId;
