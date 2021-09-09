@@ -1,68 +1,133 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanHeaderMapper">
-    <!-- 可根据自己的需求，是否要使用 -->
-    <resultMap id="BaseResultMap" type="org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanHeader">
-        <result column="po_plan_header_id" property="poPlanHeaderId" jdbcType="DECIMAL"/>
-        <result column="tenant_id" property="tenantId" jdbcType="DECIMAL"/>
-        <result column="title" property="title" jdbcType="VARCHAR"/>
-        <result column="plan_type" property="planType" jdbcType="VARCHAR"/>
-        <result column="po_plan_number" property="poPlanNumber" jdbcType="VARCHAR"/>
-        <result column="application_sum" property="applicationSum" jdbcType="DECIMAL"/>
-        <result column="create_id" property="createId" jdbcType="DECIMAL"/>
-        <result column="create_name" property="createName" jdbcType="VARCHAR"/>
-        <result column="deadline" property="deadline" jdbcType="DATE"/>
-        <result column="company_code" property="companyCode" jdbcType="VARCHAR"/>
-        <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
-        <result column="business_code" property="businessCode" jdbcType="VARCHAR"/>
-        <result column="business_name" property="businessName" jdbcType="VARCHAR"/>
-        <result column="purchase_org_code" property="purchaseOrgCode" jdbcType="VARCHAR"/>
-        <result column="purchase_org_name" property="purchaseOrgName" jdbcType="VARCHAR"/>
-        <result column="purchase_code" property="purchaseCode" jdbcType="VARCHAR"/>
-        <result column="purchase_name" property="purchaseName" jdbcType="VARCHAR"/>
-        <result column="po_source" property="poSource" jdbcType="VARCHAR"/>
-        <result column="applicant" property="applicant" jdbcType="VARCHAR"/>
-        <result column="department_code" property="departmentCode" jdbcType="VARCHAR"/>
-        <result column="Department_name" property="departmentName" jdbcType="VARCHAR"/>
-        <result column="application_date" property="applicationDate" jdbcType="DATE"/>
-        <result column="original_currency" property="originalCurrency" jdbcType="VARCHAR"/>
-        <result column="plan_illustrate" property="planIllustrate" jdbcType="VARCHAR"/>
-        <result column="object_version_number" property="objectVersionNumber" jdbcType="DECIMAL"/>
-        <result column="creation_date" property="creationDate" jdbcType="DATE"/>
-        <result column="created_by" property="createdBy" jdbcType="DECIMAL"/>
-        <result column="last_updated_by" property="lastUpdatedBy" jdbcType="DECIMAL"/>
-        <result column="last_update_date" property="lastUpdateDate" jdbcType="DATE"/>
-    </resultMap>
+
+    <sql id="mappingChanges">
+        SELECT sph.pr_header_id        poPlanHeaderId,
+               sph.tenant_id           tenantId,
+               sph.title               title,
+               sph.pr_status_code      status,
+               sph.attribute_varchar23 planType,
+               sph.pr_num              poPlanNumber,
+               sph.requested_by        createId,
+               sph.pr_requested_name   createName,
+               sph.attribute_datetime1 deadline,
+               sph.parent_unit_id      companyCode,
+               sph.purchase_org_id     purchaseOrgCode,
+               sph.purchase_agent_id   purchaseCode,
+               sph.pr_source_platform  poSource,
+               sph.pr_requested_name   applicant,
+               sph.unit_id             departmentCode,
+               sph.request_date        applicationDate,
+               sph.original_currency   originalCurrency,
+               sph.attribute_varchar24 planIllustrate,
+               sph.creation_date       creationDate,
+               sph.attribute_varchar22 businessCode,
+               (SELECT SUM(unit_price) FROM sprm_pr_line WHERE pr_header_id = #{poPlanHeaderId})
+                                       applicationSum
+        FROM sprm_pr_header sph
+                 LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
+    </sql>
+
+    <!--    保存头表-->
+    <insert id="setOne">
+        INSERT INTO sprm_pr_header (tenant_id,
+                                    title,
+                                    pr_status_code,
+                                    attribute_varchar23,
+                                    pr_num,
+                                    requested_by,
+                                    pr_requested_name,
+                                    attribute_datetime1,
+                                    parent_unit_id,
+                                    purchase_org_id,
+                                    purchase_agent_id,
+                                    pr_source_platform,
+                                    pr_requested_name,
+                                    unit_id,
+                                    request_date,
+                                    original_currency,
+                                    attribute_varchar24,
+                                    creation_date,
+                                    display_pr_num,
+                                    lot_num,
+                                    attribute_varchar22)
+            VALUE (#{tenantId},
+            #{title},
+            #{status},
+            #{planType},
+            #{poPlanNumber},
+            #{createId},
+            #{createName},
+            #{deadline},
+            #{companyCode},
+            #{purchaseOrgCode},
+            #{purchaseCode},
+            #{poSource},
+            #{applicant},
+            #{departmentCode},
+            #{applicationDate},
+            #{originalCurrency},
+            #{planIllustrate},
+            #{creationDate},
+            #{poPlanNumber},
+            '0',
+            #{businessCode}
+            )
+    </insert>
+
+    <!--    根据头表id修改-->
+    <update id="updateByKey">
+        update sprm_pr_header
+        set sph.title               = #{title},
+            sph.pr_status_code      = #{status},
+            sph.attribute_varchar23 = #{planType},
+            sph.pr_num              = #{poPlanNumber},
+            sph.requested_by        = #{createId},
+            sph.pr_requested_name   = #{createName},
+            sph.attribute_datetime1 = #{deadline},
+            sph.parent_unit_id      = #{companyCode},
+            sph.purchase_org_id     = #{purchaseOrgCode},
+            sph.purchase_agent_id   = #{purchaseCode},
+            sph.pr_source_platform  = #{poSource},
+            sph.pr_requested_name   = #{applicant},
+            sph.unit_id             = #{departmentCode},
+            sph.request_date        = #{applicationDate},
+            sph.original_currency   = #{originalCurrency},
+            sph.attribute_varchar24 = #{planIllustrate},
+            sph.creation_date       = #{creationDate},
+            sph.attribute_varchar22 = #{businessCode}
+        where pr_header_id = #{poPlanHeaderId}
+    </update>
+
+    <!--    根据头表id删除-->
+    <delete id="deleteByKey">
+        DELETE
+        FROM sprm_pr_header
+        WHERE pr_header_id = #{poPlanHeaderId}
+    </delete>
 
     <!--    采购计划头表查询参数-->
-    <select id="list" resultType="org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanHeader">
-        SELECT status,
-        applicant,
-        application_date,
-        po_plan_number,
-        title,
-        company_name,
-        business_name,
-        purchase_org_name,
-        purchase_name,
-        create_name,
-        creation_date,
-        Department_name,
-        po_source,
-        plan_illustrate
-        FROM scux_sinochemintl_po_plan_header
-        WHERE tenant_id = #{tenantId}
+    <select id="list" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
         <if test="poPlanNumber != null and poPlanNumber != ''">
             <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
-            AND po_plan_number like #{poPlanNumberLike}
+            AND sph.pr_num like #{poPlanNumberLike}
         </if>
         <if test="title != null and title != ''">
             <bind name="titleLike" value="'%' + title + '%'"/>
-            AND title like #{titleLike}
+            AND sph.title like #{titleLike}
         </if>
         <if test="status != null and status != ''">
-            AND status = #{status}
+            AND sph.attribute_varchar22 = #{status}
         </if>
+    </select>
+
+    <!--    根据头表id查询-->
+    <select id="selectByKey" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        WHERE sph.pr_header_id = #{poPlanHeaderId}
     </select>
 
 </mapper>

@@ -8,7 +8,7 @@ import org.hzero.boot.imported.infra.validator.annotation.ImportValidators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanLine;
+import org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 
 /**
@@ -34,9 +34,9 @@ public class SinochemintlPoPlanImportValidator extends ValidatorHandler {
         LOGGER.info("param detail import data examine: [{}]", data);
         boolean isBlank = true;
         try {
-            SinochemintlPoPlanLine sinochemintlPoPlanLine = objectMapper.readValue(data, SinochemintlPoPlanLine.class);
-            sinochemintlPoPlanLine.setTenantId(DetailsHelper.getUserDetails().getTenantId());
-            isBlank = checkData(sinochemintlPoPlanLine);
+            SinochemintlPoPlanLineDTO SinochemintlPoPlanLineDTO = objectMapper.readValue(data, SinochemintlPoPlanLineDTO.class);
+            SinochemintlPoPlanLineDTO.setTenantId(DetailsHelper.getUserDetails().getTenantId());
+            isBlank = checkData(SinochemintlPoPlanLineDTO);
         } catch (Exception e) {
             LOGGER.error("import data examine error: [{}] ,data: [{}]", e, data);
             return false;
@@ -49,9 +49,9 @@ public class SinochemintlPoPlanImportValidator extends ValidatorHandler {
      *
      * @return 校验结果
      */
-    private boolean checkData(SinochemintlPoPlanLine sinochemintlPoPlanLine) {
+    private boolean checkData(SinochemintlPoPlanLineDTO SinochemintlPoPlanLineDTO) {
         //供应商名称必填
-        return sinochemintlPoPlanLine != null;
+        return SinochemintlPoPlanLineDTO != null;
     }
 
 }

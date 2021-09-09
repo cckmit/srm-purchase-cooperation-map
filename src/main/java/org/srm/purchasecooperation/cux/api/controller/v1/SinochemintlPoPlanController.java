@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.app.service.SinochemintlPoPlanService;
-import org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanHeader;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
@@ -41,10 +40,10 @@ public class SinochemintlPoPlanController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/list")
     @ProcessLovValue
-    public ResponseEntity<Page<SinochemintlPoPlanHeader>> list(@PathVariable("organizationId") Long organizationId, SinochemintlPoPlanHeader sinochemintlPoPlanHeader, @ApiIgnore @SortDefault(value = SinochemintlPoPlanHeader.FIELD_PO_PLAN_HEADER_ID,
+    public ResponseEntity<Page<SinochemintlPoPlanHeaderDTO>> list(@PathVariable("organizationId") Long organizationId, SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO, @ApiIgnore @SortDefault(value = "poPlanHeaderId",
             direction = Sort.Direction.DESC) PageRequest pageRequest) {
-        sinochemintlPoPlanHeader.setTenantId(organizationId);
-        Page<SinochemintlPoPlanHeader> list = sinochemintlPoPlanHeaderService.list(sinochemintlPoPlanHeader, pageRequest);
+        sinochemintlPoPlanHeaderDTO.setTenantId(organizationId);
+        Page<SinochemintlPoPlanHeaderDTO> list = sinochemintlPoPlanHeaderService.list(sinochemintlPoPlanHeaderDTO, pageRequest);
         return Results.success(list);
     }
 
@@ -52,17 +51,17 @@ public class SinochemintlPoPlanController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/addPoPlan")
     @ProcessLovValue
-    public ResponseEntity<SinochemintlPoPlanHeader> addPoPlan(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto) {
+    public ResponseEntity<SinochemintlPoPlanHeaderDTO> addPoPlan(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto) {
         dto.setTenantId(organizationId);
-        SinochemintlPoPlanHeader sinochemintlPoPlanHeader = sinochemintlPoPlanHeaderService.addPoPlan(dto);
-        return Results.success(sinochemintlPoPlanHeader);
+        SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO = sinochemintlPoPlanHeaderService.addPoPlan(dto);
+        return Results.success(sinochemintlPoPlanHeaderDTO);
     }
 
     @ApiOperation(value = "获取头行单表")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/getPoPlan/{poPlanHeaderId}")
     @ProcessLovValue
-    public ResponseEntity<SinochemintlPoPlanHeaderDTO> getPoPlan(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId, @ApiIgnore @SortDefault(value = SinochemintlPoPlanHeader.FIELD_PO_PLAN_HEADER_ID,
+    public ResponseEntity<SinochemintlPoPlanHeaderDTO> getPoPlan(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId, @ApiIgnore @SortDefault(value = "poPlanHeaderId",
             direction = Sort.Direction.DESC) PageRequest pageRequest) {
         SinochemintlPoPlanHeaderDTO result = sinochemintlPoPlanHeaderService.getPoPlan(organizationId, poPlanHeaderId, pageRequest);
         return Results.success(result);
@@ -87,8 +86,8 @@ public class SinochemintlPoPlanController extends BaseController {
     @ApiOperation(value = "提交采购计划")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/submit/{poPlanHeaderId}")
-    public ResponseEntity<Void> submit(@Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId) {
-        sinochemintlPoPlanHeaderService.submit(poPlanHeaderId);
+    public ResponseEntity<Void> submit(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId) {
+        sinochemintlPoPlanHeaderService.submit(organizationId,poPlanHeaderId);
         return Results.success();
     }
 

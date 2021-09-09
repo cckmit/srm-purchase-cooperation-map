@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanLine;
+import org.srm.purchasecooperation.cux.domain.entity.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 
 import java.io.IOException;
@@ -41,12 +41,12 @@ public class SinochemintlPoPlanImportServiceImpl extends BatchImportHandler {
         }
         try {
             //获取参数
-            String poPlanHeaderId = getArgs(SinochemintlPoPlanLine.FIELD_PO_PLAN_HEADER_ID);
+            String poPlanHeaderId = getArgs(SinochemintlPoPlanLineDTO.FIELD_PO_PLAN_HEADER_ID);
             for (String data : datas) {
-                SinochemintlPoPlanLine sinochemintlPoPlanLine = objectMapper.readValue(data, SinochemintlPoPlanLine.class);
-                sinochemintlPoPlanLine.setPoPlanHeaderId(Long.valueOf(poPlanHeaderId));
+                SinochemintlPoPlanLineDTO SinochemintlPoPlanLineDTO = objectMapper.readValue(data, SinochemintlPoPlanLineDTO.class);
+                SinochemintlPoPlanLineDTO.setPoPlanHeaderId(Long.valueOf(poPlanHeaderId));
                 //业务需求
-                sinochemintlPoPlanLineRepository.insert(sinochemintlPoPlanLine);
+                sinochemintlPoPlanLineRepository.insert(SinochemintlPoPlanLineDTO);
             }
         } catch (IOException e) {
             logger.error("import data error: [{}] ,data: [{}]", e, datas);
