@@ -12,21 +12,33 @@
                sph.requested_by        createId,
                sph.pr_requested_name   createName,
                sph.attribute_datetime1 deadline,
-               sph.parent_unit_id      companyCode,
-               sph.purchase_org_id     purchaseOrgCode,
-               sph.purchase_agent_id   purchaseCode,
+               sph.parent_unit_id      companyId,
+               hc.company_name         companyName,
+               sph.attribute_bigint11  businessId,
+               hou.ou_name             businessName,
+               sph.purchase_org_id     purchaseOrgId,
+               hpo.organization_name   purchaseOrgName,
+               sph.purchase_agent_id   purchaseId,
+               hpa.purchase_agent_name purchaseName,
                sph.pr_source_platform  poSource,
                sph.pr_requested_name   applicant,
-               sph.unit_id             departmentCode,
+               sph.unit_id             departmentId,
+               hu.unit_name            departmentName,
                sph.request_date        applicationDate,
-               sph.original_currency   originalCurrency,
+               sph.original_currency   originalId,
+               sc.currency_name        currencyName,
                sph.attribute_varchar24 planIllustrate,
                sph.creation_date       creationDate,
-               sph.attribute_varchar22 businessCode,
                (SELECT SUM(unit_price) FROM sprm_pr_line WHERE pr_header_id = #{poPlanHeaderId})
                                        applicationSum
         FROM sprm_pr_header sph
                  LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
+                 LEFT JOIN hpfm_company hc ON hc.company_id = sph.parent_unit_id
+                 LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
+                 LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = sph.unit_id
+                 LEFT JOIN smdm_currency sc ON sc.currency_id = sph.original_currency
+                 LEFT JOIN hpfm_operation_unit hou ON hou.ou_id = sph.attribute_bigint11
     </sql>
 
     <!--    保存头表-->
@@ -51,7 +63,7 @@
                                     creation_date,
                                     display_pr_num,
                                     lot_num,
-                                    attribute_varchar22)
+                                    attribute_bigint11)
             VALUE (#{tenantId},
             #{title},
             #{status},
@@ -60,19 +72,19 @@
             #{createId},
             #{createName},
             #{deadline},
-            #{companyCode},
-            #{purchaseOrgCode},
-            #{purchaseCode},
+            #{companyId},
+            #{purchaseOrgId},
+            #{purchaseId},
             #{poSource},
             #{applicant},
-            #{departmentCode},
+            #{departmentId},
             #{applicationDate},
-            #{originalCurrency},
+            #{originalId},
             #{planIllustrate},
             #{creationDate},
             #{poPlanNumber},
             '0',
-            #{businessCode}
+            #{businessId}
             )
     </insert>
 
@@ -86,17 +98,17 @@
             sph.requested_by        = #{createId},
             sph.pr_requested_name   = #{createName},
             sph.attribute_datetime1 = #{deadline},
-            sph.parent_unit_id      = #{companyCode},
-            sph.purchase_org_id     = #{purchaseOrgCode},
-            sph.purchase_agent_id   = #{purchaseCode},
+            sph.parent_unit_id      = #{companyId},
+            sph.purchase_org_id     = #{purchaseOrgId},
+            sph.purchase_agent_id   = #{purchaseId},
             sph.pr_source_platform  = #{poSource},
             sph.pr_requested_name   = #{applicant},
-            sph.unit_id             = #{departmentCode},
+            sph.unit_id             = #{departmentId},
             sph.request_date        = #{applicationDate},
-            sph.original_currency   = #{originalCurrency},
+            sph.original_currency   = #{originalId},
             sph.attribute_varchar24 = #{planIllustrate},
             sph.creation_date       = #{creationDate},
-            sph.attribute_varchar22 = #{businessCode}
+            sph.attribute_bigint11  = #{businessId}
         where pr_header_id = #{poPlanHeaderId}
     </update>
 
@@ -120,8 +132,13 @@
             AND sph.title like #{titleLike}
         </if>
         <if test="status != null and status != ''">
-            AND sph.attribute_varchar22 = #{status}
+            AND sph.attribute_bigint11 = #{status}
         </if>
+        <if test="defaultCompanyId != null and defaultCompanyId != ''">
+            <bind name="defaultCompanyIdLike" value="'%|' + defaultCompanyId + '|%'"/>
+            AND spl.attribute_varchar23 like #{defaultCompanyIdLike} OR sph.requested_by = #{createId}
+        </if>
+        GROUP BY sph.pr_header_id
     </select>
 
     <!--    根据头表id查询-->

@@ -42,34 +42,36 @@ public class SinochemintlPoPlanHeaderDTO {
     private String createName;
     @ApiModelProperty(value = "拼单截至时间", required = true)
     private Date deadline;
-    @ApiModelProperty(value = "公司编码(SPFM.USER_AUTH.COMPANY)")
-    private String companyCode;
+    @ApiModelProperty(value = "公司ID(SPFM.USER_AUTH.COMPANY)")
+    private Long companyId;
     @ApiModelProperty(value = "公司", required = true)
     private String companyName;
-    @ApiModelProperty(value = "业务实体编码(SPFM.USER_AUTH.OU)")
-    private String businessCode;
+    @ApiModelProperty(value = "业务实体ID(SPFM.USER_AUTH.OU)")
+    private Long businessId;
     @ApiModelProperty(value = "业务实体", required = true)
     private String businessName;
-    @ApiModelProperty(value = "采购组织编码(SPCM.UNIT_PUR_ORGANIZATION)")
-    private String purchaseOrgCode;
+    @ApiModelProperty(value = "采购组织ID(HPFM.PURCHASE_ORGANIZATION)")
+    private Long purchaseOrgId;
     @ApiModelProperty(value = "采购组织", required = true)
     private String purchaseOrgName;
-    @ApiModelProperty(value = "采购员编码")
-    private String purchaseCode;
-    @ApiModelProperty(value = "采购员(SPUC.PURCHASE_AGENT)", required = true)
+    @ApiModelProperty(value = "采购员ID(SPUC.PURCHASE_AGENT)")
+    private Long purchaseId;
+    @ApiModelProperty(value = "采购员", required = true)
     private String purchaseName;
     @ApiModelProperty(value = "单据来源", required = true)
     private String poSource;
     @ApiModelProperty(value = "申请人", required = true)
     private String applicant;
-    @ApiModelProperty(value = "部门编码")
-    private String departmentCode;
-    @ApiModelProperty(value = "所属部门(SPUC.SD_PH_UNIT)", required = true)
+    @ApiModelProperty(value = "部门ID(SPUC.SD_PH_UNIT)")
+    private Long departmentId;
+    @ApiModelProperty(value = "所属部门", required = true)
     private String departmentName;
     @ApiModelProperty(value = "申请日期", required = true)
     private Date applicationDate;
     @ApiModelProperty(value = "原币币种(SPCM.CURRENCY)")
-    private String originalCurrency;
+    private String originalId;
+    @ApiModelProperty(value = "币种名称", required = true)
+    private String currencyName;
     @ApiModelProperty(value = "计划说明")
     private String planIllustrate;
     @ApiModelProperty(value = "创建日期")
@@ -78,12 +80,21 @@ public class SinochemintlPoPlanHeaderDTO {
     @ApiModelProperty(value = "行表数据")
     private List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList;
 
+
     public List<SinochemintlPoPlanLineDTO> getSinochemintlPoPlanLineList() {
         return sinochemintlPoPlanLineList;
     }
 
     public void setSinochemintlPoPlanLineList(List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList) {
         this.sinochemintlPoPlanLineList = sinochemintlPoPlanLineList;
+    }
+
+    public String getCurrencyName() {
+        return currencyName;
+    }
+
+    public void setCurrencyName(String currencyName) {
+        this.currencyName = currencyName;
     }
 
     public String getStatusName() {
@@ -220,14 +231,14 @@ public class SinochemintlPoPlanHeaderDTO {
     }
 
     /**
-     * @return 公司编码
+     * @return 公司ID
      */
-    public String getCompanyCode() {
-        return companyCode;
+    public Long getCompanyId() {
+        return companyId;
     }
 
-    public SinochemintlPoPlanHeaderDTO setCompanyCode(String companyCode) {
-        this.companyCode = companyCode;
+    public SinochemintlPoPlanHeaderDTO setCompanyId(Long companyId) {
+        this.companyId = companyId;
         return this;
     }
 
@@ -244,14 +255,14 @@ public class SinochemintlPoPlanHeaderDTO {
     }
 
     /**
-     * @return 业务实体编码
+     * @return 业务实体ID
      */
-    public String getBusinessCode() {
-        return businessCode;
+    public Long getBusinessId() {
+        return businessId;
     }
 
-    public SinochemintlPoPlanHeaderDTO setBusinessCode(String businessCode) {
-        this.businessCode = businessCode;
+    public SinochemintlPoPlanHeaderDTO setBusinessId(Long businessId) {
+        this.businessId = businessId;
         return this;
     }
 
@@ -268,14 +279,14 @@ public class SinochemintlPoPlanHeaderDTO {
     }
 
     /**
-     * @return 采购组织编码
+     * @return 采购组织ID
      */
-    public String getPurchaseOrgCode() {
-        return purchaseOrgCode;
+    public Long getPurchaseOrgId() {
+        return purchaseOrgId;
     }
 
-    public SinochemintlPoPlanHeaderDTO setPurchaseOrgCode(String purchaseOrgCode) {
-        this.purchaseOrgCode = purchaseOrgCode;
+    public SinochemintlPoPlanHeaderDTO setPurchaseOrgId(Long purchaseOrgId) {
+        this.purchaseOrgId = purchaseOrgId;
         return this;
     }
 
@@ -292,14 +303,14 @@ public class SinochemintlPoPlanHeaderDTO {
     }
 
     /**
-     * @return 采购员编码
+     * @return 采购员ID
      */
-    public String getPurchaseCode() {
-        return purchaseCode;
+    public Long getPurchaseId() {
+        return purchaseId;
     }
 
-    public SinochemintlPoPlanHeaderDTO setPurchaseCode(String purchaseCode) {
-        this.purchaseCode = purchaseCode;
+    public SinochemintlPoPlanHeaderDTO setPurchaseId(Long purchaseId) {
+        this.purchaseId = purchaseId;
         return this;
     }
 
@@ -340,14 +351,14 @@ public class SinochemintlPoPlanHeaderDTO {
     }
 
     /**
-     * @return 部门编码
+     * @return 部门ID
      */
-    public String getDepartmentCode() {
-        return departmentCode;
+    public Long getDepartmentId() {
+        return departmentId;
     }
 
-    public SinochemintlPoPlanHeaderDTO setDepartmentCode(String departmentCode) {
-        this.departmentCode = departmentCode;
+    public SinochemintlPoPlanHeaderDTO setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
         return this;
     }
 
@@ -379,11 +390,11 @@ public class SinochemintlPoPlanHeaderDTO {
      * @return 原币币种
      */
     public String getOriginalCurrency() {
-        return originalCurrency;
+        return originalId;
     }
 
-    public SinochemintlPoPlanHeaderDTO setOriginalCurrency(String originalCurrency) {
-        this.originalCurrency = originalCurrency;
+    public SinochemintlPoPlanHeaderDTO setOriginalCurrency(String originalId) {
+        this.originalId = originalId;
         return this;
     }
 
