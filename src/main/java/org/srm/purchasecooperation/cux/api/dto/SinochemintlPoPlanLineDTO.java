@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 采购计划行表
@@ -15,7 +16,7 @@ import java.util.Date;
  * @author tianjing.gui@hand-china.com 2021-09-06 09:59:20
  */
 @ApiModel("采购计划行表")
-public class SinochemintlPoPlanLineDTO{
+public class SinochemintlPoPlanLineDTO {
 
     @ApiModelProperty("表ID，主键，供其他表做外键")
     @Id
@@ -31,37 +32,45 @@ public class SinochemintlPoPlanLineDTO{
     private Long spellDocProvince;
     @ApiModelProperty(value = "需求日期", required = true)
     private Date needDate;
-    @ApiModelProperty(value = "计划共享省区", required = true)
+    @ApiModelProperty(value = "计划共享省区(SPFM.USER_AUTH.COMPANY)", required = true)
     private String planSharedProvince;
-    @ApiModelProperty(value = "省公司/项目ID", required = true)
-    private String provinceCompanyId;
+    @ApiModelProperty(value = "计划共享省区名称", required = true)
+    @Transient
+    private List<String> planSharedProvinceName;
+    @ApiModelProperty(value = "省公司/项目ID(SPFM.USER_AUTH.COMPANY)", required = true)
+    private Long provinceCompanyId;
     @ApiModelProperty(value = "省公司/项目", required = true)
     private String provinceCompany;
     @ApiModelProperty(value = "产品名称", required = true)
     private String productName;
     @ApiModelProperty(value = "包装规格", required = true)
     private String specification;
+    @ApiModelProperty(value = "初步沟通供应商Id(SMAL.TENANT_SUPPLIER_ALL)", required = true)
+    private String initialSupplierId;
     @ApiModelProperty(value = "初步沟通供应商", required = true)
     private String initialSupplier;
     @ApiModelProperty(value = "出厂价", required = true)
     private BigDecimal factoryPrice;
     @ApiModelProperty(value = "发货地址", required = true)
     private String deliveryAddress;
-    @ApiModelProperty(value = "物料编码(SSRC.PRICE_LIB_ITEM)")
+    @ApiModelProperty(value = "物料id(SSRC.PRICE_LIB_ITEM)")
+    private Long materialId;
+    @ApiModelProperty(value = "物料编码")
     private String materialCoding;
     @ApiModelProperty(value = "物料分类")
     private String materialClass;
     @ApiModelProperty(value = "需求数量", required = true)
     private BigDecimal requiredQuantity;
     @ApiModelProperty(value = "单位(SPRM.UOM)", required = true)
-    @LovValue(lovCode = "SPRM.UOM", meaningField = "unitName")
-    private String uomCode;
+    private Long uomId;
     @ApiModelProperty(value = "单位名称", required = true)
     private String unitName;
     @ApiModelProperty(value = "采购总价", required = true)
     private BigDecimal totalPurchasePrice;
     @ApiModelProperty(value = "币种(SPCM.CURRENCY)", required = true)
-    private String currencyType;
+    private Long currencyId;
+    @ApiModelProperty(value = "币种名称", required = true)
+    private String currencyName;
     @ApiModelProperty(value = "运费供应商")
     private String freightSupplier;
     @ApiModelProperty(value = "运费价格")
@@ -70,7 +79,9 @@ public class SinochemintlPoPlanLineDTO{
     private String priceTerms;
     @ApiModelProperty(value = "备注")
     private String remark;
-    @ApiModelProperty(value = "税种(SPRM.TAX)")
+    @ApiModelProperty(value = "税种ID(SPRM.TAX)")
+    private Long taxId;
+    @ApiModelProperty(value = "税种")
     private String taxType;
     @ApiModelProperty(value = "税率")
     private BigDecimal taxRate;
@@ -95,11 +106,67 @@ public class SinochemintlPoPlanLineDTO{
 // ------------------------------------------------------------------------------
 
 
-    public String getProvinceCompanyId() {
+    public List<String> getPlanSharedProvinceName() {
+        return planSharedProvinceName;
+    }
+
+    public void setPlanSharedProvinceName(List<String> planSharedProvinceName) {
+        this.planSharedProvinceName = planSharedProvinceName;
+    }
+
+    public String getInitialSupplierId() {
+        return initialSupplierId;
+    }
+
+    public void setInitialSupplierId(String initialSupplierId) {
+        this.initialSupplierId = initialSupplierId;
+    }
+
+    public Long getCurrencyId() {
+        return currencyId;
+    }
+
+    public void setCurrencyId(Long currencyId) {
+        this.currencyId = currencyId;
+    }
+
+    public Long getTaxId() {
+        return taxId;
+    }
+
+    public void setTaxId(Long taxId) {
+        this.taxId = taxId;
+    }
+
+    public Long getUomId() {
+        return uomId;
+    }
+
+    public void setUomId(Long uomId) {
+        this.uomId = uomId;
+    }
+
+    public String getCurrencyName() {
+        return currencyName;
+    }
+
+    public void setCurrencyName(String currencyName) {
+        this.currencyName = currencyName;
+    }
+
+    public Long getMaterialId() {
+        return materialId;
+    }
+
+    public void setMaterialId(Long materialId) {
+        this.materialId = materialId;
+    }
+
+    public Long getProvinceCompanyId() {
         return provinceCompanyId;
     }
 
-    public void setProvinceCompanyId(String provinceCompanyId) {
+    public void setProvinceCompanyId(Long provinceCompanyId) {
         this.provinceCompanyId = provinceCompanyId;
     }
 
@@ -319,12 +386,12 @@ public class SinochemintlPoPlanLineDTO{
     /**
      * @return 单位
      */
-    public String getUomCode() {
-        return uomCode;
+    public Long getUomCode() {
+        return uomId;
     }
 
-    public SinochemintlPoPlanLineDTO setUomCode(String uomCode) {
-        this.uomCode = uomCode;
+    public SinochemintlPoPlanLineDTO setUomCode(Long uomId) {
+        this.uomId = uomId;
         return this;
     }
 
@@ -337,18 +404,6 @@ public class SinochemintlPoPlanLineDTO{
 
     public SinochemintlPoPlanLineDTO setTotalPurchasePrice(BigDecimal totalPurchasePrice) {
         this.totalPurchasePrice = totalPurchasePrice;
-        return this;
-    }
-
-    /**
-     * @return 币种
-     */
-    public String getCurrencyType() {
-        return currencyType;
-    }
-
-    public SinochemintlPoPlanLineDTO setCurrencyType(String currencyType) {
-        this.currencyType = currencyType;
         return this;
     }
 
