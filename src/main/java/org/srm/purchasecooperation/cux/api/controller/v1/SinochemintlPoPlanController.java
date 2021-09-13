@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author tianjing.gui@hand-china.com 2021-09-06 09:59:20
  */
-@RestController("sinochemintlPoPlanHeaderController.v1")
+@RestController("SinochemintlPoPlanController.v1")
 @RequestMapping("/v1/{organizationId}/sinochemintl-po-plans")
 public class SinochemintlPoPlanController extends BaseController {
 
