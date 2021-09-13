@@ -51,4 +51,11 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
      * @return 头表数据
      */
     SinochemintlPoPlanHeaderDTO selectByKey(Long poPlanHeaderId);
+
+    /**
+     * 获取头表id
+     * @param sinochemintlPoPlanHeaderDTO 采购计划头表
+     * @return 头表id
+     */
+    Long getPoPlanHeaderId(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 }

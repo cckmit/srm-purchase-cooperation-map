@@ -55,7 +55,6 @@
                                     purchase_org_id,
                                     purchase_agent_id,
                                     pr_source_platform,
-                                    pr_requested_name,
                                     unit_id,
                                     request_date,
                                     original_currency,
@@ -63,6 +62,9 @@
                                     creation_date,
                                     display_pr_num,
                                     lot_num,
+                                    created_by,
+                                    last_updated_by,
+                                    last_update_date,
                                     attribute_bigint11)
             VALUE (#{tenantId},
             #{title},
@@ -76,7 +78,6 @@
             #{purchaseOrgId},
             #{purchaseId},
             #{poSource},
-            #{applicant},
             #{departmentId},
             #{applicationDate},
             #{originalId},
@@ -84,6 +85,9 @@
             #{creationDate},
             #{poPlanNumber},
             '0',
+            #{createdBy},
+            #{lastUpdatedBy},
+            #{lastUpdateDate},
             #{businessId}
             )
     </insert>
@@ -102,13 +106,14 @@
             sph.purchase_org_id     = #{purchaseOrgId},
             sph.purchase_agent_id   = #{purchaseId},
             sph.pr_source_platform  = #{poSource},
-            sph.pr_requested_name   = #{applicant},
             sph.unit_id             = #{departmentId},
             sph.request_date        = #{applicationDate},
             sph.original_currency   = #{originalId},
             sph.attribute_varchar24 = #{planIllustrate},
             sph.creation_date       = #{creationDate},
-            sph.attribute_bigint11  = #{businessId}
+            sph.attribute_bigint11  = #{businessId},
+            sph.last_updated_by     = #{lastUpdatedBy},
+            sph.last_update_date    = #{lastUpdateDate}
         where pr_header_id = #{poPlanHeaderId}
     </update>
 
@@ -134,9 +139,9 @@
         <if test="status != null and status != ''">
             AND sph.attribute_bigint11 = #{status}
         </if>
-        <if test="defaultCompanyId != null and defaultCompanyId != ''">
-            <bind name="defaultCompanyIdLike" value="'%|' + defaultCompanyId + '|%'"/>
-            AND spl.attribute_varchar23 like #{defaultCompanyIdLike} OR sph.requested_by = #{createId}
+        <if test="companyId != null and companyId != ''">
+            <bind name="companyIdLike" value="'%|' + companyId + '|%'"/>
+            AND spl.attribute_varchar23 like #{companyIdLike} OR sph.requested_by = #{createId}
         </if>
         GROUP BY sph.pr_header_id
     </select>
@@ -145,6 +150,12 @@
     <select id="selectByKey" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
         WHERE sph.pr_header_id = #{poPlanHeaderId}
+    </select>
+
+    <select id="getPoPlanHeaderId" resultType="java.lang.Long">
+        SELECT pr_header_id
+        FROM sprm_pr_header
+        ORDER BY pr_header_id DESC LIMIT 1
     </select>
 
 </mapper>

@@ -1,8 +1,15 @@
 package org.srm.purchasecooperation.cux.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.boot.platform.lov.annotation.LovValue;
+import org.hzero.core.base.BaseConstants;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -16,7 +23,10 @@ import java.util.List;
  * @author tianjing.gui@hand-china.com 2021-09-06 09:59:20
  */
 @ApiModel("采购计划行表")
-public class SinochemintlPoPlanLineDTO {
+@VersionAudit
+@ModifyAudit
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SinochemintlPoPlanLineDTO extends AuditDomain {
 
     @ApiModelProperty("表ID，主键，供其他表做外键")
     @Id
@@ -31,6 +41,8 @@ public class SinochemintlPoPlanLineDTO {
     @ApiModelProperty(value = "已拼单省区数量", required = true)
     private Long spellDocProvince;
     @ApiModelProperty(value = "需求日期", required = true)
+    @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
+    @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
     private Date needDate;
     @ApiModelProperty(value = "计划共享省区(SPFM.USER_AUTH.COMPANY)", required = true)
     private String planSharedProvince;

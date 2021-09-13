@@ -11,6 +11,7 @@ public class SinochemintlConstant {
      */
     public interface ErrorCode {
         String ERROR_CANT_DELETE = "仅新建状态的采购计划单才可以进行删除！";
+        String ERROR_LINE_NO_DATA = "行表无数据，无法提交。！";
         String ERROR_PARAMETER_ERROR = "参数错误！";
         String ERROR_NON_NEW_NOT_CANCEL = "非新建的单据不能取消！";
     }

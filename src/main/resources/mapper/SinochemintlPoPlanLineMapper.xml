@@ -148,7 +148,7 @@
     <select id="selectByHeaderId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{organizationId}
-        sph.pr_line_id = #{poPlanLineId}
+        and sph.pr_header_id = #{poPlanHeaderId}
     </select>
 
 </mapper>

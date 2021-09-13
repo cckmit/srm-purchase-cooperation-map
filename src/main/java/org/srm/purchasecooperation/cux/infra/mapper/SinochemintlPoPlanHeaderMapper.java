@@ -48,4 +48,6 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @return 头表数据
      */
     SinochemintlPoPlanHeaderDTO selectByKey(Long poPlanHeaderId);
+
+    Long getPoPlanHeaderId(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 }

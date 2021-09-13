@@ -66,7 +66,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         //当自己为采购创建人时，只能查询到状态为新建或拼单中的采购计划  当自己为共享省区对应人时，只能查询到状态为拼单中的采购计划数据
         //获取用户当前登录用户所在公司
         UserVO userVO = pigicIamFeignClient.selectSelf();
-        Assert.notNull(userVO.getDefaultCompanyId(), MessageAccessor.getMessage("error.supplier.quota.company.num.not.find").desc());
+//        Assert.notNull(userVO.getDefaultCompanyId(), MessageAccessor.getMessage("error.supplier.quota.company.num.not.find").desc());
         sinochemintlPoPlanHeaderDTO.setCompanyId(userVO.getDefaultCompanyId());
         sinochemintlPoPlanHeaderDTO.setCreateId(userVO.getId());
         return PageHelper.doPage(pageRequest, () -> sinochemintlPoPlanHeaderRepository.list(sinochemintlPoPlanHeaderDTO));
@@ -78,33 +78,45 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
      * @param dto 采购计划头表和行表数据
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SinochemintlPoPlanHeaderDTO addPoPlan(SinochemintlPoPlanHeaderDTO dto) {
         //创建头表并保存
+        Date date = new Date();
+        CustomUserDetails user = DetailsHelper.getUserDetails();
         SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO = new SinochemintlPoPlanHeaderDTO();
         BeanUtils.copyProperties(dto, sinochemintlPoPlanHeaderDTO);
         if (StringUtils.isEmpty(sinochemintlPoPlanHeaderDTO.getPoPlanHeaderId())) {
             //id无值 状态无值 新增操作
             if (StringUtils.isEmpty(dto.getStatus()) && StringUtils.isEmpty(dto.getCreateName())) {
                 //获取采购计划单号
-                String poPlanNumber = codeRuleBuilder.generateCode(dto.getTenantId(), SinochemintlConstant.CodingCode.SCUX_ZHNY_RULES_PO_PLAN,
-                        CodeConstants.CodeRuleLevelCode.GLOBAL, CodeConstants.CodeRuleLevelCode.GLOBAL, null);
-                sinochemintlPoPlanHeaderDTO.setPoPlanNumber(poPlanNumber);
+//                String poPlanNumber = codeRuleBuilder.generateCode(dto.getTenantId(), SinochemintlConstant.CodingCode.SCUX_ZHNY_RULES_PO_PLAN,
+//                        CodeConstants.CodeRuleLevelCode.GLOBAL, CodeConstants.CodeRuleLevelCode.GLOBAL, null);
+//                sinochemintlPoPlanHeaderDTO.setPoPlanNumber(poPlanNumber);
+                sinochemintlPoPlanHeaderDTO.setPoPlanNumber("PO202108130001");
                 sinochemintlPoPlanHeaderDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_NEW);
                 //获取当前登录人信息
-                CustomUserDetails user = DetailsHelper.getUserDetails();
                 sinochemintlPoPlanHeaderDTO.setCreateName(user.getRealName());
                 sinochemintlPoPlanHeaderDTO.setCreateId(user.getUserId());
                 sinochemintlPoPlanHeaderDTO.setCreationDate(new Date());
                 //系统自动带出当前申请人
                 sinochemintlPoPlanHeaderDTO.setApplicant(user.getRealName());
+                sinochemintlPoPlanHeaderDTO.setApplicationDate(new Date());
                 //系统自动带出单据来源于哪个系统 暂时只默认SRM系统
                 sinochemintlPoPlanHeaderDTO.setPoSource("SRM");
                 return sinochemintlPoPlanHeaderDTO;
             }
             //id无值 保存操作
+            sinochemintlPoPlanHeaderDTO.setCreationDate(date);
+            sinochemintlPoPlanHeaderDTO.setCreatedBy(user.getUserId());
+            sinochemintlPoPlanHeaderDTO.setLastUpdateDate(date);
+            sinochemintlPoPlanHeaderDTO.setLastUpdatedBy(user.getUserId());
             sinochemintlPoPlanHeaderRepository.setOne(sinochemintlPoPlanHeaderDTO);
+            Long poPlanHeaderId = sinochemintlPoPlanHeaderRepository.getPoPlanHeaderId(sinochemintlPoPlanHeaderDTO);
+            sinochemintlPoPlanHeaderDTO.setPoPlanHeaderId(poPlanHeaderId);
         } else {
             //有值 修改操作
+            sinochemintlPoPlanHeaderDTO.setLastUpdateDate(date);
+            sinochemintlPoPlanHeaderDTO.setLastUpdatedBy(user.getUserId());
             sinochemintlPoPlanHeaderRepository.updateByKey(sinochemintlPoPlanHeaderDTO);
         }
         //获取行表数据
@@ -120,15 +132,23 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 if (StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getPoPlanLineId())) {
                     //id无值 新增操作
                     sinochemintlPoPlanLineDTO.setPoPlanHeaderId(sinochemintlPoPlanHeaderDTO.getPoPlanHeaderId());
+                    sinochemintlPoPlanLineDTO.setTenantId(sinochemintlPoPlanHeaderDTO.getTenantId());
                     sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_NEW);
-                    sinochemintlPoPlanLineDTO.setApplicant(DetailsHelper.getUserDetails().getRealName());
+                    sinochemintlPoPlanLineDTO.setApplicant(user.getRealName());
+                    sinochemintlPoPlanLineDTO.setCreationDate(date);
+                    sinochemintlPoPlanLineDTO.setCreatedBy(user.getUserId());
+                    sinochemintlPoPlanLineDTO.setLastUpdateDate(date);
+                    sinochemintlPoPlanLineDTO.setLastUpdatedBy(user.getUserId());
                     sinochemintlPoPlanLineRepository.setOne(sinochemintlPoPlanLineDTO);
                 } else {
                     //有值 修改操作
+                    sinochemintlPoPlanLineDTO.setLastUpdateDate(date);
+                    sinochemintlPoPlanLineDTO.setLastUpdatedBy(user.getUserId());
                     sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
                 }
             }
         }
+        sinochemintlPoPlanHeaderDTO.setSinochemintlPoPlanLineList(sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanHeaderDTO.getTenantId(), sinochemintlPoPlanHeaderDTO.getPoPlanHeaderId()));
         return sinochemintlPoPlanHeaderDTO;
     }
 
@@ -172,7 +192,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 if (!sinochemintlPoPlanLineDTO.getStatus().equals(SinochemintlConstant.StatusCode.STATUS_NEW)) {
                     throw new CommonException(SinochemintlConstant.ErrorCode.ERROR_CANT_DELETE);
                 }
-                //只要新增状态才可以删除
+                //只有新增状态才可以删除
                 sinochemintlPoPlanLineRepository.deleteByKey(sinochemintlPoPlanLineDTO.getPoPlanHeaderId());
             }
         }
@@ -192,8 +212,8 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             throw new CommonException(SinochemintlConstant.ErrorCode.ERROR_PARAMETER_ERROR);
         }
         //获取行数据
-        Page<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = PageHelper.doPage(pageRequest, () -> sinochemintlPoPlanLineRepository.selectByHeaderId(organizationId, poPlanHeaderId));
-        if (sinochemintlPoPlanLineList == null || sinochemintlPoPlanLineList.isEmpty()) {
+        List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = sinochemintlPoPlanLineRepository.selectByHeaderId(organizationId, poPlanHeaderId);
+        if (sinochemintlPoPlanLineList.get(0) == null) {
             sinochemintlPoPlanHeaderDTO.setSinochemintlPoPlanLineList(new ArrayList<>());
         } else {
             // 处理页面数据的序号
@@ -223,6 +243,9 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO = sinochemintlPoPlanHeaderRepository.selectByKey(poPlanHeaderId);
         List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = sinochemintlPoPlanLineRepository.selectByHeaderId(organizationId, poPlanHeaderId);
         for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineList) {
+            if (sinochemintlPoPlanLineDTO == null) {
+                throw new CommonException(SinochemintlConstant.ErrorCode.ERROR_LINE_NO_DATA);
+            }
             if (!StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getSpellDocProvince())) {
                 //校验共享省区数量，若均已填写，则状态更新为【拼单完成】
                 String[] split = sinochemintlPoPlanLineDTO.getPlanSharedProvince().split("\\|");

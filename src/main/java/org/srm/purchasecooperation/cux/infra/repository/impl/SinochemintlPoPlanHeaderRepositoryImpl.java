@@ -44,4 +44,10 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     public SinochemintlPoPlanHeaderDTO selectByKey(Long poPlanHeaderId) {
         return sinochemintlPoPlanHeaderMapper.selectByKey(poPlanHeaderId);
     }
+
+    @Override
+    public Long getPoPlanHeaderId(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
+        return sinochemintlPoPlanHeaderMapper.getPoPlanHeaderId(sinochemintlPoPlanHeaderDTO);
+    }
+
 }
