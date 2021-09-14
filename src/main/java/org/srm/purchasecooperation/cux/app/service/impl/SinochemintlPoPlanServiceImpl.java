@@ -66,7 +66,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         //当自己为采购创建人时，只能查询到状态为新建或拼单中的采购计划  当自己为共享省区对应人时，只能查询到状态为拼单中的采购计划数据
         //获取用户当前登录用户所在公司
         UserVO userVO = pigicIamFeignClient.selectSelf();
-//        Assert.notNull(userVO.getDefaultCompanyId(), MessageAccessor.getMessage("error.supplier.quota.company.num.not.find").desc());
+        Assert.notNull(userVO.getDefaultCompanyId(), MessageAccessor.getMessage("error.supplier.quota.company.num.not.find").desc());
         sinochemintlPoPlanHeaderDTO.setCompanyId(userVO.getDefaultCompanyId());
         sinochemintlPoPlanHeaderDTO.setCreateId(userVO.getId());
         return PageHelper.doPage(pageRequest, () -> sinochemintlPoPlanHeaderRepository.list(sinochemintlPoPlanHeaderDTO));
@@ -89,10 +89,10 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             //id无值 状态无值 新增操作
             if (StringUtils.isEmpty(dto.getStatus()) && StringUtils.isEmpty(dto.getCreateName())) {
                 //获取采购计划单号
-//                String poPlanNumber = codeRuleBuilder.generateCode(dto.getTenantId(), SinochemintlConstant.CodingCode.SCUX_ZHNY_RULES_PO_PLAN,
-//                        CodeConstants.CodeRuleLevelCode.GLOBAL, CodeConstants.CodeRuleLevelCode.GLOBAL, null);
-//                sinochemintlPoPlanHeaderDTO.setPoPlanNumber(poPlanNumber);
-                sinochemintlPoPlanHeaderDTO.setPoPlanNumber("PO202108130001");
+                String poPlanNumber = codeRuleBuilder.generateCode(dto.getTenantId(), SinochemintlConstant.CodingCode.SCUX_ZHNY_RULES_PO_PLAN,
+                        CodeConstants.CodeRuleLevelCode.GLOBAL, CodeConstants.CodeRuleLevelCode.GLOBAL, null);
+                sinochemintlPoPlanHeaderDTO.setPoPlanNumber(poPlanNumber);
+//                sinochemintlPoPlanHeaderDTO.setPoPlanNumber("PO202108130001");
                 sinochemintlPoPlanHeaderDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_NEW);
                 //获取当前登录人信息
                 sinochemintlPoPlanHeaderDTO.setCreateName(user.getRealName());
