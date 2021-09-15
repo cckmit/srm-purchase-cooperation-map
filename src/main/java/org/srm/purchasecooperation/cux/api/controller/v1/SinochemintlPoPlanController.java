@@ -7,6 +7,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.choerodon.swagger.annotation.Permission;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.boot.platform.lov.annotation.ProcessLovValue;
 import org.hzero.core.base.BaseConstants;
@@ -31,6 +32,9 @@ import java.util.List;
  *
  * @author tianjing.gui@hand-china.com 2021-09-06 09:59:20
  */
+@Api(
+        tags = {"sinochemintl-po-plan"}
+)
 @RestController("SinochemintlPoPlanController.v1")
 @RequestMapping("/v1/{organizationId}/sinochemintl-po-plans")
 public class SinochemintlPoPlanController extends BaseController {
