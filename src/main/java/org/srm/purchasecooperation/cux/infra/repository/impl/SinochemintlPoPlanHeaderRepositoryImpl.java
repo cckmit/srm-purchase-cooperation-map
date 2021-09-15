@@ -3,11 +3,16 @@ package org.srm.purchasecooperation.cux.infra.repository.impl;
 import org.hzero.mybatis.base.impl.BaseRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanHeaderMapper;
 
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 采购计划头表 资源库实现
@@ -50,4 +55,24 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
         return sinochemintlPoPlanHeaderMapper.getPoPlanHeaderId(sinochemintlPoPlanHeaderDTO);
     }
 
+    @Override
+    public List<SinochemintlPoPlanExcelDTO> excel(List<Long> ids) {
+        return sinochemintlPoPlanHeaderMapper.excel(ids);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanHeaderDTO> maintain(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
+        List<SinochemintlPoPlanHeaderDTO> maintain = sinochemintlPoPlanHeaderMapper.maintain(sinochemintlPoPlanHeaderDTO);
+        return maintain.stream().sorted(Comparator.comparing(SinochemintlPoPlanHeaderDTO::getCreationDate)).collect(Collectors.toList());
+    }
+
+    @Override
+    public SinochemintlPoPlanLineDTO importVerify(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
+        return sinochemintlPoPlanHeaderMapper.importVerify(sinochemintlPoPlanLineDTO);
+    }
+
+    @Override
+    public void timedTaskAlterState(Date date) {
+        sinochemintlPoPlanHeaderMapper.timedTaskAlterState(date);
+    }
 }

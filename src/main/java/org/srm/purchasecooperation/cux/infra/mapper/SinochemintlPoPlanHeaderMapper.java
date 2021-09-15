@@ -1,8 +1,11 @@
 package org.srm.purchasecooperation.cux.infra.mapper;
 
 import io.choerodon.mybatis.common.BaseMapper;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,4 +53,29 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
     SinochemintlPoPlanHeaderDTO selectByKey(Long poPlanHeaderId);
 
     Long getPoPlanHeaderId(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
+
+    /**
+     * 采购计划导出
+     *
+     * @param ids 勾选的头表id
+     * @return 需要导出的结果
+     */
+    List<SinochemintlPoPlanExcelDTO> excel(List<Long> ids);
+
+    List<SinochemintlPoPlanHeaderDTO> maintain(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
+
+    /**
+     * 导入数据校验
+     *
+     * @param sinochemintlPoPlanLineDTO 导入的数据
+     * @return 查询结果
+     */
+    SinochemintlPoPlanLineDTO importVerify(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
+
+    /**
+     * 根据拼单截至时间修改状态
+     *
+     * @param date 当前时间
+     */
+    void timedTaskAlterState(Date date);
 }

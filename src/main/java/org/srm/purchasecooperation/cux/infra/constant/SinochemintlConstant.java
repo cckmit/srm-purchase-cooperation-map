@@ -14,6 +14,9 @@ public class SinochemintlConstant {
         String ERROR_LINE_NO_DATA = "行表无数据，无法提交。！";
         String ERROR_PARAMETER_ERROR = "参数错误！";
         String ERROR_NON_NEW_NOT_CANCEL = "非新建的单据不能取消！";
+        String ERROR_RESULTS_NOT_ENTERED = "定点结果尚未录入，请进行录入！";
+        String ERROR_NOT_FOUNDER = "只有创建人才可以最终确认采购计划！";
+        String ERROR_NOT_FOUNDER_CANCEL = "只有创建人才可以最终确认采购计划！";
     }
 
     /**
@@ -37,6 +40,8 @@ public class SinochemintlConstant {
      */
     public interface CodingCode {
         //采购计划单号
-        String SCUX_ZHNY_RULES_PO_PLAN = "SCUX.ZHNY.RULES.PO_PLAN！";
+        String SCUX_ZHNY_RULES_PO_PLAN = "SCUX.ZHNY.RULES.PO_PLAN";
+        //定时任务 : 根据拼单截至时间修改状态
+        String SPUC_ZHNY_PO_PLAN_HANDLER = "SPUC.ZHNY.PO_PLAN.HANDLER";
     }
 }

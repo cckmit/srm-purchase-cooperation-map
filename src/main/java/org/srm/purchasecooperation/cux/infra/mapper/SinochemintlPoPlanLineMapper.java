@@ -50,4 +50,14 @@ public interface SinochemintlPoPlanLineMapper extends BaseMapper<SinochemintlPoP
      * @return 行表数据
      */
     List<SinochemintlPoPlanLineDTO> selectByHeaderId(@Param("organizationId") Long organizationId, @Param("poPlanHeaderId") Long poPlanHeaderId);
+
+    /**
+     * 获取共享计划省区
+     */
+    List<String> getPlanSharedProvince(List<String> strings);
+
+    /**
+     * 获取当前排序
+     */
+    Integer getSerialNum(String poPlanHeaderId);
 }

@@ -88,6 +88,8 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     private String currencyName;
     @ApiModelProperty(value = "计划说明")
     private String planIllustrate;
+    @ApiModelProperty(value = "登录用户所在公司ID")
+    private Long userCompany;
     @Transient
     @ApiModelProperty(value = "行表数据")
     private List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList;
@@ -99,6 +101,22 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
 
     public void setSinochemintlPoPlanLineList(List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList) {
         this.sinochemintlPoPlanLineList = sinochemintlPoPlanLineList;
+    }
+
+    public String getOriginalId() {
+        return originalId;
+    }
+
+    public void setOriginalId(String originalId) {
+        this.originalId = originalId;
+    }
+
+    public Long getUserCompany() {
+        return userCompany;
+    }
+
+    public void setUserCompany(Long userCompany) {
+        this.userCompany = userCompany;
     }
 
     public String getCurrencyName() {

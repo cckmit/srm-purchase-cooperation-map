@@ -58,9 +58,13 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     @ApiModelProperty(value = "包装规格", required = true)
     private String specification;
     @ApiModelProperty(value = "初步沟通供应商Id(SMAL.TENANT_SUPPLIER_ALL)", required = true)
-    private String initialSupplierId;
+    private Long initialSupplierId;
     @ApiModelProperty(value = "初步沟通供应商", required = true)
     private String initialSupplier;
+    @ApiModelProperty(value = "最终供应商", required = true)
+    private String endSupplier;
+    @ApiModelProperty(value = "最终价格", required = true)
+    private BigDecimal endPrice;
     @ApiModelProperty(value = "出厂价", required = true)
     private BigDecimal factoryPrice;
     @ApiModelProperty(value = "发货地址", required = true)
@@ -80,7 +84,7 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     @ApiModelProperty(value = "采购总价", required = true)
     private BigDecimal totalPurchasePrice;
     @ApiModelProperty(value = "币种(SPCM.CURRENCY)", required = true)
-    private Long currencyId;
+    private String currencyId;
     @ApiModelProperty(value = "币种名称", required = true)
     private String currencyName;
     @ApiModelProperty(value = "运费供应商")
@@ -100,7 +104,7 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     @ApiModelProperty(value = "申请人")
     private String applicant;
     @ApiModelProperty(value = "附件id")
-    private Long appendixId;
+    private String appendixId;
 
 //
 // 非数据库字段
@@ -126,19 +130,35 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
         this.planSharedProvinceName = planSharedProvinceName;
     }
 
-    public String getInitialSupplierId() {
+    public String getEndSupplier() {
+        return endSupplier;
+    }
+
+    public void setEndSupplier(String endSupplier) {
+        this.endSupplier = endSupplier;
+    }
+
+    public BigDecimal getEndPrice() {
+        return endPrice;
+    }
+
+    public void setEndPrice(BigDecimal endPrice) {
+        this.endPrice = endPrice;
+    }
+
+    public Long getInitialSupplierId() {
         return initialSupplierId;
     }
 
-    public void setInitialSupplierId(String initialSupplierId) {
+    public void setInitialSupplierId(Long initialSupplierId) {
         this.initialSupplierId = initialSupplierId;
     }
 
-    public Long getCurrencyId() {
+    public String getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(Long currencyId) {
+    public void setCurrencyId(String currencyId) {
         this.currencyId = currencyId;
     }
 
@@ -506,11 +526,11 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     /**
      * @return 附件id
      */
-    public Long getAppendixId() {
+    public String getAppendixId() {
         return appendixId;
     }
 
-    public SinochemintlPoPlanLineDTO setAppendixId(Long appendixId) {
+    public SinochemintlPoPlanLineDTO setAppendixId(String appendixId) {
         this.appendixId = appendixId;
         return this;
     }

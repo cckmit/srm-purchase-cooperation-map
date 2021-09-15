@@ -1,10 +1,14 @@
 package org.srm.purchasecooperation.cux.domain.repository;
 
 
+import org.hzero.boot.scheduler.infra.enums.ReturnT;
 import org.hzero.mybatis.base.BaseRepository;
 import org.springframework.stereotype.Component;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,8 +58,35 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
 
     /**
      * 获取头表id
+     *
      * @param sinochemintlPoPlanHeaderDTO 采购计划头表
      * @return 头表id
      */
     Long getPoPlanHeaderId(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
+
+    /**
+     * 采购计划导出
+     *
+     * @param ids 勾选的头表id
+     * @return 需要导出的结果
+     */
+    List<SinochemintlPoPlanExcelDTO> excel(List<Long> ids);
+
+    List<SinochemintlPoPlanHeaderDTO> maintain(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
+
+    /**
+     * 导入数据校验
+     *
+     * @param sinochemintlPoPlanLineDTO 导入的数据
+     * @return 查询结果
+     */
+    SinochemintlPoPlanLineDTO importVerify(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
+
+    /**
+     * 根据拼单截至时间修改状态
+     *
+     * @param date 当前时间
+     */
+    void timedTaskAlterState(Date date);
+
 }
