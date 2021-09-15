@@ -1,6 +1,7 @@
 package org.srm.purchasecooperation.cux.infra.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.DetailsHelper;
 import org.hzero.boot.imported.app.service.ValidatorHandler;
 import org.hzero.boot.imported.infra.validator.annotation.ImportValidator;
@@ -9,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
-import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
+import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 
 /**
  * 采购计划行表导入校验
@@ -25,7 +26,7 @@ public class SinochemintlPoPlanImportValidator extends ValidatorHandler {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository;
+    private SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SinochemintlPoPlanImportValidator.class);
 
@@ -51,7 +52,26 @@ public class SinochemintlPoPlanImportValidator extends ValidatorHandler {
      */
     private boolean checkData(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
         //供应商名称必填
-        return sinochemintlPoPlanLineDTO != null;
+        SinochemintlPoPlanLineDTO importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
+        if (importVerify.getProvinceCompanyId() != null) {
+            throw new CommonException("省公司/项目:" + sinochemintlPoPlanLineDTO.getProvinceCompany() + ",不存在！");
+        }
+        if (importVerify.getInitialSupplierId() != null) {
+            throw new CommonException("初步沟通供应商:" + sinochemintlPoPlanLineDTO.getInitialSupplier() + ",不存在！");
+        }
+        if (importVerify.getMaterialId() != null) {
+            throw new CommonException("物料编码:" + sinochemintlPoPlanLineDTO.getMaterialCoding() + ",不存在！");
+        }
+        if (importVerify.getUomId() != null) {
+            throw new CommonException("单位:" + sinochemintlPoPlanLineDTO.getUnitName() + ",不存在！");
+        }
+        if (importVerify.getCurrencyId() != null) {
+            throw new CommonException("币种:" + sinochemintlPoPlanLineDTO.getCurrencyName() + ",不存在！");
+        }
+        if (importVerify.getTaxId() != null) {
+            throw new CommonException("税种:" + sinochemintlPoPlanLineDTO.getTaxType() + ",不存在！");
+        }
+        return true;
     }
 
 }

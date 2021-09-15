@@ -3,6 +3,7 @@ package org.srm.purchasecooperation.cux.app.service;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 
 import java.util.List;
@@ -65,4 +66,20 @@ public interface SinochemintlPoPlanService {
      * @param poPlanHeaderId 头表id
      */
     void cancel(Long poPlanHeaderId);
+
+    /**
+     * 采购计划导出
+     *
+     * @param ids 勾选的头表id
+     * @return 需要导出的结果
+     */
+    List<SinochemintlPoPlanExcelDTO> excel(List<Long> ids);
+
+    /**
+     * 采购计划确认
+     *
+     * @param dto 修改后的数据
+     */
+    void confirm(SinochemintlPoPlanHeaderDTO dto);
+
 }

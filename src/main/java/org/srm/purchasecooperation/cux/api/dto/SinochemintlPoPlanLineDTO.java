@@ -1,8 +1,15 @@
 package org.srm.purchasecooperation.cux.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.boot.platform.lov.annotation.LovValue;
+import org.hzero.core.base.BaseConstants;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -16,7 +23,10 @@ import java.util.List;
  * @author tianjing.gui@hand-china.com 2021-09-06 09:59:20
  */
 @ApiModel("采购计划行表")
-public class SinochemintlPoPlanLineDTO {
+@VersionAudit
+@ModifyAudit
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SinochemintlPoPlanLineDTO extends AuditDomain {
 
     @ApiModelProperty("表ID，主键，供其他表做外键")
     @Id
@@ -31,6 +41,8 @@ public class SinochemintlPoPlanLineDTO {
     @ApiModelProperty(value = "已拼单省区数量", required = true)
     private Long spellDocProvince;
     @ApiModelProperty(value = "需求日期", required = true)
+    @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
+    @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
     private Date needDate;
     @ApiModelProperty(value = "计划共享省区(SPFM.USER_AUTH.COMPANY)", required = true)
     private String planSharedProvince;
@@ -46,9 +58,13 @@ public class SinochemintlPoPlanLineDTO {
     @ApiModelProperty(value = "包装规格", required = true)
     private String specification;
     @ApiModelProperty(value = "初步沟通供应商Id(SMAL.TENANT_SUPPLIER_ALL)", required = true)
-    private String initialSupplierId;
+    private Long initialSupplierId;
     @ApiModelProperty(value = "初步沟通供应商", required = true)
     private String initialSupplier;
+    @ApiModelProperty(value = "最终供应商", required = true)
+    private String endSupplier;
+    @ApiModelProperty(value = "最终价格", required = true)
+    private BigDecimal endPrice;
     @ApiModelProperty(value = "出厂价", required = true)
     private BigDecimal factoryPrice;
     @ApiModelProperty(value = "发货地址", required = true)
@@ -68,7 +84,7 @@ public class SinochemintlPoPlanLineDTO {
     @ApiModelProperty(value = "采购总价", required = true)
     private BigDecimal totalPurchasePrice;
     @ApiModelProperty(value = "币种(SPCM.CURRENCY)", required = true)
-    private Long currencyId;
+    private String currencyId;
     @ApiModelProperty(value = "币种名称", required = true)
     private String currencyName;
     @ApiModelProperty(value = "运费供应商")
@@ -88,7 +104,7 @@ public class SinochemintlPoPlanLineDTO {
     @ApiModelProperty(value = "申请人")
     private String applicant;
     @ApiModelProperty(value = "附件id")
-    private Long appendixId;
+    private String appendixId;
 
 //
 // 非数据库字段
@@ -114,19 +130,35 @@ public class SinochemintlPoPlanLineDTO {
         this.planSharedProvinceName = planSharedProvinceName;
     }
 
-    public String getInitialSupplierId() {
+    public String getEndSupplier() {
+        return endSupplier;
+    }
+
+    public void setEndSupplier(String endSupplier) {
+        this.endSupplier = endSupplier;
+    }
+
+    public BigDecimal getEndPrice() {
+        return endPrice;
+    }
+
+    public void setEndPrice(BigDecimal endPrice) {
+        this.endPrice = endPrice;
+    }
+
+    public Long getInitialSupplierId() {
         return initialSupplierId;
     }
 
-    public void setInitialSupplierId(String initialSupplierId) {
+    public void setInitialSupplierId(Long initialSupplierId) {
         this.initialSupplierId = initialSupplierId;
     }
 
-    public Long getCurrencyId() {
+    public String getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(Long currencyId) {
+    public void setCurrencyId(String currencyId) {
         this.currencyId = currencyId;
     }
 
@@ -494,11 +526,11 @@ public class SinochemintlPoPlanLineDTO {
     /**
      * @return 附件id
      */
-    public Long getAppendixId() {
+    public String getAppendixId() {
         return appendixId;
     }
 
-    public SinochemintlPoPlanLineDTO setAppendixId(Long appendixId) {
+    public SinochemintlPoPlanLineDTO setAppendixId(String appendixId) {
         this.appendixId = appendixId;
         return this;
     }

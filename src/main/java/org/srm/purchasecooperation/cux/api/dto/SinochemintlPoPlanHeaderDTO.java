@@ -1,8 +1,15 @@
 package org.srm.purchasecooperation.cux.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.boot.platform.lov.annotation.LovValue;
+import org.hzero.core.base.BaseConstants;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -16,7 +23,10 @@ import java.util.List;
  * @author tianjing.gui@hand-china.com 2021-09-06 09:59:20
  */
 @ApiModel("采购计划头表")
-public class SinochemintlPoPlanHeaderDTO {
+@VersionAudit
+@ModifyAudit
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
 
     @ApiModelProperty("表ID，主键，供其他表做外键")
     @Id
@@ -41,6 +51,8 @@ public class SinochemintlPoPlanHeaderDTO {
     @ApiModelProperty(value = "创建人", required = true)
     private String createName;
     @ApiModelProperty(value = "拼单截至时间", required = true)
+    @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
+    @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
     private Date deadline;
     @ApiModelProperty(value = "公司ID(SPFM.USER_AUTH.COMPANY)")
     private Long companyId;
@@ -67,6 +79,8 @@ public class SinochemintlPoPlanHeaderDTO {
     @ApiModelProperty(value = "所属部门", required = true)
     private String departmentName;
     @ApiModelProperty(value = "申请日期", required = true)
+    @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
+    @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
     private Date applicationDate;
     @ApiModelProperty(value = "原币币种(SPCM.CURRENCY)")
     private String originalId;
@@ -74,8 +88,8 @@ public class SinochemintlPoPlanHeaderDTO {
     private String currencyName;
     @ApiModelProperty(value = "计划说明")
     private String planIllustrate;
-    @ApiModelProperty(value = "创建日期")
-    private Date creationDate;
+    @ApiModelProperty(value = "登录用户所在公司ID")
+    private Long userCompany;
     @Transient
     @ApiModelProperty(value = "行表数据")
     private List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList;
@@ -87,6 +101,22 @@ public class SinochemintlPoPlanHeaderDTO {
 
     public void setSinochemintlPoPlanLineList(List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList) {
         this.sinochemintlPoPlanLineList = sinochemintlPoPlanLineList;
+    }
+
+    public String getOriginalId() {
+        return originalId;
+    }
+
+    public void setOriginalId(String originalId) {
+        this.originalId = originalId;
+    }
+
+    public Long getUserCompany() {
+        return userCompany;
+    }
+
+    public void setUserCompany(Long userCompany) {
+        this.userCompany = userCompany;
     }
 
     public String getCurrencyName() {
@@ -103,14 +133,6 @@ public class SinochemintlPoPlanHeaderDTO {
 
     public void setStatusName(String statusName) {
         this.statusName = statusName;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
     }
 
     public String getStatus() {

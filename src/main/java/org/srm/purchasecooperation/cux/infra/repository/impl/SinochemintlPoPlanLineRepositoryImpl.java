@@ -44,4 +44,14 @@ public class SinochemintlPoPlanLineRepositoryImpl extends BaseRepositoryImpl<Sin
     public List<SinochemintlPoPlanLineDTO> selectByHeaderId(Long organizationId, Long poPlanHeaderId) {
         return sinochemintlPoPlanLineMapper.selectByHeaderId(organizationId, poPlanHeaderId);
     }
+
+    @Override
+    public List<String> getPlanSharedProvince(List<String> strings) {
+        return sinochemintlPoPlanLineMapper.getPlanSharedProvince(strings);
+    }
+
+    @Override
+    public Integer getSerialNum(String poPlanHeaderId) {
+        return sinochemintlPoPlanLineMapper.getSerialNum(poPlanHeaderId);
+    }
 }

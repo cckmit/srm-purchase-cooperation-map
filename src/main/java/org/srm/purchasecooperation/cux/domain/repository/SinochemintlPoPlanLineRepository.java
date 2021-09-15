@@ -52,4 +52,14 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
      * @return 行表数据
      */
     List<SinochemintlPoPlanLineDTO> selectByHeaderId(Long organizationId, Long poPlanHeaderId);
+
+    /**
+     * 获取共享计划省区
+     */
+    List<String> getPlanSharedProvince(List<String> strings);
+
+    /**
+     * 获取当前排序
+     */
+    Integer getSerialNum(String poPlanHeaderId);
 }

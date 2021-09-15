@@ -6,7 +6,7 @@
         SELECT spl.pr_line_id          poPlanLineId,
                spl.pr_header_id        poPlanHeaderId,
                spl.tenant_id           tenantId,
-               spl.attribute_varchar22 status,
+               sph.pr_status_code      status,
                spl.attribute_bigint14  spellDocProvince,
                spl.needed_date         needDate,
                spl.attribute_varchar23 planSharedProvince,
@@ -16,6 +16,8 @@
                spl.attribute_varchar24 specification,
                spl.supplier_id         initialSupplierId,
                spl.supplier_name       initialSupplier,
+               spl.attribute_varchar39 endSupplier,
+               spl.attribute_decimal3  endPrice,
                spl.unit_price          factoryPrice,
                spl.attribute_varchar25 deliveryAddress,
                spl.item_id             materialId,
@@ -33,6 +35,7 @@
                spl.tax_code            taxType,
                spl.tax_rate            taxRate,
                spl.pr_requested_name   applicant,
+               spl.display_line_num    serialNum,
                spl.attachment_uuid     appendixId
         FROM sprm_pr_header sph
                  LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
@@ -46,7 +49,6 @@
     <insert id="setOne">
         INSERT INTO sprm_pr_line (pr_header_id,
                                   tenant_id,
-                                  attribute_varchar22,
                                   attribute_bigint14,
                                   needed_date,
                                   attribute_varchar23,
@@ -73,7 +75,6 @@
                                   attachment_uuid)
             VALUE (#{poPlanHeaderId},
             #{tenantId},
-            #{status},
             #{spellDocProvince},
             #{needDate},
             #{planSharedProvince},
@@ -104,18 +105,19 @@
     <!--    根据行表id修改-->
     <update id="updateByKey">
         update sprm_pr_line
-        set attribute_varchar22 = #{status},
-            attribute_bigint14  = #{spellDocProvince},
+        set attribute_bigint14  = #{spellDocProvince},
             needed_date         = #{needDate},
             attribute_varchar23 = #{planSharedProvince},
             company_id          = #{provinceCompanyId},
             product_name        = #{productName},
             attribute_varchar24 = #{specification},
-            supplier_id       = #{initialSupplierId},
+            supplier_id         = #{initialSupplierId},
             supplier_name       = #{initialSupplier},
+            attribute_varchar39 = #{endSupplier},
+            attribute_decimal3  = #{endPrice},
             unit_price          = #{factoryPrice},
             attribute_varchar25 = #{deliveryAddress},
-            spl.item_id         = #{materialId},
+            item_id             = #{materialId},
             item_code           = #{materialCoding},
             quantity            = #{requiredQuantity},
             uom_id              = #{uomId},
@@ -141,14 +143,32 @@
     <!--    根据行表id查询-->
     <select id="selectByKey" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
         <include refid="mappingChanges"/>
-        WHERE sph.pr_line_id = #{poPlanLineId}
+        WHERE spl.pr_line_id = #{poPlanLineId}
     </select>
 
     <!--    根据头表id查询-->
     <select id="selectByHeaderId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{organizationId}
-        sph.pr_line_id = #{poPlanLineId}
+        and sph.pr_header_id = #{poPlanHeaderId}
+    </select>
+
+    <!--    获取共享计划省区-->
+    <select id="getPlanSharedProvince" resultType="java.lang.String">
+        SELECT company_name FROM hpfm_company
+        WHERE company_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <!--    获取当前排序-->
+    <select id="getSerialNum" resultType="java.lang.Integer">
+        SELECT display_line_num
+        FROM sprm_pr_line
+        where pr_header_id = #{poPlanHeaderId}
+        GROUP BY display_line_num DESC
+        LIMIT 1
     </select>
 
 </mapper>

@@ -5,19 +5,25 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.choerodon.swagger.annotation.Permission;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.boot.platform.lov.annotation.ProcessLovValue;
+import org.hzero.core.base.BaseConstants;
 import org.hzero.core.base.BaseController;
 import org.hzero.core.util.Results;
+import org.hzero.export.annotation.ExcelExport;
+import org.hzero.export.vo.ExportParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.app.service.SinochemintlPoPlanService;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -87,7 +93,7 @@ public class SinochemintlPoPlanController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/submit/{poPlanHeaderId}")
     public ResponseEntity<Void> submit(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId) {
-        sinochemintlPoPlanHeaderService.submit(organizationId,poPlanHeaderId);
+        sinochemintlPoPlanHeaderService.submit(organizationId, poPlanHeaderId);
         return Results.success();
     }
 
@@ -98,4 +104,28 @@ public class SinochemintlPoPlanController extends BaseController {
         sinochemintlPoPlanHeaderService.cancel(poPlanHeaderId);
         return Results.success();
     }
+
+    @ApiOperation(value = "采购计划导出")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @PostMapping ("/excel")
+    @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
+    @CustomPageRequest
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
+    public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> excel(@PathVariable("organizationId") Long tenantId,
+                                                                  @RequestBody @Encrypt List<Long> ids,
+                                                                  PageRequest pageRequest,
+                                                                  ExportParam exportParam,
+                                                                  HttpServletResponse response) {
+        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.excel(ids);
+        return Results.success(list);
+    }
+
+    @ApiOperation(value = "采购计划确认")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @PostMapping("/confirm")
+    public ResponseEntity<Void> confirm(@RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto) {
+        sinochemintlPoPlanHeaderService.confirm(dto);
+        return Results.success();
+    }
+
 }

@@ -32,7 +32,6 @@
                (SELECT SUM(unit_price) FROM sprm_pr_line WHERE pr_header_id = #{poPlanHeaderId})
                                        applicationSum
         FROM sprm_pr_header sph
-                 LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
                  LEFT JOIN hpfm_company hc ON hc.company_id = sph.parent_unit_id
                  LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
                  LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
@@ -55,7 +54,6 @@
                                     purchase_org_id,
                                     purchase_agent_id,
                                     pr_source_platform,
-                                    pr_requested_name,
                                     unit_id,
                                     request_date,
                                     original_currency,
@@ -63,6 +61,9 @@
                                     creation_date,
                                     display_pr_num,
                                     lot_num,
+                                    created_by,
+                                    last_updated_by,
+                                    last_update_date,
                                     attribute_bigint11)
             VALUE (#{tenantId},
             #{title},
@@ -76,7 +77,6 @@
             #{purchaseOrgId},
             #{purchaseId},
             #{poSource},
-            #{applicant},
             #{departmentId},
             #{applicationDate},
             #{originalId},
@@ -84,6 +84,9 @@
             #{creationDate},
             #{poPlanNumber},
             '0',
+            #{createdBy},
+            #{lastUpdatedBy},
+            #{lastUpdateDate},
             #{businessId}
             )
     </insert>
@@ -91,25 +94,33 @@
     <!--    根据头表id修改-->
     <update id="updateByKey">
         update sprm_pr_header
-        set sph.title               = #{title},
-            sph.pr_status_code      = #{status},
-            sph.attribute_varchar23 = #{planType},
-            sph.pr_num              = #{poPlanNumber},
-            sph.requested_by        = #{createId},
-            sph.pr_requested_name   = #{createName},
-            sph.attribute_datetime1 = #{deadline},
-            sph.parent_unit_id      = #{companyId},
-            sph.purchase_org_id     = #{purchaseOrgId},
-            sph.purchase_agent_id   = #{purchaseId},
-            sph.pr_source_platform  = #{poSource},
-            sph.pr_requested_name   = #{applicant},
-            sph.unit_id             = #{departmentId},
-            sph.request_date        = #{applicationDate},
-            sph.original_currency   = #{originalId},
-            sph.attribute_varchar24 = #{planIllustrate},
-            sph.creation_date       = #{creationDate},
-            sph.attribute_bigint11  = #{businessId}
+        set title               = #{title},
+            pr_status_code      = #{status},
+            attribute_varchar23 = #{planType},
+            pr_num              = #{poPlanNumber},
+            requested_by        = #{createId},
+            pr_requested_name   = #{createName},
+            attribute_datetime1 = #{deadline},
+            parent_unit_id      = #{companyId},
+            purchase_org_id     = #{purchaseOrgId},
+            purchase_agent_id   = #{purchaseId},
+            pr_source_platform  = #{poSource},
+            unit_id             = #{departmentId},
+            request_date        = #{applicationDate},
+            original_currency   = #{originalId},
+            attribute_varchar24 = #{planIllustrate},
+            creation_date       = #{creationDate},
+            attribute_bigint11  = #{businessId},
+            last_updated_by     = #{lastUpdatedBy},
+            last_update_date    = #{lastUpdateDate}
         where pr_header_id = #{poPlanHeaderId}
+    </update>
+
+    <!--    根据拼单截至时间修改状态-->
+    <update id="timedTaskAlterState">
+        update sprm_pr_header
+        set status = "INPUT_COMPLETE"
+        where attribute_datetime1 &lt; #{date}
     </update>
 
     <!--    根据头表id删除-->
@@ -134,9 +145,9 @@
         <if test="status != null and status != ''">
             AND sph.attribute_bigint11 = #{status}
         </if>
-        <if test="defaultCompanyId != null and defaultCompanyId != ''">
-            <bind name="defaultCompanyIdLike" value="'%|' + defaultCompanyId + '|%'"/>
-            AND spl.attribute_varchar23 like #{defaultCompanyIdLike} OR sph.requested_by = #{createId}
+        <if test="userCompany != null and userCompany != ''">
+            <bind name="userCompanyLike" value="'%|' + userCompany + '|%'"/>
+            AND spl.attribute_varchar23 like #{userCompanyLike} OR sph.requested_by = #{createId}
         </if>
         GROUP BY sph.pr_header_id
     </select>
@@ -145,6 +156,124 @@
     <select id="selectByKey" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
         WHERE sph.pr_header_id = #{poPlanHeaderId}
+    </select>
+
+    <select id="getPoPlanHeaderId" resultType="java.lang.Long">
+        SELECT pr_header_id
+        FROM sprm_pr_header
+        ORDER BY pr_header_id DESC LIMIT 1
+    </select>
+
+    <!--    采购计划导出-->
+    <select id="excel" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
+        SELECT sph.pr_header_id poPlanHeaderId,
+        sph.tenant_id tenantId,
+        sph.title title,
+        sph.pr_status_code status,
+        sph.attribute_varchar23 planType,
+        sph.pr_num poPlanNumber,
+        sph.requested_by createId,
+        sph.pr_requested_name createName,
+        sph.attribute_datetime1 deadline,
+        sph.parent_unit_id companyId,
+        hc1.company_name companyName,
+        sph.attribute_bigint11 businessId,
+        hou.ou_name businessName,
+        sph.purchase_org_id purchaseOrgId,
+        hpo.organization_name purchaseOrgName,
+        sph.purchase_agent_id purchaseId,
+        hpa.purchase_agent_name purchaseName,
+        sph.pr_source_platform poSource,
+        sph.pr_requested_name applicant,
+        sph.unit_id departmentId,
+        hu.unit_name departmentName,
+        sph.request_date applicationDate,
+        sph.original_currency originalId,
+        sc.currency_name currencyName,
+        sph.attribute_varchar24 planIllustrate,
+        sph.creation_date creationDate,
+        spl.attribute_bigint14 spellDocProvince,
+        spl.needed_date needDate,
+        spl.attribute_varchar23 planSharedProvince,
+        spl.company_id provinceCompanyId,
+        hc2.company_name provinceCompany,
+        spl.product_name productName,
+        spl.attribute_varchar24 specification,
+        spl.supplier_id initialSupplierId,
+        spl.supplier_name initialSupplier,
+        spl.attribute_varchar39 endSupplier,
+        spl.attribute_decimal3 endPrice,
+        spl.unit_price factoryPrice,
+        spl.attribute_varchar25 deliveryAddress,
+        spl.item_id materialId,
+        spl.item_code materialCoding,
+        spl.quantity requiredQuantity,
+        spl.uom_id uomId,
+        su.uom_name unitName,
+        spl.attribute_varchar38 freightSupplier,
+        spl.line_freight freightPrice,
+        spl.attribute_varchar39 priceTerms,
+        spl.remark remark,
+        spl.tax_id taxId,
+        spl.tax_code taxType,
+        spl.tax_rate taxRate,
+        spl.pr_requested_name lineApplicant
+        FROM sprm_pr_header sph
+        LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
+        LEFT JOIN hpfm_company hc1 ON hc1.company_id = sph.parent_unit_id
+        LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
+        LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
+        LEFT JOIN hpfm_unit hu ON hu.unit_id = sph.unit_id
+        LEFT JOIN smdm_currency sc ON sc.currency_id = sph.original_currency
+        LEFT JOIN hpfm_operation_unit hou ON hou.ou_id = sph.attribute_bigint11
+        LEFT JOIN smdm_item si ON si.item_id = spl.item_id
+        LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
+        LEFT JOIN hpfm_company hc2 ON hc2.company_id = spl.company_id
+        WHERE sph.pr_header_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="maintain" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        AND sph.attribute_bigint11 = 'SPLICING_DOC_MIDDLE'
+        <if test="userCompany != null and userCompany != ''">
+            <bind name="userCompanyLike" value="'%|' + userCompany + '|%'"/>
+            AND spl.attribute_varchar23 like #{userCompanyLike}
+        </if>
+        UNION
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        AND sph.attribute_bigint11 in('SPLICING_DOC_MIDDLE','NEW')
+        AND sph.requested_by = #{createId}
+    </select>
+
+    <!--    导入数据校验-->
+    <select id="importVerify" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
+        select (SELECT company_id FROM hpfm_company WHERE company_name = #{provinceCompany}) provinceCompanyId,
+               (SELECT company_id FROM hpfm_company WHERE company_name = #{initialSupplier}) initialSupplierId,
+               (SELECT item_id FROM smdm_item WHERE item_name = #{materialCoding})           materialId,
+               (SELECT uom_id FROM smdm_uom WHERE uom_name = #{unitName})                    uomId,
+               (SELECT currency_id FROM smdm_currency WHERE currency_name = #{currencyName}) currencyId,
+               (SELECT tax_id FROM smdm_tax WHERE description = #{taxType})                  taxId
     </select>
 
 </mapper>
