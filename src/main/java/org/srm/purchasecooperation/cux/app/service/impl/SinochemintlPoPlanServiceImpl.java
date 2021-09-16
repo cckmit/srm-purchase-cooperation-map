@@ -9,22 +9,18 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.hzero.boot.platform.code.builder.CodeRuleBuilder;
 import org.hzero.boot.platform.code.constant.CodeConstants;
 import org.hzero.core.base.BaseAppService;
-import org.hzero.core.message.MessageAccessor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
-import org.srm.purchasecooperation.cux.api.dto.UserVO;
 import org.srm.purchasecooperation.cux.app.service.SinochemintlPoPlanService;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlConstant;
-import org.srm.purchasecooperation.cux.infra.feign.PigicIamFeignClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,9 +48,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         this.sinochemintlPoPlanLineRepository = sinochemintlPoPlanLineRepository;
     }
 
-    @Autowired
-    private PigicIamFeignClient pigicIamFeignClient;
-
     /**
      * 采购计划头表查询参数
      *
@@ -66,13 +59,12 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
     public Page<SinochemintlPoPlanHeaderDTO> list(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO, PageRequest pageRequest) {
         //当自己为采购创建人时，只能查询到状态为新建或拼单中的采购计划  当自己为共享省区对应人时，只能查询到状态为拼单中的采购计划数据
         //获取用户当前登录用户所在公司
-        UserVO userVO = pigicIamFeignClient.selectSelf();
-        Assert.notNull(userVO.getDefaultCompanyId(), MessageAccessor.getMessage("error.supplier.quota.company.num.not.find").desc());
-//        userVO.setDefaultCompanyId(111L);
-        if (userVO.getDefaultCompanyId() != 1510) {
-            //非总部人员只可查看和自己有关的数据
-            sinochemintlPoPlanHeaderDTO.setUserCompany(userVO.getDefaultCompanyId());
-            sinochemintlPoPlanHeaderDTO.setCreateId(userVO.getId());
+        CustomUserDetails user = DetailsHelper.getUserDetails();
+        SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(user.getUserId());
+        //非总部人员只可查看和自己有关的数据
+        if ("1510".equals(sinochemintlPoPlanLineDTO.getProvinceCompany())) {
+            sinochemintlPoPlanHeaderDTO.setUserCompany(sinochemintlPoPlanLineDTO.getProvinceCompanyId());
+            sinochemintlPoPlanHeaderDTO.setCreateId(user.getUserId());
         }
         //采购计划维护分页查询逻辑重写
         if ("MAINTAIN".equals(sinochemintlPoPlanHeaderDTO.getStatus())) {
@@ -102,7 +94,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 String poPlanNumber = codeRuleBuilder.generateCode(dto.getTenantId(), SinochemintlConstant.CodingCode.SCUX_ZHNY_RULES_PO_PLAN,
                         CodeConstants.CodeRuleLevelCode.GLOBAL, CodeConstants.CodeRuleLevelCode.GLOBAL, null);
                 sinochemintlPoPlanHeaderDTO.setPoPlanNumber(poPlanNumber);
-//                sinochemintlPoPlanHeaderDTO.setPoPlanNumber("PO202108140001");
                 sinochemintlPoPlanHeaderDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_NEW);
                 //获取当前登录人信息
                 sinochemintlPoPlanHeaderDTO.setCreateName(user.getRealName());

@@ -78,4 +78,12 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @param date 当前时间
      */
     void timedTaskAlterState(Date date);
+
+    /**
+     * 根据员工id获取当前用户所在公司id和公司编码
+     *
+     * @param employeeId 员工id
+     * @return 公司id和公司编码
+     */
+    SinochemintlPoPlanLineDTO getDefaultCompanyId(Long employeeId);
 }

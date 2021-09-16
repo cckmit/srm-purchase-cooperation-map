@@ -119,7 +119,7 @@
     <!--    根据拼单截至时间修改状态-->
     <update id="timedTaskAlterState">
         update sprm_pr_header
-        set status = "INPUT_COMPLETE"
+        set pr_status_code = "INPUT_COMPLETE"
         where attribute_datetime1 &lt; #{date}
     </update>
 
@@ -274,6 +274,24 @@
                (SELECT uom_id FROM smdm_uom WHERE uom_name = #{unitName})                    uomId,
                (SELECT currency_id FROM smdm_currency WHERE currency_name = #{currencyName}) currencyId,
                (SELECT tax_id FROM smdm_tax WHERE description = #{taxType})                  taxId
+    </select>
+
+    <!--    根据员工id获取当前用户所在公司id和公司编码-->
+    <!--            SELECT hc.company_id provinceCompanyId, hc.company_num provinceCompany
+            FROM hpfm_employee_user heu
+                     LEFT JOIN hpfm_employee_assign hea ON heu.employee_id = hea.employee_id
+                     LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
+                     LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
+            WHERE heu.user_id = #{employeeId}-->
+    <select id="getDefaultCompanyId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
+        select hc.company_id  provinceCompanyId,
+               hc.company_num provinceCompany
+        from iam_user iu
+                 left join hpfm_employee_user heu on heu.user_id = iu.id
+                 left join hpfm_employee_assign hea on hea.employee_id = heu.employee_id
+                 left join hpfm_company hc on hc.company_id = hea.unit_company_id
+        where hc.company_id is not null
+          AND iu.id = #{employeeId}
     </select>
 
 </mapper>
