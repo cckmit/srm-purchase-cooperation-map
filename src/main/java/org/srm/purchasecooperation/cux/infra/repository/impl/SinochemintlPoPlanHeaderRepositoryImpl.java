@@ -75,4 +75,9 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     public void timedTaskAlterState(Date date) {
         sinochemintlPoPlanHeaderMapper.timedTaskAlterState(date);
     }
+
+    @Override
+    public SinochemintlPoPlanLineDTO getDefaultCompanyId(Long employeeId) {
+        return sinochemintlPoPlanHeaderMapper.getDefaultCompanyId(employeeId);
+    }
 }
