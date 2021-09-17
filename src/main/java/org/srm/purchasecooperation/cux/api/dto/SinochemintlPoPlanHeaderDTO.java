@@ -90,6 +90,27 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     private String planIllustrate;
     @ApiModelProperty(value = "登录用户所在公司ID")
     private Long userCompany;
+    @ApiModelProperty(value = "物料分类")
+    private Long materialClass;
+    @ApiModelProperty(value = "行号")
+    private Long serialNum;
+    @ApiModelProperty(value = "物料编码")
+    private Long materialCoding;
+    @ApiModelProperty(value = "产品名称")
+    private Long productName;
+    @ApiModelProperty(value = "需求数量")
+    private BigDecimal requiredQuantity;
+    @ApiModelProperty(value = "税种")
+    private String taxType;
+    @ApiModelProperty(value = "税率")
+    private BigDecimal taxRate;
+    @ApiModelProperty(value = "附件id")
+    private String appendixId;
+    @ApiModelProperty(value = "创建日期")
+    @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
+    @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
+    private Date establishDate;
+
     @Transient
     @ApiModelProperty(value = "行表数据")
     private List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList;
@@ -101,6 +122,78 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
 
     public void setSinochemintlPoPlanLineList(List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList) {
         this.sinochemintlPoPlanLineList = sinochemintlPoPlanLineList;
+    }
+
+    public Date getEstablishDate() {
+        return establishDate;
+    }
+
+    public void setEstablishDate(Date establishDate) {
+        this.establishDate = establishDate;
+    }
+
+    public String getAppendixId() {
+        return appendixId;
+    }
+
+    public void setAppendixId(String appendixId) {
+        this.appendixId = appendixId;
+    }
+
+    public Long getProductName() {
+        return productName;
+    }
+
+    public void setProductName(Long productName) {
+        this.productName = productName;
+    }
+
+    public BigDecimal getRequiredQuantity() {
+        return requiredQuantity;
+    }
+
+    public void setRequiredQuantity(BigDecimal requiredQuantity) {
+        this.requiredQuantity = requiredQuantity;
+    }
+
+    public String getTaxType() {
+        return taxType;
+    }
+
+    public void setTaxType(String taxType) {
+        this.taxType = taxType;
+    }
+
+    public BigDecimal getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(BigDecimal taxRate) {
+        this.taxRate = taxRate;
+    }
+
+    public Long getMaterialClass() {
+        return materialClass;
+    }
+
+    public void setMaterialClass(Long materialClass) {
+        this.materialClass = materialClass;
+    }
+
+    public Long getSerialNum() {
+        return serialNum;
+    }
+
+    public void setSerialNum(Long serialNum) {
+        this.serialNum = serialNum;
+    }
+
+    public Long getMaterialCoding() {
+        return materialCoding;
+    }
+
+    public void setMaterialCoding(Long materialCoding) {
+        this.materialCoding = materialCoding;
     }
 
     public String getOriginalId() {

@@ -28,16 +28,27 @@
                sph.original_currency   originalId,
                sc.currency_name        currencyName,
                sph.attribute_varchar24 planIllustrate,
-               sph.creation_date       creationDate,
+               sph.attachment_uuid     appendixId,
+               sph.creation_date       establishDate,
+               sic.category_name       materialClass,
+               spl.display_line_num    serialNum,
+               spl.item_code           materialCoding,
+               spl.product_name        productName,
+               spl.quantity            requiredQuantity,
+               spl.tax_code            taxType,
+               spl.tax_rate            taxRate,
                (SELECT SUM(unit_price) FROM sprm_pr_line WHERE pr_header_id = #{poPlanHeaderId})
                                        applicationSum
         FROM sprm_pr_header sph
+                 LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
                  LEFT JOIN hpfm_company hc ON hc.company_id = sph.parent_unit_id
                  LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
                  LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
                  LEFT JOIN hpfm_unit hu ON hu.unit_id = sph.unit_id
                  LEFT JOIN smdm_currency sc ON sc.currency_id = sph.original_currency
                  LEFT JOIN hpfm_operation_unit hou ON hou.ou_id = sph.attribute_bigint11
+                 LEFT JOIN smdm_item si ON si.item_id = spl.item_id
+                 LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
     </sql>
 
     <!--    保存头表-->
@@ -59,11 +70,11 @@
                                     original_currency,
                                     attribute_varchar24,
                                     creation_date,
+                                    created_by,
                                     display_pr_num,
                                     lot_num,
                                     created_by,
-                                    last_updated_by,
-                                    last_update_date,
+                                    attachment_uuid,
                                     attribute_bigint11)
             VALUE (#{tenantId},
             #{title},
@@ -81,12 +92,12 @@
             #{applicationDate},
             #{originalId},
             #{planIllustrate},
-            #{creationDate},
+            #{establishDate},
+            #{createdBy},
             #{poPlanNumber},
             '0',
             #{createdBy},
-            #{lastUpdatedBy},
-            #{lastUpdateDate},
+            #{appendixId},
             #{businessId}
             )
     </insert>
@@ -112,6 +123,7 @@
             creation_date       = #{creationDate},
             attribute_bigint11  = #{businessId},
             last_updated_by     = #{lastUpdatedBy},
+            attachment_uuid     = #{appendixId},
             last_update_date    = #{lastUpdateDate}
         where pr_header_id = #{poPlanHeaderId}
     </update>
@@ -142,14 +154,47 @@
             <bind name="titleLike" value="'%' + title + '%'"/>
             AND sph.title like #{titleLike}
         </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
         <if test="status != null and status != ''">
-            AND sph.attribute_bigint11 = #{status}
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="serialNum != null and serialNum != ''">
+            AND spl.display_line_num = #{serialNum}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
         </if>
         <if test="userCompany != null and userCompany != ''">
             <bind name="userCompanyLike" value="'%|' + userCompany + '|%'"/>
             AND spl.attribute_varchar23 like #{userCompanyLike} OR sph.requested_by = #{createId}
         </if>
-        GROUP BY sph.pr_header_id
     </select>
 
     <!--    根据头表id查询-->
@@ -207,6 +252,7 @@
         spl.attribute_varchar25 deliveryAddress,
         spl.item_id materialId,
         spl.item_code materialCoding,
+        sic.category_name materialClass,
         spl.quantity requiredQuantity,
         spl.uom_id uomId,
         su.uom_name unitName,
@@ -229,6 +275,7 @@
         LEFT JOIN smdm_item si ON si.item_id = spl.item_id
         LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
         LEFT JOIN hpfm_company hc2 ON hc2.company_id = spl.company_id
+        LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
         WHERE sph.pr_header_id in
         <foreach collection="list" item="id" open="(" close=")" separator=",">
             #{id}
@@ -246,7 +293,8 @@
             <bind name="titleLike" value="'%' + title + '%'"/>
             AND sph.title like #{titleLike}
         </if>
-        AND sph.attribute_bigint11 = 'SPLICING_DOC_MIDDLE'
+        AND
+        AND sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
         <if test="userCompany != null and userCompany != ''">
             <bind name="userCompanyLike" value="'%|' + userCompany + '|%'"/>
             AND spl.attribute_varchar23 like #{userCompanyLike}
