@@ -22,6 +22,7 @@
                spl.attribute_varchar25 deliveryAddress,
                spl.item_id             materialId,
                spl.item_code           materialCoding,
+               sic.category_name       materialClass,
                spl.quantity            requiredQuantity,
                spl.uom_id              uomId,
                su.uom_name             unitName,
@@ -40,6 +41,7 @@
         FROM sprm_pr_header sph
                  LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
                  LEFT JOIN smdm_item si ON si.item_id = spl.item_id
+                 LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
                  LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
                  LEFT JOIN smdm_currency sc ON sc.currency_id = spl.currency_code
                  LEFT JOIN hpfm_company hc ON hc.company_id = spl.company_id

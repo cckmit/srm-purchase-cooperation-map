@@ -54,22 +54,28 @@ public class SinochemintlPoPlanImportValidator extends ValidatorHandler {
         //供应商名称必填
         SinochemintlPoPlanLineDTO importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
         if (importVerify.getProvinceCompanyId() != null) {
-            throw new CommonException("省公司/项目:" + sinochemintlPoPlanLineDTO.getProvinceCompany() + ",不存在！");
+            getContext().addErrorMsg("省公司/项目:" + sinochemintlPoPlanLineDTO.getProvinceCompany() + ",不存在！");
+            return false;
         }
         if (importVerify.getInitialSupplierId() != null) {
-            throw new CommonException("初步沟通供应商:" + sinochemintlPoPlanLineDTO.getInitialSupplier() + ",不存在！");
+            getContext().addErrorMsg("初步沟通供应商:" + sinochemintlPoPlanLineDTO.getInitialSupplier() + ",不存在！");
+            return false;
         }
         if (importVerify.getMaterialId() != null) {
-            throw new CommonException("物料编码:" + sinochemintlPoPlanLineDTO.getMaterialCoding() + ",不存在！");
+            getContext().addErrorMsg("物料编码:" + sinochemintlPoPlanLineDTO.getMaterialCoding() + ",不存在！");
+            return false;
         }
         if (importVerify.getUomId() != null) {
-            throw new CommonException("单位:" + sinochemintlPoPlanLineDTO.getUnitName() + ",不存在！");
+            getContext().addErrorMsg("单位:" + sinochemintlPoPlanLineDTO.getUnitName() + ",不存在！");
+            return false;
         }
         if (importVerify.getCurrencyId() != null) {
-            throw new CommonException("币种:" + sinochemintlPoPlanLineDTO.getCurrencyName() + ",不存在！");
+            getContext().addErrorMsg("币种:" + sinochemintlPoPlanLineDTO.getCurrencyName() + ",不存在！");
+            return false;
         }
         if (importVerify.getTaxId() != null) {
-            throw new CommonException("税种:" + sinochemintlPoPlanLineDTO.getTaxType() + ",不存在！");
+            getContext().addErrorMsg("税种:" + sinochemintlPoPlanLineDTO.getTaxType() + ",不存在！");
+            return false;
         }
         return true;
     }
