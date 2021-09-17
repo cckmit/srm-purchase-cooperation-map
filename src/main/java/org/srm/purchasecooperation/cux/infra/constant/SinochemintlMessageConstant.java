@@ -18,11 +18,6 @@ public class SinochemintlMessageConstant {
     public static String Sms_Server_Code = "Sms_Server_Code";
 
     /**
-     * Lov（待更新）
-     */
-    public static String Lov_Code = "SPFM.USER_AUTH.COMPANY";
-
-    /**
      * 消息模板参数
      */
     public interface MessageTemplateParameters {

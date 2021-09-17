@@ -294,4 +294,20 @@
           AND iu.id = #{employeeId}
     </select>
 
+    <!--    根据省区获取拼单人员信息-->
+    <select id="getDefaultEmployeeList" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO">
+        select
+        iu.id,
+        iu.email,
+        iu.phone,
+        iu.international_tel_code,
+        iu.organization_id
+        from iam_user iu
+        left join hpfm_employee_user heu on heu.user_id = iu.id
+        left join hpfm_employee_assign hea on hea.employee_id = heu.employee_id
+        left join hpfm_company hc on hc.company_id = hea.unit_company_id
+        where hc.company_id = #{provinceCompanyId}
+           or iu.real_name = "王刚"
+    </select>
+
 </mapper>

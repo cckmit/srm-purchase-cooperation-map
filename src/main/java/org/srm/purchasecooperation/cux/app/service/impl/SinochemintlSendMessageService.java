@@ -9,9 +9,12 @@ import org.hzero.core.base.BaseConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.srm.purchasecooperation.cux.api.dto.MessageSenderDTO;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
+import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstant;
+import org.srm.purchasecooperation.cux.infra.repository.impl.SinochemintlPoPlanHeaderRepositoryImpl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,11 +33,8 @@ public class SinochemintlSendMessageService{
     @Autowired
     private MessageClient messageClient;
     @Autowired
-    private LovAdapter lovAdapter;
+    private SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository;
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BaseConstants.Pattern.DATE);
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SinochemintlSendMessageService.class);
 
     /**
      * 发送邮件
@@ -77,15 +77,18 @@ public class SinochemintlSendMessageService{
 
     /**
      * 获取接受者
-     * @param organizationId
      * @param string
      * @return
      */
-    public List<Receiver> getReceiverList(Long organizationId, String string) {
+    public List<Receiver> getReceiverList(String string) {
         List<Receiver> receiverList = new ArrayList<>();
-        List<String> params = new ArrayList<>();
-        //lovAdapter.queryLovValue(SinochemintlMessageConstant.Lov_Code, organizationId, params);
-
+        List<SinochemintlEmployeeInformationDTO> employeeList = new ArrayList<>();
+        Long provinceCompanyId = Long.valueOf(string);
+        employeeList = sinochemintlPoPlanHeaderRepository.getDefaultEmployeeList(provinceCompanyId);
+        for (SinochemintlEmployeeInformationDTO dto : employeeList) {
+            Receiver receiver = new Receiver().setUserId(dto.getId()).setTargetUserTenantId(dto.getOrganizationId()).setEmail(dto.getEmail()).setPhone(dto.getPhone()).setIdd(dto.getInternationalTelCode());
+            receiverList.add(receiver);
+        }
 
         return receiverList;
     }
