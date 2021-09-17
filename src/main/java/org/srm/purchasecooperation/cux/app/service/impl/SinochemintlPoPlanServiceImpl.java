@@ -66,13 +66,12 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
     public Page<SinochemintlPoPlanHeaderDTO> list(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO, PageRequest pageRequest) {
         //当自己为采购创建人时，只能查询到状态为新建或拼单中的采购计划  当自己为共享省区对应人时，只能查询到状态为拼单中的采购计划数据
         //获取用户当前登录用户所在公司
-        UserVO userVO = pigicIamFeignClient.selectSelf();
-        Assert.notNull(userVO.getDefaultCompanyId(), MessageAccessor.getMessage("error.supplier.quota.company.num.not.find").desc());
-//        userVO.setDefaultCompanyId(111L);
-        if (userVO.getDefaultCompanyId() != 1510) {
-            //非总部人员只可查看和自己有关的数据
-            sinochemintlPoPlanHeaderDTO.setUserCompany(userVO.getDefaultCompanyId());
-            sinochemintlPoPlanHeaderDTO.setCreateId(userVO.getId());
+        CustomUserDetails user = DetailsHelper.getUserDetails();
+        SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(user.getUserId());
+        //非总部人员只可查看和自己有关的数据
+        if ("1510".equals(sinochemintlPoPlanLineDTO.getProvinceCompany())) {
+            sinochemintlPoPlanHeaderDTO.setUserCompany(sinochemintlPoPlanLineDTO.getProvinceCompanyId());
+            sinochemintlPoPlanHeaderDTO.setCreateId(user.getUserId());
         }
         //采购计划维护分页查询逻辑重写
         if ("MAINTAIN".equals(sinochemintlPoPlanHeaderDTO.getStatus())) {

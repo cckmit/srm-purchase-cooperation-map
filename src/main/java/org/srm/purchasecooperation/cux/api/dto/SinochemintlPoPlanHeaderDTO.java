@@ -62,7 +62,7 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     private Long businessId;
     @ApiModelProperty(value = "业务实体", required = true)
     private String businessName;
-    @ApiModelProperty(value = "采购组织ID(HPFM.PURCHASE_ORGANIZATION)")
+    @ApiModelProperty(value = "采购组织ID(HPFM.PURCHASE_ORGANIZATION_M)")
     private Long purchaseOrgId;
     @ApiModelProperty(value = "采购组织", required = true)
     private String purchaseOrgName;
@@ -82,7 +82,7 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
     @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
     private Date applicationDate;
-    @ApiModelProperty(value = "原币币种(SPCM.CURRENCY)")
+    @ApiModelProperty(value = "原币币种(SPRM.EXCHANGE_RATE.CURRENCY)")
     private String originalId;
     @ApiModelProperty(value = "币种名称", required = true)
     private String currencyName;
