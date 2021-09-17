@@ -77,15 +77,14 @@ public class SinochemintlSendMessageService{
 
     /**
      * 获取接受者
-     * @param sinochemintlPoPlanLineDTO
+     * @param organizationId
+     * @param string
      * @return
      */
-    public List<Receiver> getReceiverList(Long organizationId, SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
-        String planSharedProvince = sinochemintlPoPlanLineDTO.getPlanSharedProvince();
+    public List<Receiver> getReceiverList(Long organizationId, String string) {
         List<Receiver> receiverList = new ArrayList<>();
-        //Todo 通过采购计划行上的省区代码，在值集定义中进行人员的匹配。
         List<String> params = new ArrayList<>();
-        lovAdapter.queryLovValue(SinochemintlMessageConstant.Lov_Code, organizationId, params);
+        //lovAdapter.queryLovValue(SinochemintlMessageConstant.Lov_Code, organizationId, params);
 
 
         return receiverList;
