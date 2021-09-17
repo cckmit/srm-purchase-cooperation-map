@@ -263,8 +263,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 if (strings.size() > sinochemintlPoPlanLineDTO.getSpellDocProvince()) {
                     sinochemintlPoPlanHeaderDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_COMPLETE);
                     if (sinochemintlPoPlanLineDTO.getSpellDocProvince() != 1) {
-                        //TODO 拼单完成 发送消息
-
                         List<Receiver> receiverList = new ArrayList<>();
                         for (String string : strings) {
                             receiverList.addAll(sinochemintlSendMessageService.getReceiverList(string));
