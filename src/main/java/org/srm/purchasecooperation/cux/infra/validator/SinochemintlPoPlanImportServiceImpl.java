@@ -49,7 +49,7 @@ public class SinochemintlPoPlanImportServiceImpl extends BatchImportHandler {
         }
         try {
             //获取参数
-            String poPlanHeaderId = getArgs("poPlanHeaderId");
+            Integer poPlanHeaderId = getArgs("poPlanHeaderId");
             for (String data : datas) {
                 SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO = objectMapper.readValue(data, SinochemintlPoPlanLineDTO.class);
                 sinochemintlPoPlanLineDTO.setPoPlanHeaderId(Long.valueOf(poPlanHeaderId));
@@ -71,7 +71,7 @@ public class SinochemintlPoPlanImportServiceImpl extends BatchImportHandler {
                 sinochemintlPoPlanLineDTO.setCreatedBy(user.getUserId());
                 sinochemintlPoPlanLineDTO.setLastUpdateDate(date);
                 sinochemintlPoPlanLineDTO.setLastUpdatedBy(user.getUserId());
-                sinochemintlPoPlanLineDTO.setSerialNum(sinochemintlPoPlanLineRepository.getSerialNum(poPlanHeaderId) + 1);
+                sinochemintlPoPlanLineDTO.setSerialNum(sinochemintlPoPlanLineRepository.getSerialNum(String.valueOf(poPlanHeaderId)) + 1);
                 sinochemintlPoPlanLineRepository.setOne(sinochemintlPoPlanLineDTO);
             }
         } catch (IOException e) {
