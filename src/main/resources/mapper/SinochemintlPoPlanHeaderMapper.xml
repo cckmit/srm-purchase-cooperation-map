@@ -108,9 +108,6 @@
         set title               = #{title},
             pr_status_code      = #{status},
             attribute_varchar23 = #{planType},
-            pr_num              = #{poPlanNumber},
-            requested_by        = #{createId},
-            pr_requested_name   = #{createName},
             attribute_datetime1 = #{deadline},
             parent_unit_id      = #{companyId},
             purchase_org_id     = #{purchaseOrgId},
@@ -120,7 +117,6 @@
             request_date        = #{applicationDate},
             original_currency   = #{originalId},
             attribute_varchar24 = #{planIllustrate},
-            creation_date       = #{creationDate},
             attribute_bigint11  = #{businessId},
             last_updated_by     = #{lastUpdatedBy},
             attachment_uuid     = #{appendixId},
@@ -201,6 +197,7 @@
     <select id="selectByKey" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
         WHERE sph.pr_header_id = #{poPlanHeaderId}
+        group by sph.pr_header_id
     </select>
 
     <select id="getPoPlanHeaderId" resultType="java.lang.Long">

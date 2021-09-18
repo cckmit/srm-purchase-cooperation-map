@@ -2,11 +2,14 @@ package org.srm.purchasecooperation.cux.app.service.impl;
 
 import cfca.org.slf4j.Logger;
 import cfca.org.slf4j.LoggerFactory;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import org.hzero.boot.message.MessageClient;
 import org.hzero.boot.message.entity.Receiver;
 import org.hzero.boot.platform.lov.adapter.LovAdapter;
 import org.hzero.core.base.BaseConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.srm.purchasecooperation.cux.api.dto.MessageSenderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;

@@ -260,7 +260,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             if (!StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getSpellDocProvince())) {
                 //校验共享省区数量，若均已填写，则状态更新为【拼单完成】
                 List<String> strings = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().substring(1).split("\\|"));
-                if (strings.size() > sinochemintlPoPlanLineDTO.getSpellDocProvince()) {
+                if (strings.size() == sinochemintlPoPlanLineDTO.getSpellDocProvince()) {
                     sinochemintlPoPlanHeaderDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_COMPLETE);
                     if (sinochemintlPoPlanLineDTO.getSpellDocProvince() != 1) {
                         List<Receiver> receiverList = new ArrayList<>();
