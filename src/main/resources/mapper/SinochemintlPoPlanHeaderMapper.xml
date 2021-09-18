@@ -71,9 +71,10 @@
                                     attribute_varchar24,
                                     creation_date,
                                     created_by,
+                                    last_update_date,
+                                    last_updated_by,
                                     display_pr_num,
                                     lot_num,
-                                    created_by,
                                     attachment_uuid,
                                     attribute_bigint11)
             VALUE (#{tenantId},
@@ -92,11 +93,12 @@
             #{applicationDate},
             #{originalId},
             #{planIllustrate},
-            #{establishDate},
+            #{creationDate},
             #{createdBy},
+            #{lastUpdateDate},
+            #{lastUpdatedBy},
             #{poPlanNumber},
             '0',
-            #{createdBy},
             #{appendixId},
             #{businessId}
             )
@@ -197,7 +199,7 @@
     <select id="selectByKey" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
         WHERE sph.pr_header_id = #{poPlanHeaderId}
-        group by sph.pr_header_id
+        GROUP BY sph.pr_header_id
     </select>
 
     <select id="getPoPlanHeaderId" resultType="java.lang.Long">
