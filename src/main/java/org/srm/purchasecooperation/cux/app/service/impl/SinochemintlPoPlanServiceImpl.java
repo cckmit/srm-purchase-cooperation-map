@@ -11,6 +11,8 @@ import org.hzero.boot.platform.code.builder.CodeRuleBuilder;
 import org.hzero.boot.platform.code.constant.CodeConstants;
 import org.hzero.core.base.BaseAppService;
 import org.hzero.core.base.BaseConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ import java.util.*;
  */
 @Service
 public class SinochemintlPoPlanServiceImpl extends BaseAppService implements SinochemintlPoPlanService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SinochemintlPoPlanServiceImpl.class);
 
     private final SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository;
 
@@ -268,11 +272,15 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                         for (String string : strings) {
                             receiverList.addAll(sinochemintlSendMessageService.getReceiverList(string));
                         }
-                        Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
-                        paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
-                        sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
-                        sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
-                        sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                        try {
+                            Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
+                            paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
+                            sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
+                            sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
+                            sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                        } catch (IllegalArgumentException e) {
+                            logger.error("Message sending failure:{}", receiverList);
+                        }
                     }
                 }
             }
@@ -347,7 +355,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             }
             sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_INPUT_COMPLETE);
             sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
-
             //录入完成 发送消息
             if (!StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getPlanSharedProvince())) {
                 List<String> strings = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().substring(1).split("\\|"));
@@ -357,11 +364,15 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                     for (String string : strings) {
                         receiverList.addAll(sinochemintlSendMessageService.getReceiverList(string));
                     }
-                    Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
-                    paramMap.putAll(sinochemintlSendMessageService.getCommonParam(dto));
-                    sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
-                    sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
-                    sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                    try {
+                        Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
+                        paramMap.putAll(sinochemintlSendMessageService.getCommonParam(dto));
+                        sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
+                        sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
+                        sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                    } catch (IllegalArgumentException e) {
+                        logger.error("Message sending failure:{}", receiverList);
+                    }
                 }
             }
         }

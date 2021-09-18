@@ -324,35 +324,28 @@
     </select>
 
     <!--    根据员工id获取当前用户所在公司id和公司编码-->
-    <!--            SELECT hc.company_id provinceCompanyId, hc.company_num provinceCompany
-            FROM hpfm_employee_user heu
-                     LEFT JOIN hpfm_employee_assign hea ON heu.employee_id = hea.employee_id
-                     LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
-                     LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
-            WHERE heu.user_id = #{employeeId}-->
     <select id="getDefaultCompanyId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
-        select hc.company_id  provinceCompanyId,
-               hc.company_num provinceCompany
-        from iam_user iu
-                 left join hpfm_employee_user heu on heu.user_id = iu.id
-                 left join hpfm_employee_assign hea on hea.employee_id = heu.employee_id
-                 left join hpfm_company hc on hc.company_id = hea.unit_company_id
-        where hc.company_id is not null
-          AND iu.id = #{employeeId}
+        SELECT hc.company_id provinceCompanyId, hc.company_num provinceCompany
+        FROM hpfm_employee_user heu
+                 LEFT JOIN hpfm_employee_assign hea ON heu.employee_id = hea.employee_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
+                 LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
+        WHERE heu.user_id = #{employeeId}
     </select>
 
     <!--    根据省区获取拼单人员信息-->
-    <select id="getDefaultEmployeeList" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO">
-        select
-        iu.id,
-        iu.email,
-        iu.phone,
-        iu.international_tel_code,
-        iu.organization_id
+    <select id="getDefaultEmployeeList"
+            resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO">
+        select iu.id,
+               iu.email,
+               iu.phone,
+               iu.international_tel_code,
+               iu.organization_id
         from iam_user iu
-        left join hpfm_employee_user heu on heu.user_id = iu.id
-        left join hpfm_employee_assign hea on hea.employee_id = heu.employee_id
-        left join hpfm_company hc on hc.company_id = hea.unit_company_id
+                 left join hpfm_employee_user heu on heu.user_id = iu.id
+                 left join hpfm_employee_assign hea on hea.employee_id = heu.employee_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
+                 LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
         where hc.company_id = #{provinceCompanyId}
            or iu.real_name = "王刚"
     </select>
