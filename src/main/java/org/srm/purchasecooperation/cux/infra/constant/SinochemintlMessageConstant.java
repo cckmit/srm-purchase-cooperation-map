@@ -14,7 +14,7 @@ public class SinochemintlMessageConstant {
     /**
      * Server_code（待更新）
      */
-    public static String Email_Server_Code = "TEST_JX";
+    public static String Email_Server_Code = "SRM";
     public static String Sms_Server_Code = "HZERO_BAIDU";
 
     /**
