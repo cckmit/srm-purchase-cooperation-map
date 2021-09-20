@@ -3,6 +3,7 @@ package org.srm.purchasecooperation.cux.infra.repository.impl;
 import org.hzero.mybatis.base.impl.BaseRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
@@ -79,5 +80,10 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     @Override
     public SinochemintlPoPlanLineDTO getDefaultCompanyId(Long employeeId) {
         return sinochemintlPoPlanHeaderMapper.getDefaultCompanyId(employeeId);
+    }
+
+    @Override
+    public List<SinochemintlEmployeeInformationDTO> getDefaultEmployeeList(Long provinceCompanyId) {
+        return sinochemintlPoPlanHeaderMapper.getDefaultEmployeeList(provinceCompanyId);
     }
 }

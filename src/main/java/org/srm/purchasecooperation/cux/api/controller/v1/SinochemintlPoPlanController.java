@@ -127,7 +127,8 @@ public class SinochemintlPoPlanController extends BaseController {
     @ApiOperation(value = "采购计划确认")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/confirm")
-    public ResponseEntity<Void> confirm(@RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto) {
+    public ResponseEntity<Void> confirm(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto) {
+        dto.setTenantId(organizationId);
         sinochemintlPoPlanHeaderService.confirm(dto);
         return Results.success();
     }

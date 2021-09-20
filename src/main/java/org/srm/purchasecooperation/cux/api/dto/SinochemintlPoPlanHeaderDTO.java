@@ -91,13 +91,13 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @ApiModelProperty(value = "登录用户所在公司ID")
     private Long userCompany;
     @ApiModelProperty(value = "物料分类")
-    private Long materialClass;
+    private String materialClass;
     @ApiModelProperty(value = "行号")
     private Long serialNum;
     @ApiModelProperty(value = "物料编码")
-    private Long materialCoding;
+    private String materialCoding;
     @ApiModelProperty(value = "产品名称")
-    private Long productName;
+    private String productName;
     @ApiModelProperty(value = "需求数量")
     private BigDecimal requiredQuantity;
     @ApiModelProperty(value = "税种")
@@ -140,11 +140,11 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
         this.appendixId = appendixId;
     }
 
-    public Long getProductName() {
+    public String getProductName() {
         return productName;
     }
 
-    public void setProductName(Long productName) {
+    public void setProductName(String productName) {
         this.productName = productName;
     }
 
@@ -172,11 +172,11 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
         this.taxRate = taxRate;
     }
 
-    public Long getMaterialClass() {
+    public String getMaterialClass() {
         return materialClass;
     }
 
-    public void setMaterialClass(Long materialClass) {
+    public void setMaterialClass(String materialClass) {
         this.materialClass = materialClass;
     }
 
@@ -188,11 +188,11 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
         this.serialNum = serialNum;
     }
 
-    public Long getMaterialCoding() {
+    public String getMaterialCoding() {
         return materialCoding;
     }
 
-    public void setMaterialCoding(Long materialCoding) {
+    public void setMaterialCoding(String materialCoding) {
         this.materialCoding = materialCoding;
     }
 

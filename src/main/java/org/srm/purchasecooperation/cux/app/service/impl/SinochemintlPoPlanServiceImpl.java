@@ -6,14 +6,19 @@ import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import org.hzero.boot.message.entity.Receiver;
 import org.hzero.boot.platform.code.builder.CodeRuleBuilder;
 import org.hzero.boot.platform.code.constant.CodeConstants;
 import org.hzero.core.base.BaseAppService;
+import org.hzero.core.base.BaseConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.srm.purchasecooperation.cux.api.dto.MessageSenderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
@@ -21,11 +26,9 @@ import org.srm.purchasecooperation.cux.app.service.SinochemintlPoPlanService;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlConstant;
+import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstant;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 采购计划应用服务默认实现
@@ -35,17 +38,22 @@ import java.util.List;
 @Service
 public class SinochemintlPoPlanServiceImpl extends BaseAppService implements SinochemintlPoPlanService {
 
+    private static final Logger logger = LoggerFactory.getLogger(SinochemintlPoPlanServiceImpl.class);
+
     private final SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository;
 
     private final SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository;
+
+    private final SinochemintlSendMessageService sinochemintlSendMessageService;
 
     @Autowired
     private CodeRuleBuilder codeRuleBuilder;
 
     @Autowired
-    public SinochemintlPoPlanServiceImpl(SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository, SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository) {
+    public SinochemintlPoPlanServiceImpl(SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository, SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository, SinochemintlSendMessageService sinochemintlSendMessageService) {
         this.sinochemintlPoPlanHeaderRepository = sinochemintlPoPlanHeaderRepository;
         this.sinochemintlPoPlanLineRepository = sinochemintlPoPlanLineRepository;
+        this.sinochemintlSendMessageService = sinochemintlSendMessageService;
     }
 
     /**
@@ -94,11 +102,10 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 String poPlanNumber = codeRuleBuilder.generateCode(dto.getTenantId(), SinochemintlConstant.CodingCode.SCUX_ZHNY_RULES_PO_PLAN,
                         CodeConstants.CodeRuleLevelCode.GLOBAL, CodeConstants.CodeRuleLevelCode.GLOBAL, null);
                 sinochemintlPoPlanHeaderDTO.setPoPlanNumber(poPlanNumber);
+//                sinochemintlPoPlanHeaderDTO.setPoPlanNumber("PO202108140001");
                 sinochemintlPoPlanHeaderDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_NEW);
                 //获取当前登录人信息
                 sinochemintlPoPlanHeaderDTO.setCreateName(user.getRealName());
-                sinochemintlPoPlanHeaderDTO.setCreateId(user.getUserId());
-                sinochemintlPoPlanHeaderDTO.setCreationDate(new Date());
                 //系统自动带出当前申请人
                 sinochemintlPoPlanHeaderDTO.setApplicant(user.getRealName());
                 sinochemintlPoPlanHeaderDTO.setApplicationDate(new Date());
@@ -155,8 +162,10 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         //将数据返回
         List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLines = sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanHeaderDTO.getTenantId(), sinochemintlPoPlanHeaderDTO.getPoPlanHeaderId());
         for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLines) {
-            List<String> strings = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().substring(1).split("\\|"));
-            sinochemintlPoPlanLineDTO.setPlanSharedProvinceName(strings);
+            if (!StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getPlanSharedProvince())) {
+                List<String> strings = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().substring(1).split("\\|"));
+                sinochemintlPoPlanLineDTO.setPlanSharedProvinceName(strings);
+            }
         }
         sinochemintlPoPlanHeaderDTO.setSinochemintlPoPlanLineList(sinochemintlPoPlanLines);
         return sinochemintlPoPlanHeaderDTO;
@@ -229,8 +238,10 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             sinochemintlPoPlanHeaderDTO.setSinochemintlPoPlanLineList(sinochemintlPoPlanLineList);
         }
         for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineList) {
-            List<String> strings = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().substring(1).split("\\|"));
-            sinochemintlPoPlanLineDTO.setPlanSharedProvinceName(strings);
+            if (!StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getPlanSharedProvince())) {
+                List<String> strings = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().substring(1).split("\\|"));
+                sinochemintlPoPlanLineDTO.setPlanSharedProvinceName(strings);
+            }
         }
         return sinochemintlPoPlanHeaderDTO;
     }
@@ -254,10 +265,22 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             if (!StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getSpellDocProvince())) {
                 //校验共享省区数量，若均已填写，则状态更新为【拼单完成】
                 List<String> strings = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().substring(1).split("\\|"));
-                if (strings.size() > sinochemintlPoPlanLineDTO.getSpellDocProvince()) {
+                if (strings.size() == sinochemintlPoPlanLineDTO.getSpellDocProvince()) {
                     sinochemintlPoPlanHeaderDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_COMPLETE);
                     if (sinochemintlPoPlanLineDTO.getSpellDocProvince() != 1) {
-                        //TODO 拼单完成 发送短信
+                        List<Receiver> receiverList = new ArrayList<>();
+                        for (String string : strings) {
+                            receiverList.addAll(sinochemintlSendMessageService.getReceiverList(string));
+                        }
+                        try {
+                            Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
+                            paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
+                            sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
+                            sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
+                            sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                        } catch (IllegalArgumentException e) {
+                            logger.error("Message sending failure:{}", receiverList);
+                        }
                     }
                 }
             }
@@ -332,6 +355,26 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             }
             sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_INPUT_COMPLETE);
             sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
+            //录入完成 发送消息
+            if (!StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getPlanSharedProvince())) {
+                List<String> strings = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().substring(1).split("\\|"));
+                Long organizationId = dto.getTenantId();
+                List<Receiver> receiverList = new ArrayList<>();
+                if (strings.size() > 0) {
+                    for (String string : strings) {
+                        receiverList.addAll(sinochemintlSendMessageService.getReceiverList(string));
+                    }
+                    try {
+                        Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
+                        paramMap.putAll(sinochemintlSendMessageService.getCommonParam(dto));
+                        sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
+                        sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
+                        sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                    } catch (IllegalArgumentException e) {
+                        logger.error("Message sending failure:{}", receiverList);
+                    }
+                }
+            }
         }
         dto.setStatus(SinochemintlConstant.StatusCode.STATUS_INPUT_COMPLETE);
         dto.setLastUpdateDate(new Date());

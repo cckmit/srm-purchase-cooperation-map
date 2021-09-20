@@ -4,6 +4,7 @@ package org.srm.purchasecooperation.cux.domain.repository;
 import org.hzero.boot.scheduler.infra.enums.ReturnT;
 import org.hzero.mybatis.base.BaseRepository;
 import org.springframework.stereotype.Component;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
@@ -96,4 +97,11 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
      * @return 公司id和公司编码
      */
     SinochemintlPoPlanLineDTO getDefaultCompanyId(Long employeeId);
+
+    /**
+     * 通过省区代码，获取对应人员
+     * @param provinceCompanyId
+     * @return
+     */
+    List<SinochemintlEmployeeInformationDTO> getDefaultEmployeeList(Long provinceCompanyId);
 }

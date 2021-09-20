@@ -71,9 +71,10 @@
                                     attribute_varchar24,
                                     creation_date,
                                     created_by,
+                                    last_update_date,
+                                    last_updated_by,
                                     display_pr_num,
                                     lot_num,
-                                    created_by,
                                     attachment_uuid,
                                     attribute_bigint11)
             VALUE (#{tenantId},
@@ -92,11 +93,12 @@
             #{applicationDate},
             #{originalId},
             #{planIllustrate},
-            #{establishDate},
+            #{creationDate},
             #{createdBy},
+            #{lastUpdateDate},
+            #{lastUpdatedBy},
             #{poPlanNumber},
             '0',
-            #{createdBy},
             #{appendixId},
             #{businessId}
             )
@@ -108,9 +110,6 @@
         set title               = #{title},
             pr_status_code      = #{status},
             attribute_varchar23 = #{planType},
-            pr_num              = #{poPlanNumber},
-            requested_by        = #{createId},
-            pr_requested_name   = #{createName},
             attribute_datetime1 = #{deadline},
             parent_unit_id      = #{companyId},
             purchase_org_id     = #{purchaseOrgId},
@@ -120,7 +119,6 @@
             request_date        = #{applicationDate},
             original_currency   = #{originalId},
             attribute_varchar24 = #{planIllustrate},
-            creation_date       = #{creationDate},
             attribute_bigint11  = #{businessId},
             last_updated_by     = #{lastUpdatedBy},
             attachment_uuid     = #{appendixId},
@@ -201,6 +199,7 @@
     <select id="selectByKey" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
         WHERE sph.pr_header_id = #{poPlanHeaderId}
+        GROUP BY sph.pr_header_id
     </select>
 
     <select id="getPoPlanHeaderId" resultType="java.lang.Long">
@@ -325,21 +324,30 @@
     </select>
 
     <!--    根据员工id获取当前用户所在公司id和公司编码-->
-    <!--            SELECT hc.company_id provinceCompanyId, hc.company_num provinceCompany
-            FROM hpfm_employee_user heu
-                     LEFT JOIN hpfm_employee_assign hea ON heu.employee_id = hea.employee_id
-                     LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
-                     LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
-            WHERE heu.user_id = #{employeeId}-->
     <select id="getDefaultCompanyId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
-        select hc.company_id  provinceCompanyId,
-               hc.company_num provinceCompany
+        SELECT hc.company_id provinceCompanyId, hc.company_num provinceCompany
+        FROM hpfm_employee_user heu
+                 LEFT JOIN hpfm_employee_assign hea ON heu.employee_id = hea.employee_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
+                 LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
+        WHERE heu.user_id = #{employeeId}
+    </select>
+
+    <!--    根据省区获取拼单人员信息-->
+    <select id="getDefaultEmployeeList"
+            resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO">
+        select iu.id,
+               iu.email,
+               iu.phone,
+               iu.international_tel_code,
+               iu.organization_id
         from iam_user iu
                  left join hpfm_employee_user heu on heu.user_id = iu.id
                  left join hpfm_employee_assign hea on hea.employee_id = heu.employee_id
-                 left join hpfm_company hc on hc.company_id = hea.unit_company_id
-        where hc.company_id is not null
-          AND iu.id = #{employeeId}
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
+                 LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
+        where hc.company_id = #{provinceCompanyId}
+           or iu.real_name = "王刚"
     </select>
 
 </mapper>
