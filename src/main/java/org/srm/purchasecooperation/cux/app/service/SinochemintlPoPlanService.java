@@ -5,6 +5,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public interface SinochemintlPoPlanService {
      *
      * @param dto 采购计划头表和行表数据
      */
-    SinochemintlPoPlanHeaderDTO addPoPlan(SinochemintlPoPlanHeaderDTO dto);
+    SinochemintlPoPlanHeaderDTO addPoPlan(SinochemintlPoPlanHeaderDTO dto, PageRequest pageRequest);
 
     /**
      * 删除采购计划头表
@@ -82,4 +83,13 @@ public interface SinochemintlPoPlanService {
      */
     void confirm(SinochemintlPoPlanHeaderDTO dto);
 
+    /**
+     * 获取行表列表
+     *
+     * @param organizationId 租户id
+     * @param poPlanHeaderId 头表id
+     * @param pageRequest    分页参数
+     * @return 行表列表
+     */
+    Page<SinochemintlPoPlanLineDTO> getPoPlanLine(Long organizationId, Long poPlanHeaderId, PageRequest pageRequest);
 }

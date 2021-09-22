@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.app.service.SinochemintlPoPlanService;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -61,9 +62,11 @@ public class SinochemintlPoPlanController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/addPoPlan")
     @ProcessLovValue
-    public ResponseEntity<SinochemintlPoPlanHeaderDTO> addPoPlan(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto) {
+    public ResponseEntity<SinochemintlPoPlanHeaderDTO> addPoPlan(@PathVariable("organizationId") Long organizationId,
+                                                                 @RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto,
+                                                                 @ApiIgnore @SortDefault(value = "poPlanHeaderId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
         dto.setTenantId(organizationId);
-        SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO = sinochemintlPoPlanHeaderService.addPoPlan(dto);
+        SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO = sinochemintlPoPlanHeaderService.addPoPlan(dto, pageRequest);
         return Results.success(sinochemintlPoPlanHeaderDTO);
     }
 
@@ -74,6 +77,17 @@ public class SinochemintlPoPlanController extends BaseController {
     public ResponseEntity<SinochemintlPoPlanHeaderDTO> getPoPlan(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId, @ApiIgnore @SortDefault(value = "poPlanHeaderId",
             direction = Sort.Direction.DESC) PageRequest pageRequest) {
         SinochemintlPoPlanHeaderDTO result = sinochemintlPoPlanHeaderService.getPoPlan(organizationId, poPlanHeaderId, pageRequest);
+        return Results.success(result);
+    }
+
+    @ApiOperation(value = "获取行表列表")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/getPoPlanLine/{poPlanHeaderId}")
+    @ProcessLovValue
+    public ResponseEntity<Page<SinochemintlPoPlanLineDTO>> getPoPlanLine(@PathVariable("organizationId") Long organizationId,
+                                                                   @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId,
+                                                                   @ApiIgnore @SortDefault(value = "poPlanHeaderId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
+        Page<SinochemintlPoPlanLineDTO> result = sinochemintlPoPlanHeaderService.getPoPlanLine(organizationId, poPlanHeaderId, pageRequest);
         return Results.success(result);
     }
 
@@ -111,7 +125,7 @@ public class SinochemintlPoPlanController extends BaseController {
 
     @ApiOperation(value = "采购计划导出")
     @Permission(level = ResourceLevel.ORGANIZATION)
-    @PostMapping ("/excel")
+    @PostMapping("/excel")
     @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
     @CustomPageRequest
     @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)

@@ -1,5 +1,6 @@
 package org.srm.purchasecooperation.cux.api.dto;
 
+import io.choerodon.core.domain.Page;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.choerodon.mybatis.annotation.ModifyAudit;
@@ -39,6 +40,7 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @LovValue(lovCode = "SCUX.SINOCHEMINTL.PO_PLAN_NUMBER", meaningField = "statusName")
     private String status;
     @ApiModelProperty(value = "状态名")
+    @Transient
     private String statusName;
     @ApiModelProperty(value = "计划类型", required = true)
     private String planType;
@@ -114,7 +116,6 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @Transient
     @ApiModelProperty(value = "行表数据")
     private List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList;
-
 
     public List<SinochemintlPoPlanLineDTO> getSinochemintlPoPlanLineList() {
         return sinochemintlPoPlanLineList;

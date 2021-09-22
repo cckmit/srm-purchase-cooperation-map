@@ -98,7 +98,7 @@
             #{lastUpdateDate},
             #{lastUpdatedBy},
             #{poPlanNumber},
-            '0',
+            'PO_PLAN',
             #{appendixId},
             #{businessId}
             )
@@ -144,6 +144,7 @@
     <select id="list" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
         <if test="poPlanNumber != null and poPlanNumber != ''">
             <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
             AND sph.pr_num like #{poPlanNumberLike}
@@ -191,8 +192,11 @@
         </if>
         <if test="userCompany != null and userCompany != ''">
             <bind name="userCompanyLike" value="'%|' + userCompany + '|%'"/>
-            AND spl.attribute_varchar23 like #{userCompanyLike} OR sph.requested_by = #{createId}
+            AND spl.attribute_varchar23 like #{userCompanyLike}
+            OR sph.requested_by = #{createId}
+            AND sph.lot_num = 'PO_PLAN'
         </if>
+        GROUP BY sph.pr_header_id
     </select>
 
     <!--    根据头表id查询-->
@@ -275,7 +279,9 @@
         LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
         LEFT JOIN hpfm_company hc2 ON hc2.company_id = spl.company_id
         LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
-        WHERE sph.pr_header_id in
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        AND sph.pr_header_id in
         <foreach collection="list" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
@@ -284,6 +290,7 @@
     <select id="maintain" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
         <if test="poPlanNumber != null and poPlanNumber != ''">
             <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
             AND sph.pr_num like #{poPlanNumberLike}
@@ -301,6 +308,7 @@
         UNION
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
         <if test="poPlanNumber != null and poPlanNumber != ''">
             <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
             AND sph.pr_num like #{poPlanNumberLike}

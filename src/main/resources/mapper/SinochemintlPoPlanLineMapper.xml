@@ -37,6 +37,7 @@
                spl.tax_rate            taxRate,
                spl.pr_requested_name   applicant,
                spl.display_line_num    serialNum,
+               spl.attribute_bigint15  sharedProvinceId,
                spl.attachment_uuid     appendixId
         FROM sprm_pr_header sph
                  LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
@@ -74,6 +75,7 @@
                                   pr_requested_name,
                                   display_line_num,
                                   company_id,
+                                  attribute_bigint15,
                                   attachment_uuid)
             VALUE (#{poPlanHeaderId},
             #{tenantId},
@@ -100,6 +102,7 @@
             #{applicant},
             #{serialNum},
             #{provinceCompanyId},
+            #{sharedProvinceId},
             #{appendixId}
             )
     </insert>
@@ -131,6 +134,7 @@
             tax_code            = #{taxType},
             tax_rate            = #{taxRate},
             pr_requested_name   = #{applicant},
+            attribute_bigint15  = #{sharedProvinceId},
             attachment_uuid     = #{appendixId}
         where pr_line_id = #{poPlanLineId}
     </update>

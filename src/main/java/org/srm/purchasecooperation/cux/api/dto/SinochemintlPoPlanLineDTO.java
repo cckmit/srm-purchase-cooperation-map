@@ -117,10 +117,12 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     @ApiModelProperty(value = "状态名")
     private String statusName;
 
+    @ApiModelProperty(value = "共享省区对应id")
+    private Long sharedProvinceId;
+
 //
 // getter/setter
 // ------------------------------------------------------------------------------
-
 
     public List<String> getPlanSharedProvinceName() {
         return planSharedProvinceName;
@@ -128,6 +130,14 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
 
     public void setPlanSharedProvinceName(List<String> planSharedProvinceName) {
         this.planSharedProvinceName = planSharedProvinceName;
+    }
+
+    public Long getSharedProvinceId() {
+        return sharedProvinceId;
+    }
+
+    public void setSharedProvinceId(Long sharedProvinceId) {
+        this.sharedProvinceId = sharedProvinceId;
     }
 
     public String getEndSupplier() {
