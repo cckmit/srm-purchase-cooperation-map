@@ -29,6 +29,7 @@ import org.srm.purchasecooperation.cux.infra.constant.SinochemintlConstant;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstant;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 采购计划应用服务默认实现
@@ -272,6 +273,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                         for (String string : strings) {
                             receiverList.addAll(sinochemintlSendMessageService.getReceiverList(string));
                         }
+                        receiverList = receiverList.stream().distinct().collect(Collectors.toList());
                         try {
                             Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
                             paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
@@ -364,6 +366,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                     for (String string : strings) {
                         receiverList.addAll(sinochemintlSendMessageService.getReceiverList(string));
                     }
+                    receiverList = receiverList.stream().distinct().collect(Collectors.toList());
                     try {
                         Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
                         paramMap.putAll(sinochemintlSendMessageService.getCommonParam(dto));
