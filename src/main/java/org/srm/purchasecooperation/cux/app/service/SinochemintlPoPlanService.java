@@ -6,6 +6,8 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
+import org.srm.purchasecooperation.pr.api.dto.PrActionDTO;
+import org.srm.purchasecooperation.pr.domain.entity.PrAction;
 
 import java.util.List;
 
@@ -57,9 +59,9 @@ public interface SinochemintlPoPlanService {
     /**
      * 提交采购计划
      *
-     * @param poPlanHeaderId 头表id
+     * @param ids 头表id
      */
-    void submit(Long organizationId, Long poPlanHeaderId);
+    void submit(Long organizationId, List<Long> ids);
 
     /**
      * 取消采购计划
@@ -92,4 +94,21 @@ public interface SinochemintlPoPlanService {
      * @return 行表列表
      */
     Page<SinochemintlPoPlanLineDTO> getPoPlanLine(Long organizationId, Long poPlanHeaderId, PageRequest pageRequest);
+
+    /**
+     * 批量采购计划确认
+     *
+     * @param ids 修改后的数据
+     */
+    void batchConfirm(Long organizationId, List<Long> ids);
+
+    /**
+     * 操作记录
+     *
+     * @param organizationId 租户id
+     * @param poPlanHeaderId 头表id
+     * @param pageRequest    分页参数
+     * @return 操作记录
+     */
+    Page<PrActionDTO> operatingRecord(Long organizationId, Long poPlanHeaderId, PageRequest pageRequest);
 }

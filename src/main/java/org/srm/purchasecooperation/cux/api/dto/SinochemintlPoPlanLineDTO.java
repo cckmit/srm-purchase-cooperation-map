@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 采购计划行表
@@ -48,7 +49,7 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     private String planSharedProvince;
     @ApiModelProperty(value = "计划共享省区名称", required = true)
     @Transient
-    private List<String> planSharedProvinceName;
+    private List<Map<String, Object>> planSharedProvinceName;
     @ApiModelProperty(value = "省公司/项目ID(SPFM.USER_AUTH.COMPANY)", required = true)
     private Long provinceCompanyId;
     @ApiModelProperty(value = "省公司/项目", required = true)
@@ -81,9 +82,11 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     private Long uomId;
     @ApiModelProperty(value = "单位名称", required = true)
     private String unitName;
-    @ApiModelProperty(value = "采购总价", required = true)
+    @ApiModelProperty(value = "最终行金额", required = true)
+    private BigDecimal totalPurchaseFinalPrice;
+    @ApiModelProperty(value = "行金额", required = true)
     private BigDecimal totalPurchasePrice;
-    @ApiModelProperty(value = "币种(SPCM.CURRENCY)", required = true)
+    @ApiModelProperty(value = "币种(SPRM.EXCHANGE_RATE.CURRENCY)", required = true)
     private String currencyId;
     @ApiModelProperty(value = "币种名称", required = true)
     private String currencyName;
@@ -113,6 +116,9 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     @ApiModelProperty(value = "序号")
     private Integer serialNum;
 
+    @ApiModelProperty(value = "展示行号")
+    private Integer displayLineNum;
+
     @Transient
     @ApiModelProperty(value = "状态名")
     private String statusName;
@@ -124,12 +130,20 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
 // getter/setter
 // ------------------------------------------------------------------------------
 
-    public List<String> getPlanSharedProvinceName() {
+    public List<Map<String, Object>> getPlanSharedProvinceName() {
         return planSharedProvinceName;
     }
 
-    public void setPlanSharedProvinceName(List<String> planSharedProvinceName) {
+    public void setPlanSharedProvinceName(List<Map<String, Object>> planSharedProvinceName) {
         this.planSharedProvinceName = planSharedProvinceName;
+    }
+
+    public Integer getDisplayLineNum() {
+        return displayLineNum;
+    }
+
+    public void setDisplayLineNum(Integer displayLineNum) {
+        this.displayLineNum = displayLineNum;
     }
 
     public Long getSharedProvinceId() {
@@ -142,6 +156,14 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
 
     public String getEndSupplier() {
         return endSupplier;
+    }
+
+    public BigDecimal getTotalPurchaseFinalPrice() {
+        return totalPurchaseFinalPrice;
+    }
+
+    public void setTotalPurchaseFinalPrice(BigDecimal totalPurchaseFinalPrice) {
+        this.totalPurchaseFinalPrice = totalPurchaseFinalPrice;
     }
 
     public void setEndSupplier(String endSupplier) {

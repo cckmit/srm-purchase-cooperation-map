@@ -1,6 +1,5 @@
 package org.srm.purchasecooperation.cux.api.dto;
 
-import io.choerodon.core.domain.Page;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.choerodon.mybatis.annotation.ModifyAudit;
@@ -48,6 +47,8 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     private String poPlanNumber;
     @ApiModelProperty(value = "申请总额", required = true)
     private BigDecimal applicationSum;
+    @ApiModelProperty(value = "申请最终总额", required = true)
+    private BigDecimal applicationFinalSum;
     @ApiModelProperty(value = "创建人id")
     private Long createId;
     @ApiModelProperty(value = "创建人", required = true)
@@ -123,6 +124,14 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
 
     public void setSinochemintlPoPlanLineList(List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList) {
         this.sinochemintlPoPlanLineList = sinochemintlPoPlanLineList;
+    }
+
+    public BigDecimal getApplicationFinalSum() {
+        return applicationFinalSum;
+    }
+
+    public void setApplicationFinalSum(BigDecimal applicationFinalSum) {
+        this.applicationFinalSum = applicationFinalSum;
     }
 
     public Date getEstablishDate() {
@@ -499,18 +508,6 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
 
     public SinochemintlPoPlanHeaderDTO setApplicationDate(Date applicationDate) {
         this.applicationDate = applicationDate;
-        return this;
-    }
-
-    /**
-     * @return 原币币种
-     */
-    public String getOriginalCurrency() {
-        return originalId;
-    }
-
-    public SinochemintlPoPlanHeaderDTO setOriginalCurrency(String originalId) {
-        this.originalId = originalId;
         return this;
     }
 

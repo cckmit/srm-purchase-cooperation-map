@@ -36,6 +36,26 @@ public class SinochemintlConstant {
     }
 
     /**
+     * 状态
+     */
+    public interface ActionStatusCode {
+        //新建
+        String STATUS_PENDING = "PENDING";
+        //提交
+        String STATUS_SUBMITTED = "SUBMITTED";
+        //更新
+        String STATUS_UPDATE = "UPDATE";
+        //新增行
+        String STATUS_NEWLINE = "NEWLINE";
+        //取消
+        String STATUS_CANCEL = "CANCEL";
+        //删除行
+        String STATUS_DELLINE = "DELLINE";
+        //确认
+        String STATUS_ENABLE = "ENABLE";
+    }
+
+    /**
      * 编码
      */
     public interface CodingCode {
