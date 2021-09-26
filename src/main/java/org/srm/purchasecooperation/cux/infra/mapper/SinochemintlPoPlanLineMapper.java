@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.Param;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 采购计划行表Mapper
@@ -72,4 +71,10 @@ public interface SinochemintlPoPlanLineMapper extends BaseMapper<SinochemintlPoP
      */
     List<SinochemintlPoPlanLineDTO> sharedProvinceVerify(List<String> planSharedProvince);
 
+    /**
+     * 批量维护
+     *
+     * @param dto 批量维护信息
+     */
+    void batchMaint(SinochemintlPoPlanLineDTO dto);
 }

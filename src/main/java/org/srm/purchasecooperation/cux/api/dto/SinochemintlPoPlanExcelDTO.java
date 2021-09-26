@@ -43,9 +43,12 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
     @ApiModelProperty(value = "状态名")
     @ExcelColumn(title = "状态", zh = "状态", en = "status", order = 2)
     private String statusName;
-    @ApiModelProperty(value = "计划类型", required = true)
-    @ExcelColumn(title = "计划类型", zh = "计划类型", en = "plan type", order = 3)
+    @ApiModelProperty(value = "计划类型(SINOCHEMINTL.PROJECT_TYPE)", required = true)
+    @LovValue(lovCode = "SINOCHEMINTL.PROJECT_TYPE", meaningField = "planName")
     private String planType;
+    @ApiModelProperty(value = "计划类型名称", required = true)
+    @ExcelColumn(title = "计划类型", zh = "计划类型", en = "plan type", order = 3)
+    private String planName;
     @ApiModelProperty(value = "采购计划单号", required = true)
     @ExcelColumn(title = "采购计划单号", zh = "采购计划单号", en = "Purchase plan number", order = 4)
     private String poPlanNumber;
@@ -188,6 +191,14 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
     @ApiModelProperty(value = "行申请人")
     @ExcelColumn(title = "行申请人", zh = "行申请人", en = "Applicant", order = 38)
     private String lineApplicant;
+
+    public String getPlanName() {
+        return planName;
+    }
+
+    public void setPlanName(String planName) {
+        this.planName = planName;
+    }
 
     public Long getPoPlanHeaderId() {
         return poPlanHeaderId;

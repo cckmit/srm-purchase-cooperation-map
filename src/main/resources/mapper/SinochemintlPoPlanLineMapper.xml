@@ -30,7 +30,7 @@
                sc.currency_name        currencyName,
                spl.attribute_varchar38 freightSupplier,
                spl.line_freight        freightPrice,
-               spl.attribute_varchar39 priceTerms,
+               spl.attribute_varchar40 priceTerms,
                spl.remark              remark,
                spl.tax_id              taxId,
                st.description          taxType,
@@ -72,7 +72,7 @@
                                   currency_code,
                                   attribute_varchar38,
                                   line_freight,
-                                  attribute_varchar39,
+                                  attribute_varchar40,
                                   remark,
                                   tax_id,
                                   tax_rate,
@@ -139,7 +139,7 @@
             currency_code       = #{currencyId},
             attribute_varchar38 = #{freightSupplier},
             line_freight        = #{freightPrice},
-            attribute_varchar39 = #{priceTerms},
+            attribute_varchar40 = #{priceTerms},
             remark              = #{remark},
             tax_id              = #{taxId},
             tax_rate            = #{taxRate},
@@ -149,6 +149,17 @@
             attribute_decimal5  = #{totalPurchaseFinalPrice},
             attachment_uuid     = #{appendixId}
         where pr_line_id = #{poPlanLineId}
+    </update>
+
+    <!--    批量维护-->
+    <update id="batchMaint">
+        update sprm_pr_line
+        set tenant_id = #{tenantId}
+        <if test="needDate != null">
+            ,needed_date = #{needDate}
+        </if>
+        where pr_header_id = #{poPlanHeaderId}
+        and tenant_id = #{tenantId}
     </update>
 
     <!--    根据头表id删除-->

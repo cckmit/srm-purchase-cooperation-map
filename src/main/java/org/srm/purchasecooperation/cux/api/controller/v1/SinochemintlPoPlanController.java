@@ -24,7 +24,6 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.app.service.SinochemintlPoPlanService;
 import org.srm.purchasecooperation.pr.api.dto.PrActionDTO;
-import org.srm.purchasecooperation.pr.domain.entity.PrAction;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
@@ -127,16 +126,30 @@ public class SinochemintlPoPlanController extends BaseController {
 
     @ApiOperation(value = "采购计划导出")
     @Permission(level = ResourceLevel.ORGANIZATION)
-    @PostMapping("/excel")
+    @GetMapping("/excel")
     @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
     @CustomPageRequest
     @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
     public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> excel(@PathVariable("organizationId") Long tenantId,
-                                                                  @RequestBody @Encrypt List<Long> ids,
-                                                                  PageRequest pageRequest,
+                                                                  String poPlanHeaderIds,
                                                                   ExportParam exportParam,
                                                                   HttpServletResponse response) {
-        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.excel(ids);
+        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.excel(poPlanHeaderIds);
+        return Results.success(list);
+    }
+
+    @ApiOperation(value = "采购计划批量导出")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/batchExcel")
+    @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
+    @CustomPageRequest
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
+    public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> batchExcel(@PathVariable("organizationId") Long tenantId,
+                                                                       SinochemintlPoPlanHeaderDTO dto,
+                                                                       ExportParam exportParam,
+                                                                       HttpServletResponse response) {
+        dto.setTenantId(tenantId);
+        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.batchExcel(dto);
         return Results.success(list);
     }
 
@@ -165,6 +178,25 @@ public class SinochemintlPoPlanController extends BaseController {
                                                              @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId,
                                                              @ApiIgnore @SortDefault(value = "poPlanHeaderId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
         Page<PrActionDTO> response = sinochemintlPoPlanHeaderService.operatingRecord(organizationId, poPlanHeaderId, pageRequest);
+        return Results.success(response);
+    }
+
+    @ApiOperation(value = "批量维护")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @PostMapping("/batchMaint")
+    public ResponseEntity<Void> batchMaint(@PathVariable("organizationId") Long organizationId,
+                                           @RequestBody @Encrypt SinochemintlPoPlanLineDTO dto) {
+        dto.setTenantId(organizationId);
+        sinochemintlPoPlanHeaderService.batchMaint(dto);
+        return Results.success();
+    }
+
+    @ApiOperation(value = "拼单")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/shareTheBill/{poPlanLineId}")
+    public ResponseEntity<SinochemintlPoPlanLineDTO> shareBill(@PathVariable("organizationId") Long organizationId,
+                                                               @Encrypt @PathVariable("poPlanLineId") Long poPlanLineId) {
+        SinochemintlPoPlanLineDTO response = sinochemintlPoPlanHeaderService.shareTheBill(poPlanLineId);
         return Results.success(response);
     }
 

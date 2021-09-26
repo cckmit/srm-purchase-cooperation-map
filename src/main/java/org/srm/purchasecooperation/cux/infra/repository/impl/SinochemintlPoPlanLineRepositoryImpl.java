@@ -3,6 +3,7 @@ package org.srm.purchasecooperation.cux.infra.repository.impl;
 import org.hzero.mybatis.base.impl.BaseRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 import org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanLineMapper;
@@ -64,6 +65,11 @@ public class SinochemintlPoPlanLineRepositoryImpl extends BaseRepositoryImpl<Sin
     @Override
     public List<SinochemintlPoPlanLineDTO> sharedProvinceVerify(List<String> planSharedProvince) {
         return sinochemintlPoPlanLineMapper.sharedProvinceVerify(planSharedProvince);
+    }
+
+    @Override
+    public void batchMaint(SinochemintlPoPlanLineDTO dto) {
+        sinochemintlPoPlanLineMapper.batchMaint(dto);
     }
 
 }

@@ -142,6 +142,214 @@
         WHERE pr_header_id = #{poPlanHeaderId}
     </delete>
 
+    <!--    根据头表id查询-->
+    <select id="selectByKey" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        WHERE sph.pr_header_id = #{poPlanHeaderId}
+        GROUP BY sph.pr_header_id
+    </select>
+
+    <select id="getPoPlanHeaderId" resultType="java.lang.Long">
+        SELECT pr_header_id
+        FROM sprm_pr_header
+        ORDER BY pr_header_id DESC LIMIT 1
+    </select>
+
+    <!--    采购计划导出-->
+    <select id="excel" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
+        SELECT distinct sph.pr_header_id poPlanHeaderId,
+        sph.tenant_id tenantId,
+        sph.title title,
+        sph.pr_status_code status,
+        sph.attribute_varchar23 planType,
+        sph.pr_num poPlanNumber,
+        sph.requested_by createId,
+        sph.pr_requested_name createName,
+        sph.attribute_datetime1 deadline,
+        sph.parent_unit_id companyId,
+        hc1.company_name companyName,
+        sph.attribute_bigint11 businessId,
+        hou.ou_name businessName,
+        sph.purchase_org_id purchaseOrgId,
+        hpo.organization_name purchaseOrgName,
+        sph.purchase_agent_id purchaseId,
+        hpa.purchase_agent_name purchaseName,
+        sph.pr_source_platform poSource,
+        sph.pr_requested_name applicant,
+        sph.unit_id departmentId,
+        hu.unit_name departmentName,
+        sph.request_date applicationDate,
+        sph.original_currency originalId,
+        sc.currency_name currencyName,
+        sph.attribute_varchar24 planIllustrate,
+        sph.creation_date creationDate,
+        spl.attribute_bigint14 spellDocProvince,
+        spl.needed_date needDate,
+        spl.attribute_longtext9 planSharedProvince,
+        spl.company_id provinceCompanyId,
+        hc2.company_name provinceCompany,
+        spl.product_name productName,
+        spl.attribute_varchar24 specification,
+        spl.supplier_id initialSupplierId,
+        spl.supplier_name initialSupplier,
+        spl.attribute_varchar39 endSupplier,
+        spl.attribute_decimal3 endPrice,
+        spl.unit_price factoryPrice,
+        spl.attribute_varchar25 deliveryAddress,
+        spl.item_id materialId,
+        spl.item_code materialCoding,
+        sic.category_name materialClass,
+        spl.quantity requiredQuantity,
+        spl.uom_id uomId,
+        su.uom_name unitName,
+        spl.attribute_varchar38 freightSupplier,
+        spl.line_freight freightPrice,
+        spl.attribute_varchar39 priceTerms,
+        spl.remark remark,
+        spl.tax_id taxId,
+        spl.tax_code taxType,
+        spl.tax_rate taxRate,
+        spl.pr_requested_name lineApplicant,
+        spl.attribute_decimal4 totalPurchasePrice
+        FROM sprm_pr_header sph
+        LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
+        LEFT JOIN hpfm_company hc1 ON hc1.company_id = sph.parent_unit_id
+        LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
+        LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
+        LEFT JOIN hpfm_unit hu ON hu.unit_id = sph.unit_id
+        LEFT JOIN smdm_currency sc ON sc.currency_id = sph.original_currency
+        LEFT JOIN hpfm_operation_unit hou ON hou.ou_id = sph.attribute_bigint11
+        LEFT JOIN smdm_item si ON si.item_id = spl.item_id
+        LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
+        LEFT JOIN hpfm_company hc2 ON hc2.company_id = spl.company_id
+        LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
+        WHERE sph.lot_num = 'PO_PLAN'
+        AND sph.pr_header_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        ORDER BY sph.creation_date DESC
+    </select>
+
+    <!--    采购计划批量导出-->
+    <select id="batchExcel" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
+        SELECT distinct sph.pr_header_id poPlanHeaderId,
+        sph.tenant_id tenantId,
+        sph.title title,
+        sph.pr_status_code status,
+        sph.attribute_varchar23 planType,
+        sph.pr_num poPlanNumber,
+        sph.requested_by createId,
+        sph.pr_requested_name createName,
+        sph.attribute_datetime1 deadline,
+        sph.parent_unit_id companyId,
+        hc1.company_name companyName,
+        sph.attribute_bigint11 businessId,
+        hou.ou_name businessName,
+        sph.purchase_org_id purchaseOrgId,
+        hpo.organization_name purchaseOrgName,
+        sph.purchase_agent_id purchaseId,
+        hpa.purchase_agent_name purchaseName,
+        sph.pr_source_platform poSource,
+        sph.pr_requested_name applicant,
+        sph.unit_id departmentId,
+        hu.unit_name departmentName,
+        sph.request_date applicationDate,
+        sph.original_currency originalId,
+        sc.currency_name currencyName,
+        sph.attribute_varchar24 planIllustrate,
+        sph.creation_date creationDate,
+        spl.attribute_bigint14 spellDocProvince,
+        spl.needed_date needDate,
+        spl.attribute_longtext9 planSharedProvince,
+        spl.company_id provinceCompanyId,
+        hc2.company_name provinceCompany,
+        spl.product_name productName,
+        spl.attribute_varchar24 specification,
+        spl.supplier_id initialSupplierId,
+        spl.supplier_name initialSupplier,
+        spl.attribute_varchar39 endSupplier,
+        spl.attribute_decimal3 endPrice,
+        spl.unit_price factoryPrice,
+        spl.attribute_varchar25 deliveryAddress,
+        spl.item_id materialId,
+        spl.item_code materialCoding,
+        sic.category_name materialClass,
+        spl.quantity requiredQuantity,
+        spl.uom_id uomId,
+        su.uom_name unitName,
+        spl.attribute_varchar38 freightSupplier,
+        spl.line_freight freightPrice,
+        spl.attribute_varchar39 priceTerms,
+        spl.remark remark,
+        spl.tax_id taxId,
+        spl.tax_code taxType,
+        spl.tax_rate taxRate,
+        spl.pr_requested_name lineApplicant,
+        spl.attribute_decimal4 totalPurchasePrice
+        FROM sprm_pr_header sph
+        LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
+        LEFT JOIN hpfm_company hc1 ON hc1.company_id = sph.parent_unit_id
+        LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
+        LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
+        LEFT JOIN hpfm_unit hu ON hu.unit_id = sph.unit_id
+        LEFT JOIN smdm_currency sc ON sc.currency_id = sph.original_currency
+        LEFT JOIN hpfm_operation_unit hou ON hou.ou_id = sph.attribute_bigint11
+        LEFT JOIN smdm_item si ON si.item_id = spl.item_id
+        LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
+        LEFT JOIN hpfm_company hc2 ON hc2.company_id = spl.company_id
+        LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="serialNum != null and serialNum != ''">
+            AND spl.display_line_num = #{serialNum}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        GROUP BY sph.pr_header_id
+        ORDER BY sph.creation_date DESC
+    </select>
+
     <!--    采购计划头表查询参数-->
     <select id="list" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
@@ -199,97 +407,7 @@
             AND sph.lot_num = 'PO_PLAN'
         </if>
         GROUP BY sph.pr_header_id
-    </select>
-
-    <!--    根据头表id查询-->
-    <select id="selectByKey" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
-        <include refid="mappingChanges"/>
-        WHERE sph.pr_header_id = #{poPlanHeaderId}
-        GROUP BY sph.pr_header_id
-    </select>
-
-    <select id="getPoPlanHeaderId" resultType="java.lang.Long">
-        SELECT pr_header_id
-        FROM sprm_pr_header
-        ORDER BY pr_header_id DESC LIMIT 1
-    </select>
-
-    <!--    采购计划导出-->
-    <select id="excel" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
-        SELECT distinct sph.pr_header_id        poPlanHeaderId,
-                        sph.tenant_id           tenantId,
-                        sph.title               title,
-                        sph.pr_status_code      status,
-                        sph.attribute_varchar23 planType,
-                        sph.pr_num              poPlanNumber,
-                        sph.requested_by        createId,
-                        sph.pr_requested_name   createName,
-                        sph.attribute_datetime1 deadline,
-                        sph.parent_unit_id      companyId,
-                        hc1.company_name        companyName,
-                        sph.attribute_bigint11  businessId,
-                        hou.ou_name             businessName,
-                        sph.purchase_org_id     purchaseOrgId,
-                        hpo.organization_name   purchaseOrgName,
-                        sph.purchase_agent_id   purchaseId,
-                        hpa.purchase_agent_name purchaseName,
-                        sph.pr_source_platform  poSource,
-                        sph.pr_requested_name   applicant,
-                        sph.unit_id             departmentId,
-                        hu.unit_name            departmentName,
-                        sph.request_date        applicationDate,
-                        sph.original_currency   originalId,
-                        sc.currency_name        currencyName,
-                        sph.attribute_varchar24 planIllustrate,
-                        sph.creation_date       creationDate,
-                        spl.attribute_bigint14  spellDocProvince,
-                        spl.needed_date         needDate,
-                        spl.attribute_longtext9 planSharedProvince,
-                        spl.company_id          provinceCompanyId,
-                        hc2.company_name        provinceCompany,
-                        spl.product_name        productName,
-                        spl.attribute_varchar24 specification,
-                        spl.supplier_id         initialSupplierId,
-                        spl.supplier_name       initialSupplier,
-                        spl.attribute_varchar39 endSupplier,
-                        spl.attribute_decimal3  endPrice,
-                        spl.unit_price          factoryPrice,
-                        spl.attribute_varchar25 deliveryAddress,
-                        spl.item_id             materialId,
-                        spl.item_code           materialCoding,
-                        sic.category_name       materialClass,
-                        spl.quantity            requiredQuantity,
-                        spl.uom_id              uomId,
-                        su.uom_name             unitName,
-                        spl.attribute_varchar38 freightSupplier,
-                        spl.line_freight        freightPrice,
-                        spl.attribute_varchar39 priceTerms,
-                        spl.remark              remark,
-                        spl.tax_id              taxId,
-                        spl.tax_code            taxType,
-                        spl.tax_rate            taxRate,
-                        spl.pr_requested_name   lineApplicant,
-                        spl.attribute_decimal4  totalPurchasePrice,
-                        (SELECT SUM(attribute_decimal4) FROM sprm_pr_line WHERE pr_header_id = #{poPlanHeaderId})
-                                                applicationSum
-        FROM sprm_pr_header sph
-                 LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
-                 LEFT JOIN hpfm_company hc1 ON hc1.company_id = sph.parent_unit_id
-                 LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
-                 LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
-                 LEFT JOIN hpfm_unit hu ON hu.unit_id = sph.unit_id
-                 LEFT JOIN smdm_currency sc ON sc.currency_id = sph.original_currency
-                 LEFT JOIN hpfm_operation_unit hou ON hou.ou_id = sph.attribute_bigint11
-                 LEFT JOIN smdm_item si ON si.item_id = spl.item_id
-                 LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
-                 LEFT JOIN hpfm_company hc2 ON hc2.company_id = spl.company_id
-                 LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
-        WHERE sph.tenant_id = #{tenantId}
-          AND sph.lot_num = 'PO_PLAN'
-          AND sph.pr_header_id in
-        <foreach collection="list" item="id" open="(" close=")" separator=",">
-            #{id}
-        </foreach>
+        ORDER BY sph.creation_date DESC
     </select>
 
     <select id="maintain" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
@@ -304,12 +422,10 @@
             <bind name="titleLike" value="'%' + title + '%'"/>
             AND sph.title like #{titleLike}
         </if>
-        AND
-        AND sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
-        <if test="userCompany != null and userCompany != ''">
-            <bind name="userCompanyLike" value="'%:' + userCompany + ',%'"/>
-            AND spl.attribute_longtext9 like #{userCompanyLike}
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
         </if>
+        AND sph.pr_status_code in('SPLICING_DOC_MIDDLE','NEW')
         UNION
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
@@ -322,8 +438,13 @@
             <bind name="titleLike" value="'%' + title + '%'"/>
             AND sph.title like #{titleLike}
         </if>
-        AND sph.attribute_bigint11 in('SPLICING_DOC_MIDDLE','NEW')
-        AND sph.requested_by = #{createId}
+        AND sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
+        <if test="userCompany != null and userCompany != ''">
+            <bind name="userCompanyLike" value="'%:' + userCompany + ',%'"/>
+            AND spl.attribute_longtext9 like #{userCompanyLike}
+        </if>
+        GROUP BY sph.pr_header_id
+        ORDER BY establishDate DESC
     </select>
 
     <!--    导入数据校验-->
@@ -343,7 +464,9 @@
 
     <!--    根据员工id获取当前用户所在公司id和公司编码-->
     <select id="getDefaultCompanyId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
-        SELECT hc.company_id provinceCompanyId, hc.company_num provinceCompany
+        SELECT hc.company_id provinceCompanyId,
+               hc.company_name provinceCompany,
+               hc.company_num planSharedProvince
         FROM hpfm_employee_user heu
                  LEFT JOIN hpfm_employee_assign hea ON heu.employee_id = hea.employee_id
                  LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
@@ -367,5 +490,6 @@
         where hc.company_id = #{provinceCompanyId}
            or iu.real_name = "王刚"
     </select>
+
 
 </mapper>

@@ -1,25 +1,16 @@
 package org.srm.purchasecooperation.cux.app.service.impl;
 
-import cfca.org.slf4j.Logger;
-import cfca.org.slf4j.LoggerFactory;
-import io.choerodon.core.oauth.CustomUserDetails;
-import io.choerodon.core.oauth.DetailsHelper;
 import org.hzero.boot.message.MessageClient;
 import org.hzero.boot.message.entity.Receiver;
-import org.hzero.boot.platform.lov.adapter.LovAdapter;
 import org.hzero.core.base.BaseConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.srm.purchasecooperation.cux.api.dto.MessageSenderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
-import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstant;
-import org.srm.purchasecooperation.cux.infra.repository.impl.SinochemintlPoPlanHeaderRepositoryImpl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

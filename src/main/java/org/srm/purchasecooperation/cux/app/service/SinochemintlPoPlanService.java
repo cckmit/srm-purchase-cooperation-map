@@ -7,7 +7,6 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.pr.api.dto.PrActionDTO;
-import org.srm.purchasecooperation.pr.domain.entity.PrAction;
 
 import java.util.List;
 
@@ -76,7 +75,7 @@ public interface SinochemintlPoPlanService {
      * @param ids 勾选的头表id
      * @return 需要导出的结果
      */
-    List<SinochemintlPoPlanExcelDTO> excel(List<Long> ids);
+    List<SinochemintlPoPlanExcelDTO> excel(String ids);
 
     /**
      * 采购计划确认
@@ -111,4 +110,27 @@ public interface SinochemintlPoPlanService {
      * @return 操作记录
      */
     Page<PrActionDTO> operatingRecord(Long organizationId, Long poPlanHeaderId, PageRequest pageRequest);
+
+    /**
+     * 批量维护
+     *
+     * @param dto 批量维护信息
+     */
+    void batchMaint(SinochemintlPoPlanLineDTO dto);
+
+    /**
+     * 拼单
+     *
+     * @param poPlanLineId 拼单数据
+     * @return 结果
+     */
+    SinochemintlPoPlanLineDTO shareTheBill(Long poPlanLineId);
+
+    /**
+     * 采购计划批量导出
+     *
+     * @param dto         查询数据
+     * @return 结果
+     */
+    List<SinochemintlPoPlanExcelDTO> batchExcel(SinochemintlPoPlanHeaderDTO dto);
 }

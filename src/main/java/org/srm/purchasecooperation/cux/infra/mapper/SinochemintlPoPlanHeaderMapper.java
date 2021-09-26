@@ -61,7 +61,7 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @param ids 勾选的头表id
      * @return 需要导出的结果
      */
-    List<SinochemintlPoPlanExcelDTO> excel(List<Long> ids);
+    List<SinochemintlPoPlanExcelDTO> excel(List<String> ids);
 
     List<SinochemintlPoPlanHeaderDTO> maintain(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
@@ -90,8 +90,17 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
 
     /**
      * 通过省区代码，获取对应人员
+     *
      * @param provinceCompanyId
      * @return
      */
     List<SinochemintlEmployeeInformationDTO> getDefaultEmployeeList(Long provinceCompanyId);
+
+    /**
+     * 采购计划批量导出
+     *
+     * @param dto 查询数据
+     * @return 结果
+     */
+    List<SinochemintlPoPlanExcelDTO> batchExcel(SinochemintlPoPlanHeaderDTO dto);
 }

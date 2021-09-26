@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 采购计划行表资源库
@@ -73,4 +72,11 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
      * @return 省区
      */
     List<SinochemintlPoPlanLineDTO> sharedProvinceVerify(List<String> planSharedProvince);
+
+    /**
+     * 批量维护
+     *
+     * @param dto 批量维护信息
+     */
+    void batchMaint(SinochemintlPoPlanLineDTO dto);
 }
