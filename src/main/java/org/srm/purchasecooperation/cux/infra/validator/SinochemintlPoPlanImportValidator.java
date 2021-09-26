@@ -8,8 +8,13 @@ import org.hzero.boot.imported.infra.validator.annotation.ImportValidators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
+import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 采购计划行表导入校验
@@ -26,6 +31,9 @@ public class SinochemintlPoPlanImportValidator extends ValidatorHandler {
 
     @Autowired
     private SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository;
+
+    @Autowired
+    private SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SinochemintlPoPlanImportValidator.class);
 
@@ -51,28 +59,41 @@ public class SinochemintlPoPlanImportValidator extends ValidatorHandler {
      */
     private boolean checkData(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
         //供应商名称必填
-        SinochemintlPoPlanLineDTO importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
-        if (importVerify.getProvinceCompanyId() != null) {
+        SinochemintlPoPlanLineDTO importVerify;
+        if ("人民币".equals(sinochemintlPoPlanLineDTO.getCurrencyName())) {
+            sinochemintlPoPlanLineDTO.setCurrencyName("");
+            importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
+            sinochemintlPoPlanLineDTO.setCurrencyId("304");
+        } else {
+            importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
+        }
+        List<String> planSharedProvince = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().split("、"));
+        List<SinochemintlPoPlanLineDTO> planSharedProvinceName = sinochemintlPoPlanLineRepository.sharedProvinceVerify(planSharedProvince);
+        if (planSharedProvinceName.size() != planSharedProvince.size()) {
+            getContext().addErrorMsg("共享计划省区:" + sinochemintlPoPlanLineDTO.getPlanSharedProvince() + "不存在！");
+            return false;
+        }
+        if (StringUtils.isEmpty(importVerify.getProvinceCompanyId())) {
             getContext().addErrorMsg("省公司/项目:" + sinochemintlPoPlanLineDTO.getProvinceCompany() + ",不存在！");
             return false;
         }
-        if (importVerify.getInitialSupplierId() != null) {
+        if (StringUtils.isEmpty(importVerify.getInitialSupplierId())) {
             getContext().addErrorMsg("初步沟通供应商:" + sinochemintlPoPlanLineDTO.getInitialSupplier() + ",不存在！");
             return false;
         }
-        if (importVerify.getMaterialId() != null) {
+        if (!StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getMaterialCoding()) && StringUtils.isEmpty(importVerify.getMaterialId())) {
             getContext().addErrorMsg("物料编码:" + sinochemintlPoPlanLineDTO.getMaterialCoding() + ",不存在！");
             return false;
         }
-        if (importVerify.getUomId() != null) {
+        if (StringUtils.isEmpty(importVerify.getUomId())) {
             getContext().addErrorMsg("单位:" + sinochemintlPoPlanLineDTO.getUnitName() + ",不存在！");
             return false;
         }
-        if (importVerify.getCurrencyId() != null) {
+        if (StringUtils.isEmpty(importVerify.getCurrencyId())) {
             getContext().addErrorMsg("币种:" + sinochemintlPoPlanLineDTO.getCurrencyName() + ",不存在！");
             return false;
         }
-        if (importVerify.getTaxId() != null) {
+        if (!StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getTaxType()) && StringUtils.isEmpty(importVerify.getTaxId())) {
             getContext().addErrorMsg("税种:" + sinochemintlPoPlanLineDTO.getTaxType() + ",不存在！");
             return false;
         }

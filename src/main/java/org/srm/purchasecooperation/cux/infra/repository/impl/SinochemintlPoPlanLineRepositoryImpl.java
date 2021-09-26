@@ -3,11 +3,13 @@ package org.srm.purchasecooperation.cux.infra.repository.impl;
 import org.hzero.mybatis.base.impl.BaseRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 import org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanLineMapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 采购计划行表 资源库实现
@@ -51,7 +53,23 @@ public class SinochemintlPoPlanLineRepositoryImpl extends BaseRepositoryImpl<Sin
     }
 
     @Override
-    public Integer getSerialNum(String poPlanHeaderId) {
-        return sinochemintlPoPlanLineMapper.getSerialNum(poPlanHeaderId);
+    public Integer getSerialNum(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
+        return sinochemintlPoPlanLineMapper.getSerialNum(sinochemintlPoPlanLineDTO);
     }
+
+    @Override
+    public Integer getDisplayLineNum(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
+        return sinochemintlPoPlanLineMapper.getDisplayLineNum(sinochemintlPoPlanLineDTO);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanLineDTO> sharedProvinceVerify(List<String> planSharedProvince) {
+        return sinochemintlPoPlanLineMapper.sharedProvinceVerify(planSharedProvince);
+    }
+
+    @Override
+    public void batchMaint(SinochemintlPoPlanLineDTO dto) {
+        sinochemintlPoPlanLineMapper.batchMaint(dto);
+    }
+
 }

@@ -61,5 +61,22 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
     /**
      * 获取当前排序
      */
-    Integer getSerialNum(String poPlanHeaderId);
+    Integer getSerialNum(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
+
+    Integer getDisplayLineNum(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
+
+    /**
+     * 共享计划省区校验
+     *
+     * @param planSharedProvince 共享计划省区
+     * @return 省区
+     */
+    List<SinochemintlPoPlanLineDTO> sharedProvinceVerify(List<String> planSharedProvince);
+
+    /**
+     * 批量维护
+     *
+     * @param dto 批量维护信息
+     */
+    void batchMaint(SinochemintlPoPlanLineDTO dto);
 }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlConstant;
-import shapeless.the;
 
 import java.util.Date;
 import java.util.Map;
