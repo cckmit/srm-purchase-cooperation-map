@@ -72,4 +72,8 @@ public class SinochemintlPoPlanLineRepositoryImpl extends BaseRepositoryImpl<Sin
         sinochemintlPoPlanLineMapper.batchMaint(dto);
     }
 
+    @Override
+    public List<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
+        return sinochemintlPoPlanLineMapper.detailList(sinochemintlPoPlanHeaderDTO);
+    }
 }

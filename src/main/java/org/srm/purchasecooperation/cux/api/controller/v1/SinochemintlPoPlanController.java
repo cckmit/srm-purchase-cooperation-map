@@ -59,6 +59,17 @@ public class SinochemintlPoPlanController extends BaseController {
         return Results.success(list);
     }
 
+    @ApiOperation(value = "采购计划明细查询")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/detailList")
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
+    public ResponseEntity<Page<SinochemintlPoPlanLineDTO>> detailList(@PathVariable("organizationId") Long organizationId, SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO, @ApiIgnore @SortDefault(value = "poPlanHeaderId",
+            direction = Sort.Direction.DESC) PageRequest pageRequest) {
+        sinochemintlPoPlanHeaderDTO.setTenantId(organizationId);
+        Page<SinochemintlPoPlanLineDTO> list = sinochemintlPoPlanHeaderService.detailList(sinochemintlPoPlanHeaderDTO, pageRequest);
+        return Results.success(list);
+    }
+
     @ApiOperation(value = "新增/保存/修改采购计划")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/addPoPlan")
@@ -193,10 +204,11 @@ public class SinochemintlPoPlanController extends BaseController {
 
     @ApiOperation(value = "拼单")
     @Permission(level = ResourceLevel.ORGANIZATION)
-    @GetMapping("/shareTheBill/{poPlanLineId}")
+    @PostMapping("/shareTheBill")
     public ResponseEntity<SinochemintlPoPlanLineDTO> shareBill(@PathVariable("organizationId") Long organizationId,
-                                                               @Encrypt @PathVariable("poPlanLineId") Long poPlanLineId) {
-        SinochemintlPoPlanLineDTO response = sinochemintlPoPlanHeaderService.shareTheBill(poPlanLineId);
+                                                               @RequestBody @Encrypt SinochemintlPoPlanLineDTO dto) {
+        dto.setTenantId(organizationId);
+        SinochemintlPoPlanLineDTO response = sinochemintlPoPlanHeaderService.shareTheBill(dto);
         return Results.success(response);
     }
 

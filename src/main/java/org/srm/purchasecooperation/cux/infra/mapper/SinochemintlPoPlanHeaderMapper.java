@@ -1,6 +1,7 @@
 package org.srm.purchasecooperation.cux.infra.mapper;
 
 import io.choerodon.mybatis.common.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
@@ -78,7 +79,14 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      *
      * @param date 当前时间
      */
-    void timedTaskAlterState(Date date);
+    void timedTaskAlterState(@Param("date") Date date, @Param("status") String status);
+
+    /**
+     * 根据拼单截至时间获取订单信息
+     *
+     * @param date 当前时间
+     */
+    List<SinochemintlPoPlanHeaderDTO> timedTaskHeader(Date date);
 
     /**
      * 根据员工id获取当前用户所在公司id和公司编码
@@ -86,7 +94,7 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @param employeeId 员工id
      * @return 公司id和公司编码
      */
-    SinochemintlPoPlanLineDTO getDefaultCompanyId(Long employeeId);
+    List<SinochemintlPoPlanLineDTO> getDefaultCompanyId(Long employeeId);
 
     /**
      * 通过省区代码，获取对应人员
@@ -103,4 +111,12 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @return 结果
      */
     List<SinochemintlPoPlanExcelDTO> batchExcel(SinochemintlPoPlanHeaderDTO dto);
+
+    /**
+     * 获取快到期采购计划
+     *
+     * @param date 截至时间
+     * @return 头数据
+     */
+    List<SinochemintlPoPlanHeaderDTO> getExpirationTime(Date date);
 }

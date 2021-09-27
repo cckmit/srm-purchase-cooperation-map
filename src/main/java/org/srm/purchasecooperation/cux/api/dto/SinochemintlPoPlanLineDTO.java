@@ -109,6 +109,49 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     @ApiModelProperty(value = "附件id")
     private String appendixId;
 
+    @ApiModelProperty(value = "标题", required = true)
+    private String title;
+    @ApiModelProperty(value = "采购计划单号", required = true)
+    private String poPlanNumber;
+    @ApiModelProperty(value = "计划类型", required = true)
+    private String planType;
+    @ApiModelProperty(value = "拼单截至时间", required = true)
+    @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
+    @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
+    private Date deadline;
+    @ApiModelProperty(value = "公司ID(SPFM.USER_AUTH.COMPANY)")
+    private Long companyId;
+    @ApiModelProperty(value = "公司", required = true)
+    private String companyName;
+    @ApiModelProperty(value = "业务实体ID(SPFM.USER_AUTH.OU)")
+    private Long businessId;
+    @ApiModelProperty(value = "业务实体", required = true)
+    private String businessName;
+    @ApiModelProperty(value = "采购组织ID(HPFM.PURCHASE_ORGANIZATION_M)")
+    private Long purchaseOrgId;
+    @ApiModelProperty(value = "采购组织", required = true)
+    private String purchaseOrgName;
+    @ApiModelProperty(value = "采购员ID(SPUC.PURCHASE_AGENT)")
+    private Long purchaseId;
+    @ApiModelProperty(value = "采购员", required = true)
+    private String purchaseName;
+    @ApiModelProperty(value = "部门ID(SPUC.SD_PH_UNIT)")
+    private Long departmentId;
+    @ApiModelProperty(value = "所属部门", required = true)
+    private String departmentName;
+    @ApiModelProperty(value = "创建人id")
+    private Long createId;
+    @ApiModelProperty(value = "创建人", required = true)
+    private String createName;
+    @ApiModelProperty(value = "创建日期")
+    @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
+    @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
+    private Date establishDate;
+    @ApiModelProperty(value = "申请总额", required = true)
+    private BigDecimal applicationSum;
+    @ApiModelProperty(value = "申请最终总额", required = true)
+    private BigDecimal applicationFinalSum;
+
 //
 // 非数据库字段
 // ------------------------------------------------------------------------------
@@ -136,6 +179,158 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
 
     public void setPlanSharedProvinceName(List<Map<String, Object>> planSharedProvinceName) {
         this.planSharedProvinceName = planSharedProvinceName;
+    }
+
+    public String getPlanType() {
+        return planType;
+    }
+
+    public void setPlanType(String planType) {
+        this.planType = planType;
+    }
+
+    public Date getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(Date deadline) {
+        this.deadline = deadline;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public Long getBusinessId() {
+        return businessId;
+    }
+
+    public void setBusinessId(Long businessId) {
+        this.businessId = businessId;
+    }
+
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
+    }
+
+    public Long getPurchaseOrgId() {
+        return purchaseOrgId;
+    }
+
+    public void setPurchaseOrgId(Long purchaseOrgId) {
+        this.purchaseOrgId = purchaseOrgId;
+    }
+
+    public String getPurchaseOrgName() {
+        return purchaseOrgName;
+    }
+
+    public void setPurchaseOrgName(String purchaseOrgName) {
+        this.purchaseOrgName = purchaseOrgName;
+    }
+
+    public Long getPurchaseId() {
+        return purchaseId;
+    }
+
+    public void setPurchaseId(Long purchaseId) {
+        this.purchaseId = purchaseId;
+    }
+
+    public String getPurchaseName() {
+        return purchaseName;
+    }
+
+    public void setPurchaseName(String purchaseName) {
+        this.purchaseName = purchaseName;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public Long getCreateId() {
+        return createId;
+    }
+
+    public void setCreateId(Long createId) {
+        this.createId = createId;
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName;
+    }
+
+    public Date getEstablishDate() {
+        return establishDate;
+    }
+
+    public void setEstablishDate(Date establishDate) {
+        this.establishDate = establishDate;
+    }
+
+    public BigDecimal getApplicationSum() {
+        return applicationSum;
+    }
+
+    public void setApplicationSum(BigDecimal applicationSum) {
+        this.applicationSum = applicationSum;
+    }
+
+    public BigDecimal getApplicationFinalSum() {
+        return applicationFinalSum;
+    }
+
+    public void setApplicationFinalSum(BigDecimal applicationFinalSum) {
+        this.applicationFinalSum = applicationFinalSum;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPoPlanNumber() {
+        return poPlanNumber;
+    }
+
+    public void setPoPlanNumber(String poPlanNumber) {
+        this.poPlanNumber = poPlanNumber;
     }
 
     public Integer getDisplayLineNum() {

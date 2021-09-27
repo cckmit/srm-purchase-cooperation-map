@@ -77,7 +77,7 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     private String poSource;
     @ApiModelProperty(value = "申请人", required = true)
     private String applicant;
-    @ApiModelProperty(value = "部门ID(SPUC.SD_PH_UNIT)")
+    @ApiModelProperty(value = "部门ID(SSRC.CREATED_UNIT)")
     private Long departmentId;
     @ApiModelProperty(value = "所属部门", required = true)
     private String departmentName;
