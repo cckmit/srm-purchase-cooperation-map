@@ -10,8 +10,10 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanHeaderMapper;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 采购计划头表 资源库实现
@@ -72,6 +74,11 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     @Override
     public void timedTaskAlterState(Date date, String status) {
         sinochemintlPoPlanHeaderMapper.timedTaskAlterState(date, status);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanHeaderDTO> timedTaskHeader(Date date) {
+        return sinochemintlPoPlanHeaderMapper.timedTaskHeader(date);
     }
 
     @Override

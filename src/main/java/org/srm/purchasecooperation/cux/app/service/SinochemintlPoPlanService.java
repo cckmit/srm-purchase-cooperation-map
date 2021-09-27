@@ -142,4 +142,10 @@ public interface SinochemintlPoPlanService {
      * @return 查询结果
      */
     Page<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO, PageRequest pageRequest);
+    /**
+     * 采购计划拼单截止时间到达通知（定时任务触发）
+     *
+     */
+    void timedTaskHeader();
+
 }

@@ -16,6 +16,7 @@ import org.srm.purchasecooperation.cux.api.dto.MessageSenderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.app.service.impl.SinochemintlSendMessageService;
+import org.srm.purchasecooperation.cux.app.service.SinochemintlPoPlanService;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlConstant;
@@ -39,6 +40,8 @@ public class SinochemintlPoPlanHandler implements IJobHandler {
 
     @Autowired
     private SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository;
+    @Autowired
+    private SinochemintlPoPlanService sinochemintlPoPlanService;
 
     @Autowired
     private SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository;
@@ -51,8 +54,11 @@ public class SinochemintlPoPlanHandler implements IJobHandler {
 
     @Override
     public ReturnT execute(Map<String, String> map, SchedulerTool tool) {
-
-        sinochemintlPoPlanHeaderRepository.timedTaskAlterState(new Date());
+        tool.updateProgress(1, "任务开始...");
+        sinochemintlPoPlanService.timedTaskHeader();
+        sinochemintlPoPlanHeaderRepository.timedTaskAlterState(new Date(), SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_COMPLETE);
+        tool.updateProgress(99, "任务结束...");
+        tool.info("任务执行完毕了...");
         //校验快到期采购计划
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());

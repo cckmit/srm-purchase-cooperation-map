@@ -90,6 +90,13 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
     void timedTaskAlterState(Date date, String status);
 
     /**
+     * 根据拼单截至时间获取订单信息
+     *
+     * @param date 当前时间
+     */
+    List<SinochemintlPoPlanHeaderDTO> timedTaskHeader(Date date);
+
+    /**
      * 根据员工id获取当前用户所在公司id和公司编码
      *
      * @param employeeId 员工id

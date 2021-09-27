@@ -136,6 +136,14 @@
           and pr_status_code = 'SPLICING_DOC_MIDDLE'
     </update>
 
+    <!--    根据拼单截至时间获取订单信息-->
+    <select id="timedTaskHeader" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        where sph.attribute_datetime1 &lt; #{date}
+        and sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
+        and previous_pr_status_code is not null
+    </select>
+
     <!--    根据头表id删除-->
     <delete id="deleteByKey">
         DELETE
