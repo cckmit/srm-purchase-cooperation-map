@@ -87,7 +87,7 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
      *
      * @param date 当前时间
      */
-    void timedTaskAlterState(Date date);
+    void timedTaskAlterState(Date date, String status);
 
     /**
      * 根据员工id获取当前用户所在公司id和公司编码

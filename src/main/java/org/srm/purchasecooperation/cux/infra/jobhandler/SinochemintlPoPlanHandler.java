@@ -23,6 +23,7 @@ import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstan
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 定时任务 : 根据拼单截至时间修改状态
@@ -77,6 +78,7 @@ public class SinochemintlPoPlanHandler implements IJobHandler {
                 }
                 for (Integer aLong : longs) {
                     List<Receiver> receiverList = new ArrayList<>(sinochemintlSendMessageService.getReceiverList(String.valueOf(aLong)));
+                    receiverList = receiverList.stream().distinct().collect(Collectors.toList());
                     try {
                         Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
                         paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
@@ -89,6 +91,7 @@ public class SinochemintlPoPlanHandler implements IJobHandler {
                 }
             }
         }
+        sinochemintlPoPlanHeaderRepository.timedTaskAlterState(cal.getTime(), SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_MIDDLE);
         return ReturnT.SUCCESS;
     }
 

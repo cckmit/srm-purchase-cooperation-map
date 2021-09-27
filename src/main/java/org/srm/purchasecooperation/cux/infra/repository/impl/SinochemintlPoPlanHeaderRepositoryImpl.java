@@ -70,8 +70,8 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     }
 
     @Override
-    public void timedTaskAlterState(Date date) {
-        sinochemintlPoPlanHeaderMapper.timedTaskAlterState(date);
+    public void timedTaskAlterState(Date date, String status) {
+        sinochemintlPoPlanHeaderMapper.timedTaskAlterState(date, status);
     }
 
     @Override

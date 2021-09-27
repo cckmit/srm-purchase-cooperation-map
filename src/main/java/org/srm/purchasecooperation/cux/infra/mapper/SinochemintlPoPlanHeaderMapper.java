@@ -1,6 +1,7 @@
 package org.srm.purchasecooperation.cux.infra.mapper;
 
 import io.choerodon.mybatis.common.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
@@ -78,7 +79,7 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      *
      * @param date 当前时间
      */
-    void timedTaskAlterState(Date date);
+    void timedTaskAlterState(@Param("date") Date date, @Param("status") String status);
 
     /**
      * 根据员工id获取当前用户所在公司id和公司编码

@@ -130,7 +130,8 @@
     <!--    根据拼单截至时间修改状态-->
     <update id="timedTaskAlterState">
         update sprm_pr_header
-        set pr_status_code = 'SPLICING_DOC_COMPLETE'
+        set pr_status_code = #{status},
+            previous_pr_status_code = 'SENT'
         where attribute_datetime1 &lt; #{date}
           and pr_status_code = 'SPLICING_DOC_MIDDLE'
     </update>
@@ -499,8 +500,9 @@
     <select id="getExpirationTime"
             resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
-        where sph.attribute_datetime1 > #{date}
+        where sph.attribute_datetime1 &lt; #{date}
         and sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
+        and previous_pr_status_code is not null
     </select>
 
 
