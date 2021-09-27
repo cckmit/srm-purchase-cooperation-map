@@ -133,6 +133,12 @@
         where attribute_datetime1 &lt; #{date}
     </update>
 
+    <!--    根据拼单截至时间获取订单信息-->
+    <select id="timedTaskHeader" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        where sph.attribute_datetime1 &lt; #{date}
+    </select>
+
     <!--    根据头表id删除-->
     <delete id="deleteByKey">
         DELETE

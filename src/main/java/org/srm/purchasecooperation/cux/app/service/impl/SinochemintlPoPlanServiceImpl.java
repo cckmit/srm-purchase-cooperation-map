@@ -385,4 +385,42 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         sinochemintlPoPlanHeaderRepository.updateByKey(dto);
     }
 
+    @Override
+    public void timedTaskHeader() {
+        CustomUserDetails self = DetailsHelper.getUserDetails();
+        Long organizationId = self.getOrganizationId();
+        List<SinochemintlPoPlanHeaderDTO> poPlanHeaders = sinochemintlPoPlanHeaderRepository.timedTaskHeader(new Date());
+        for (SinochemintlPoPlanHeaderDTO poPlanHeader:poPlanHeaders) {
+            List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = sinochemintlPoPlanLineRepository.selectByHeaderId(organizationId, poPlanHeader.getPoPlanHeaderId());
+            for (SinochemintlPoPlanLineDTO poPlanLine : sinochemintlPoPlanLineList) {
+                if (poPlanLine == null) {
+                    throw new CommonException(SinochemintlConstant.ErrorCode.ERROR_LINE_NO_DATA);
+                }
+                if (!StringUtils.isEmpty(poPlanLine.getSpellDocProvince())) {
+                    List<String> strings = Arrays.asList(poPlanLine.getPlanSharedProvince().substring(1).split("\\|"));
+                    if (strings.size() == poPlanLine.getSpellDocProvince()) {
+                        if (poPlanLine.getSpellDocProvince() != 1) {
+                            List<Receiver> receiverList = new ArrayList<>();
+                            for (String string : strings) {
+                                receiverList.addAll(sinochemintlSendMessageService.getReceiverList(string));
+                            }
+                            receiverList = receiverList.stream().distinct().collect(Collectors.toList());
+                            try {
+                                Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
+                                paramMap.putAll(sinochemintlSendMessageService.getCommonParam(poPlanHeader));
+                                sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
+                                sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
+                                sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                            } catch (IllegalArgumentException e) {
+                                logger.error("Message sending failure:{}", receiverList);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
 }

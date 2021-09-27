@@ -82,4 +82,10 @@ public interface SinochemintlPoPlanService {
      */
     void confirm(SinochemintlPoPlanHeaderDTO dto);
 
+    /**
+     * 采购计划拼单截止时间到达通知（定时任务触发）
+     *
+     */
+    void timedTaskHeader();
+
 }

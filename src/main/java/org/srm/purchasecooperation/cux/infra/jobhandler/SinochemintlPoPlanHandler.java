@@ -6,9 +6,9 @@ import org.hzero.boot.scheduler.infra.handler.IJobHandler;
 import org.hzero.boot.scheduler.infra.tool.SchedulerTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.srm.purchasecooperation.cux.app.service.SinochemintlPoPlanService;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlConstant;
-import shapeless.the;
 
 import java.util.Date;
 import java.util.Map;
@@ -24,10 +24,16 @@ public class SinochemintlPoPlanHandler implements IJobHandler {
 
     @Autowired
     private SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository;
+    @Autowired
+    private SinochemintlPoPlanService sinochemintlPoPlanService;
 
     @Override
     public ReturnT execute(Map<String, String> map, SchedulerTool tool) {
+        tool.updateProgress(1, "任务开始...");
+        sinochemintlPoPlanService.timedTaskHeader();
         sinochemintlPoPlanHeaderRepository.timedTaskAlterState(new Date());
+        tool.updateProgress(99, "任务结束...");
+        tool.info("任务执行完毕了...");
         return ReturnT.SUCCESS;
     }
 
