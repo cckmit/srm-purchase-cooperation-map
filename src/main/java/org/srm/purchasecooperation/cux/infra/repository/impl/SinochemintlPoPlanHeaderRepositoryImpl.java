@@ -75,7 +75,7 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     }
 
     @Override
-    public SinochemintlPoPlanLineDTO getDefaultCompanyId(Long employeeId) {
+    public List<SinochemintlPoPlanLineDTO> getDefaultCompanyId(Long employeeId) {
         return sinochemintlPoPlanHeaderMapper.getDefaultCompanyId(employeeId);
     }
 
@@ -87,5 +87,10 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     @Override
     public List<SinochemintlPoPlanExcelDTO> batchExcel(SinochemintlPoPlanHeaderDTO dto) {
         return sinochemintlPoPlanHeaderMapper.batchExcel(dto);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanHeaderDTO> getExpirationTime(Date date) {
+        return sinochemintlPoPlanHeaderMapper.getExpirationTime(date);
     }
 }

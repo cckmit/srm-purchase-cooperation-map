@@ -2,6 +2,7 @@ package org.srm.purchasecooperation.cux.infra.mapper;
 
 import io.choerodon.mybatis.common.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
 import java.util.List;
@@ -77,4 +78,12 @@ public interface SinochemintlPoPlanLineMapper extends BaseMapper<SinochemintlPoP
      * @param dto 批量维护信息
      */
     void batchMaint(SinochemintlPoPlanLineDTO dto);
+
+    /**
+     * 采购计划明细查询
+     *
+     * @param sinochemintlPoPlanHeaderDTO 查询条件
+     * @return 查询结果
+     */
+    List<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 }

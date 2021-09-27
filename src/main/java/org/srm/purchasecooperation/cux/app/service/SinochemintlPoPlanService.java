@@ -121,16 +121,25 @@ public interface SinochemintlPoPlanService {
     /**
      * 拼单
      *
-     * @param poPlanLineId 拼单数据
+     * @param dto 拼单数据
      * @return 结果
      */
-    SinochemintlPoPlanLineDTO shareTheBill(Long poPlanLineId);
+    SinochemintlPoPlanLineDTO shareTheBill(SinochemintlPoPlanLineDTO dto);
 
     /**
      * 采购计划批量导出
      *
-     * @param dto         查询数据
+     * @param dto 查询数据
      * @return 结果
      */
     List<SinochemintlPoPlanExcelDTO> batchExcel(SinochemintlPoPlanHeaderDTO dto);
+
+    /**
+     * 采购计划明细查询
+     *
+     * @param sinochemintlPoPlanHeaderDTO 查询条件
+     * @param pageRequest                 分页参数
+     * @return 查询结果
+     */
+    Page<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO, PageRequest pageRequest);
 }

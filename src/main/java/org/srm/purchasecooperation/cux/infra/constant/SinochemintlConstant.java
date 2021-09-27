@@ -15,6 +15,7 @@ public class SinochemintlConstant {
         String ERROR_PARAMETER_ERROR = "参数错误！";
         String ERROR_NON_NEW_NOT_CANCEL = "非新建的单据不能取消！";
         String ERROR_RESULTS_NOT_ENTERED = "定点结果尚未录入，请进行录入！";
+        String ERROR_SHARED_PROVINCE_CORRE = "只有共享省区对应人才可以进行拼单！";
         String ERROR_NOT_FOUNDER = "只有创建人才可以最终确认采购计划！";
         String ERROR_NOT_FOUNDER_CANCEL = "只有创建人才可以最终确认采购计划！";
     }

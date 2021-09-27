@@ -3,6 +3,7 @@ package org.srm.purchasecooperation.cux.domain.repository;
 
 import org.hzero.mybatis.base.BaseRepository;
 import org.springframework.stereotype.Component;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
 import java.util.List;
@@ -79,4 +80,12 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
      * @param dto 批量维护信息
      */
     void batchMaint(SinochemintlPoPlanLineDTO dto);
+
+    /**
+     * 采购计划明细查询
+     *
+     * @param sinochemintlPoPlanHeaderDTO 查询条件
+     * @return 查询结果
+     */
+    List<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 }

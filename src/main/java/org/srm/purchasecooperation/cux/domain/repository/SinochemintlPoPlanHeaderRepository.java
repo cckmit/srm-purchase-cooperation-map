@@ -95,7 +95,7 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
      * @param employeeId 员工id
      * @return 公司id和公司编码
      */
-    SinochemintlPoPlanLineDTO getDefaultCompanyId(Long employeeId);
+    List<SinochemintlPoPlanLineDTO> getDefaultCompanyId(Long employeeId);
 
     /**
      * 通过省区代码，获取对应人员
@@ -112,4 +112,12 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
      * @return 结果
      */
     List<SinochemintlPoPlanExcelDTO> batchExcel(SinochemintlPoPlanHeaderDTO dto);
+
+    /**
+     * 获取快到期采购计划
+     *
+     * @param date 截至时间
+     * @return 头数据
+     */
+    List<SinochemintlPoPlanHeaderDTO> getExpirationTime(Date date);
 }

@@ -9,6 +9,7 @@ public class SinochemintlMessageConstant {
 
     public static String Message_Input_Template_Code = "SPUC_PURCHASE_RESULTS_INPUT_NOTIFICATION";
     public static String Message_Submit_Template_Code = "SPUC.PURCHASE_PLAN_SUBMISSION_NOTICE";
+    public static String MESSAGE_INFORM_ADVANCE_CODE = "SPUC.PURCHASE.INFORM_ADVANCE";
     public static String Web_Message_Language_Chinese = "zh_CN";
     public static String Web_Message_Language_English = "en_US";
     /**
