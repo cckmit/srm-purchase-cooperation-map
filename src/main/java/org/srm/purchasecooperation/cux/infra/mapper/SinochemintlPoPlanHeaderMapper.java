@@ -119,4 +119,28 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @return 头数据
      */
     List<SinochemintlPoPlanHeaderDTO> getExpirationTime(Date date);
+
+    /**
+     * 如果公司唯一则查询业务实体
+     *
+     * @param companyId 公司id
+     * @return 查询结果
+     */
+    List<SinochemintlPoPlanHeaderDTO> verifyBusiness(Long companyId);
+
+    /**
+     * 如果业务实体唯一查询所在部门是否唯一
+     *
+     * @param businessId 业务实体id
+     * @return 查询结果
+     */
+    List<SinochemintlPoPlanHeaderDTO> verifyDepartment(Long businessId);
+
+    /**
+     * 如果业务实体唯一查询采购组织
+     *
+     * @param businessId 业务实体id
+     * @return 查询结果
+     */
+    List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId);
 }

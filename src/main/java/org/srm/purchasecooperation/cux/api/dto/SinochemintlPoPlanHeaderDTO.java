@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 采购计划头表
@@ -116,6 +117,9 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
 
     @Transient
     @ApiModelProperty(value = "行表数据")
+    private Set<Long> poPlanLineIds;
+    @Transient
+    @ApiModelProperty(value = "行表数据")
     private List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList;
 
     public List<SinochemintlPoPlanLineDTO> getSinochemintlPoPlanLineList() {
@@ -124,6 +128,14 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
 
     public void setSinochemintlPoPlanLineList(List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList) {
         this.sinochemintlPoPlanLineList = sinochemintlPoPlanLineList;
+    }
+
+    public Set<Long> getPoPlanLineIds() {
+        return poPlanLineIds;
+    }
+
+    public void setPoPlanLineIds(Set<Long> poPlanLineIds) {
+        this.poPlanLineIds = poPlanLineIds;
     }
 
     public BigDecimal getApplicationFinalSum() {

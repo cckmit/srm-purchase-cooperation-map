@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -88,4 +89,6 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
      * @return 查询结果
      */
     List<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
+
+    HashSet<Long> verifyPlanSharedProvince(String provinceCompany);
 }

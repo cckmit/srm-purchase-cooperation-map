@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -86,4 +87,6 @@ public interface SinochemintlPoPlanLineMapper extends BaseMapper<SinochemintlPoP
      * @return 查询结果
      */
     List<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
+
+    HashSet<Long> verifyPlanSharedProvince(@Param(value = "provinceCompany") String provinceCompany);
 }
