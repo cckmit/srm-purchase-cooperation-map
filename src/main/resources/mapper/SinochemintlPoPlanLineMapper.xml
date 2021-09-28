@@ -204,7 +204,7 @@
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{organizationId}
         and sph.pr_header_id = #{poPlanHeaderId}
-        GROUP BY display_line_num
+        ORDER BY display_line_num
     </select>
 
     <!--    获取共享计划省区-->
@@ -221,8 +221,7 @@
         SELECT line_num
         FROM sprm_pr_line
         where pr_header_id = #{poPlanHeaderId}
-        GROUP BY line_num DESC
-        LIMIT 1
+        ORDER BY line_num DESC LIMIT 1
     </select>
     <select id="getDisplayLineNum" resultType="java.lang.Integer">
         SELECT display_line_num
@@ -230,8 +229,7 @@
         where pr_header_id = #{poPlanHeaderId}
             and attribute_bigint15 = #{sharedProvinceId}
            OR pr_line_id = #{sharedProvinceId}
-        GROUP BY display_line_num DESC
-        LIMIT 1
+        ORDER BY display_line_num DESC LIMIT 1
     </select>
 
     <!--    共享计划省区校验-->
@@ -249,6 +247,13 @@
     <select id="detailList" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
+        <if test="createId != null and createId != ''">
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            OR sph.requested_by = #{createId}
+        </if>
         AND sph.lot_num = 'PO_PLAN'
         <if test="poPlanNumber != null and poPlanNumber != ''">
             <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
@@ -295,7 +300,14 @@
         <if test="planType != null and planType != ''">
             AND sph.attribute_varchar23 = #{planType}
         </if>
+        GROUP BY spl.pr_line_id
         ORDER BY sph.creation_date DESC
+    </select>
+
+    <select id="verifyPlanSharedProvince" resultType="java.lang.Long">
+        SELECT pr_line_id
+        FROM sprm_pr_line
+        WHERE attribute_longtext9 like #{userCompanyLike}
     </select>
 
 </mapper>

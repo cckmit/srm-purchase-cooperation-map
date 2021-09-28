@@ -100,4 +100,19 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     public List<SinochemintlPoPlanHeaderDTO> getExpirationTime(Date date) {
         return sinochemintlPoPlanHeaderMapper.getExpirationTime(date);
     }
+
+    @Override
+    public List<SinochemintlPoPlanHeaderDTO> verifyBusiness(Long companyId) {
+        return sinochemintlPoPlanHeaderMapper.verifyBusiness(companyId);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanHeaderDTO> verifyDepartment(Long businessId) {
+        return sinochemintlPoPlanHeaderMapper.verifyDepartment(businessId);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId) {
+        return sinochemintlPoPlanHeaderMapper.verifyPurchaseOrg(businessId);
+    }
 }

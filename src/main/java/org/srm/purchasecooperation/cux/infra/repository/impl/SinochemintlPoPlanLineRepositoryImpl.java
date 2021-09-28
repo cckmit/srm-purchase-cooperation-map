@@ -8,6 +8,7 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 import org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanLineMapper;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -75,5 +76,10 @@ public class SinochemintlPoPlanLineRepositoryImpl extends BaseRepositoryImpl<Sin
     @Override
     public List<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
         return sinochemintlPoPlanLineMapper.detailList(sinochemintlPoPlanHeaderDTO);
+    }
+
+    @Override
+    public HashSet<Long> verifyPlanSharedProvince(String provinceCompany) {
+        return sinochemintlPoPlanLineMapper.verifyPlanSharedProvince(provinceCompany);
     }
 }
