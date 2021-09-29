@@ -6,7 +6,7 @@
         SELECT spl.pr_line_id          poPlanLineId,
                spl.pr_header_id        poPlanHeaderId,
                spl.tenant_id           tenantId,
-               sph.pr_status_code      status,
+               spl.attribute_varchar37 status,
                spl.attribute_bigint14  spellDocProvince,
                spl.needed_date         needDate,
                spl.attribute_longtext9 planSharedProvince,
@@ -64,7 +64,8 @@
         FROM sprm_pr_header sph
                  LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
                  LEFT JOIN smdm_item si ON si.item_id = spl.item_id
-                 LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
+                 LEFT JOIN smdm_item_category sic
+                           ON sic.category_code = si.attribute_varchar5 and sic.tenant_id = spl.tenant_id
                  LEFT JOIN smdm_tax st ON spl.tax_id = st.tax_id
                  LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
                  LEFT JOIN smdm_currency sc ON sc.currency_id = spl.currency_code
@@ -80,6 +81,7 @@
     <insert id="setOne">
         INSERT INTO sprm_pr_line (pr_header_id,
                                   tenant_id,
+                                  attribute_varchar37,
                                   attribute_bigint14,
                                   needed_date,
                                   attribute_longtext9,
@@ -110,6 +112,7 @@
                                   attachment_uuid)
             VALUE (#{poPlanHeaderId},
             #{tenantId},
+            #{status},
             #{spellDocProvince},
             #{needDate},
             #{planSharedProvince},
@@ -146,6 +149,7 @@
         update sprm_pr_line
         set attribute_bigint14  = #{spellDocProvince},
             needed_date         = #{needDate},
+            attribute_varchar37 = #{status},
             attribute_longtext9 = #{planSharedProvince},
             company_id          = #{provinceCompanyId},
             product_name        = #{productName},
@@ -202,8 +206,11 @@
     <!--    根据头表id查询-->
     <select id="selectByHeaderId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
         <include refid="mappingChanges"/>
-        WHERE sph.tenant_id = #{organizationId}
+        WHERE sph.tenant_id = #{tenantId}
         and sph.pr_header_id = #{poPlanHeaderId}
+        AND spl.pr_requested_name = #{applicant}
+        or spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE')
+        GROUP BY spl.pr_line_id
         ORDER BY display_line_num
     </select>
 
@@ -247,13 +254,6 @@
     <select id="detailList" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
-        <if test="createId != null and createId != ''">
-            AND spl.pr_line_id in
-            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
-                #{id}
-            </foreach>
-            OR sph.requested_by = #{createId}
-        </if>
         AND sph.lot_num = 'PO_PLAN'
         <if test="poPlanNumber != null and poPlanNumber != ''">
             <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
@@ -300,6 +300,13 @@
         <if test="planType != null and planType != ''">
             AND sph.attribute_varchar23 = #{planType}
         </if>
+        <if test="createId != null and createId != ''">
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            OR sph.requested_by = #{createId}
+        </if>
         GROUP BY spl.pr_line_id
         ORDER BY sph.creation_date DESC
     </select>
@@ -307,7 +314,9 @@
     <select id="verifyPlanSharedProvince" resultType="java.lang.Long">
         SELECT pr_line_id
         FROM sprm_pr_line
-        WHERE attribute_longtext9 like #{userCompanyLike}
+        WHERE tenant_id = #{tenantId}
+        <bind name="provinceCompanyLike" value="'%' + provinceCompanyId + '%'"/>
+        AND attribute_longtext9 like #{provinceCompanyLike}
     </select>
 
 </mapper>

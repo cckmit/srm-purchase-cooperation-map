@@ -140,7 +140,6 @@ public class SinochemintlPoPlanController extends BaseController {
     @GetMapping("/excel")
     @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
     @CustomPageRequest
-    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
     public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> excel(@PathVariable("organizationId") Long tenantId,
                                                                   String poPlanHeaderIds,
                                                                   ExportParam exportParam,
@@ -154,7 +153,6 @@ public class SinochemintlPoPlanController extends BaseController {
     @GetMapping("/batchExcel")
     @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
     @CustomPageRequest
-    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
     public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> batchExcel(@PathVariable("organizationId") Long tenantId,
                                                                        SinochemintlPoPlanHeaderDTO dto,
                                                                        ExportParam exportParam,

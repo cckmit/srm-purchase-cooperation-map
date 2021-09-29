@@ -1,6 +1,8 @@
 package org.srm.purchasecooperation.cux.infra.jobhandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import org.hzero.boot.message.entity.Receiver;
 import org.hzero.boot.scheduler.infra.annotation.JobHandler;
 import org.hzero.boot.scheduler.infra.enums.ReturnT;
@@ -67,7 +69,12 @@ public class SinochemintlPoPlanHandler implements IJobHandler {
         if (!list.isEmpty()) {
             for (SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO : list) {
                 Set<Integer> longs = new HashSet<>();
-                List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanHeaderDTO.getTenantId(), sinochemintlPoPlanHeaderDTO.getPoPlanHeaderId());
+                SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = new SinochemintlPoPlanLineDTO();
+                sinochemintlPoPlanLine.setPoPlanHeaderId(sinochemintlPoPlanHeaderDTO.getPoPlanHeaderId());
+                sinochemintlPoPlanLine.setTenantId(sinochemintlPoPlanHeaderDTO.getTenantId());
+                CustomUserDetails user = DetailsHelper.getUserDetails();
+                sinochemintlPoPlanLine.setApplicant(user.getRealName());
+                List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanLine);
                 for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
                     String planSharedProvince = sinochemintlPoPlanLineDTO.getPlanSharedProvince();
                     if (!StringUtils.isEmpty(planSharedProvince)) {
