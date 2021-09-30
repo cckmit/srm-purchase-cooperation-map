@@ -143,4 +143,6 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @return 查询结果
      */
     List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId);
+
+    List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list);
 }

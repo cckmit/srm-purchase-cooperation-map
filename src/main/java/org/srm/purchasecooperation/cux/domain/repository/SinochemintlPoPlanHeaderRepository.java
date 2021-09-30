@@ -151,4 +151,6 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
      * @return 查询结果
      */
     List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId);
+
+    List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list);
 }

@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 采购计划行表
@@ -105,6 +106,8 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     @ApiModelProperty(value = "税率")
     private BigDecimal taxRate;
     @ApiModelProperty(value = "申请人")
+    private Long applicantId;
+    @ApiModelProperty(value = "申请人")
     private String applicant;
     @ApiModelProperty(value = "附件id")
     private String appendixId;
@@ -169,6 +172,9 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     @ApiModelProperty(value = "共享省区对应id")
     private Long sharedProvinceId;
 
+    @Transient
+    @ApiModelProperty(value = "行表数据")
+    private Set<Long> poPlanLineIds;
 //
 // getter/setter
 // ------------------------------------------------------------------------------
@@ -179,6 +185,22 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
 
     public void setPlanSharedProvinceName(List<Map<String, Object>> planSharedProvinceName) {
         this.planSharedProvinceName = planSharedProvinceName;
+    }
+
+    public Long getApplicantId() {
+        return applicantId;
+    }
+
+    public void setApplicantId(Long applicantId) {
+        this.applicantId = applicantId;
+    }
+
+    public Set<Long> getPoPlanLineIds() {
+        return poPlanLineIds;
+    }
+
+    public void setPoPlanLineIds(Set<Long> poPlanLineIds) {
+        this.poPlanLineIds = poPlanLineIds;
     }
 
     public String getPlanType() {

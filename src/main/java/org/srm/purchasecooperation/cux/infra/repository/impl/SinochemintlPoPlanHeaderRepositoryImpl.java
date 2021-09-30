@@ -115,4 +115,9 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     public List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId) {
         return sinochemintlPoPlanHeaderMapper.verifyPurchaseOrg(businessId);
     }
+
+    @Override
+    public List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list) {
+        return sinochemintlPoPlanHeaderMapper.excelLine(list);
+    }
 }
