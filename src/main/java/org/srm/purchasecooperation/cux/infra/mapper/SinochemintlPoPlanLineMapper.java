@@ -87,4 +87,6 @@ public interface SinochemintlPoPlanLineMapper extends BaseMapper<SinochemintlPoP
     List<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     HashSet<Long> verifyPlanSharedProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
+
+    Integer spellDocProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
 }

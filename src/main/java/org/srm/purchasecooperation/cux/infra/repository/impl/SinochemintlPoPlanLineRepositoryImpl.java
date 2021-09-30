@@ -82,4 +82,9 @@ public class SinochemintlPoPlanLineRepositoryImpl extends BaseRepositoryImpl<Sin
     public HashSet<Long> verifyPlanSharedProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
         return sinochemintlPoPlanLineMapper.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO);
     }
+
+    @Override
+    public Integer spellDocProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
+        return sinochemintlPoPlanLineMapper.spellDocProvince(sinochemintlPoPlanLineDTO);
+    }
 }

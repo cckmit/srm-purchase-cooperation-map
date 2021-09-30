@@ -35,6 +35,7 @@
                spl.tax_id              taxId,
                st.description          taxType,
                spl.tax_rate            taxRate,
+               spl.requested_by        applicantId,
                spl.pr_requested_name   applicant,
                spl.line_num            serialNum,
                spl.display_line_num    displayLineNum,
@@ -102,6 +103,7 @@
                                   remark,
                                   tax_id,
                                   tax_rate,
+                                  requested_by,
                                   pr_requested_name,
                                   line_num,
                                   display_line_num,
@@ -133,6 +135,7 @@
             #{remark},
             #{taxId},
             #{taxRate},
+            #{applicantId},
             #{applicant},
             #{serialNum},
             #{displayLineNum},
@@ -207,10 +210,14 @@
     <select id="selectByHeaderId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
-        and sph.pr_header_id = #{poPlanHeaderId}
-        <if test="applicant != null and applicant != ''">
-            AND spl.pr_requested_name = #{applicant}
-            or spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE')
+        and spl.pr_header_id = #{poPlanHeaderId}
+        <if test="poPlanLineIds != null">
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            OR spl.requested_by = #{applicantId}
+            and spl.pr_header_id = #{poPlanHeaderId}
         </if>
         GROUP BY spl.pr_line_id
         ORDER BY display_line_num
@@ -317,8 +324,20 @@
         SELECT pr_line_id
         FROM sprm_pr_line
         WHERE tenant_id = #{tenantId}
-        <bind name="provinceCompanyLike" value="'%' + provinceCompanyId + '%'"/>
+        <if test="poPlanHeaderId != null and poPlanHeaderId != ''">
+            AND pr_header_id = #{poPlanHeaderId}
+        </if>
+        <bind name="provinceCompanyLike" value="'%:' + provinceCompanyId + ',%'"/>
         AND attribute_longtext9 like #{provinceCompanyLike}
+    </select>
+
+    <select id="spellDocProvince"
+            resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM sprm_pr_line
+        WHERE attribute_bigint15 = #{sharedProvinceId}
+          and company_id = #{provinceCompanyId}
+          and attribute_varchar37 = 'SPLICING_DOC_COMPLETE'
     </select>
 
 </mapper>

@@ -9,6 +9,7 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.pr.api.dto.PrActionDTO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 采购计划应用服务
@@ -148,4 +149,7 @@ public interface SinochemintlPoPlanService {
      */
     void timedTaskHeader();
 
+    List<Map<String, Object>> province(Long organizationId, Long companyId, Long applicantId);
+
+    List<SinochemintlPoPlanExcelDTO> excelLine(String poPlanLineIds);
 }

@@ -425,6 +425,9 @@
             </foreach>
             OR sph.requested_by = #{createId}
             AND sph.lot_num = 'PO_PLAN'
+            <if test="status != null and status != ''">
+                AND sph.pr_status_code = #{status}
+            </if>
         </if>
         GROUP BY sph.pr_header_id
         ORDER BY sph.creation_date DESC
@@ -549,6 +552,85 @@
         FROM hpfm_unit hu
                  LEFT JOIN hpfm_purchase_organization hpo ON hu.unit_code = hpo.organization_code
         WHERE hu.unit_id = #{businessId}
+    </select>
+
+    <select id="excelLine" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
+        SELECT distinct sph.pr_header_id poPlanHeaderId,
+        sph.tenant_id tenantId,
+        sph.title title,
+        sph.pr_status_code status,
+        sph.attribute_varchar23 planType,
+        sph.pr_num poPlanNumber,
+        sph.requested_by createId,
+        sph.pr_requested_name createName,
+        sph.attribute_datetime1 deadline,
+        sph.parent_unit_id companyId,
+        hc1.company_name companyName,
+        sph.attribute_bigint11 businessId,
+        hou.ou_name businessName,
+        sph.purchase_org_id purchaseOrgId,
+        hpo.organization_name purchaseOrgName,
+        sph.purchase_agent_id purchaseId,
+        hpa.purchase_agent_name purchaseName,
+        sph.pr_source_platform poSource,
+        sph.pr_requested_name applicant,
+        sph.unit_id departmentId,
+        hu.unit_name departmentName,
+        sph.request_date applicationDate,
+        sph.original_currency originalId,
+        sc.currency_name currencyName,
+        sph.attribute_varchar24 planIllustrate,
+        sph.creation_date creationDate,
+        spl.attribute_bigint14 spellDocProvince,
+        spl.needed_date needDate,
+        spl.attribute_longtext9 planSharedProvince,
+        spl.company_id provinceCompanyId,
+        hc2.company_name provinceCompany,
+        spl.product_name productName,
+        spl.attribute_varchar24 specification,
+        spl.supplier_id initialSupplierId,
+        spl.supplier_name initialSupplier,
+        spl.attribute_varchar39 endSupplier,
+        spl.attribute_decimal3 endPrice,
+        spl.unit_price factoryPrice,
+        spl.attribute_varchar25 deliveryAddress,
+        spl.item_id materialId,
+        spl.item_code materialCoding,
+        sic.category_name materialClass,
+        spl.quantity requiredQuantity,
+        spl.uom_id uomId,
+        su.uom_name unitName,
+        spl.attribute_varchar38 freightSupplier,
+        spl.line_freight freightPrice,
+        spl.attribute_varchar39 priceTerms,
+        spl.remark remark,
+        spl.tax_id taxId,
+        st.description taxType,
+        spl.tax_rate taxRate,
+        spl.pr_requested_name lineApplicant,
+        sph.attribute_decimal1 applicationSum,
+        sph.attribute_decimal2 applicationFinalSum,
+        spl.attribute_decimal5 totalPurchaseFinalPrice,
+        spl.attribute_decimal4 totalPurchasePrice
+        FROM sprm_pr_header sph
+        LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
+        LEFT JOIN hpfm_company hc1 ON hc1.company_id = sph.parent_unit_id
+        LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
+        LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
+        LEFT JOIN hpfm_unit hu ON hu.unit_id = sph.unit_id
+        LEFT JOIN smdm_tax st ON spl.tax_id = st.tax_id
+        LEFT JOIN smdm_currency sc ON sc.currency_id = sph.original_currency
+        LEFT JOIN hpfm_operation_unit hou ON hou.ou_id = sph.attribute_bigint11
+        LEFT JOIN smdm_item si ON si.item_id = spl.item_id
+        LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
+        LEFT JOIN hpfm_company hc2 ON hc2.company_id = spl.company_id
+        LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
+        WHERE sph.lot_num = 'PO_PLAN'
+        AND spl.pr_line_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        ORDER BY sph.creation_date DESC
     </select>
 
 </mapper>

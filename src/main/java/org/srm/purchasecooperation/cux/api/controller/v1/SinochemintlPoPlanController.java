@@ -28,6 +28,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 采购计划 管理 API
@@ -148,6 +149,19 @@ public class SinochemintlPoPlanController extends BaseController {
         return Results.success(list);
     }
 
+    @ApiOperation(value = "采购计划行级导出")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/excelLine")
+    @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
+    @CustomPageRequest
+    public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> excelLine(@PathVariable("organizationId") Long tenantId,
+                                                                      String poPlanLineIds,
+                                                                      ExportParam exportParam,
+                                                                      HttpServletResponse response) {
+        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.excelLine(poPlanLineIds);
+        return Results.success(list);
+    }
+
     @ApiOperation(value = "采购计划批量导出")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/batchExcel")
@@ -210,4 +224,13 @@ public class SinochemintlPoPlanController extends BaseController {
         return Results.success(response);
     }
 
+    @ApiOperation(value = "根据登陆人公司和共享省区取交集")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/province/{userId}/{applicantId}")
+    public ResponseEntity<List<Map<String, Object>>> province(@PathVariable("organizationId") Long organizationId,
+                                                              @PathVariable("userId") Long userId,
+                                                              @PathVariable("applicantId") Long applicantId) {
+        List<Map<String, Object>> result = sinochemintlPoPlanHeaderService.province(organizationId, userId, applicantId);
+        return Results.success(result);
+    }
 }

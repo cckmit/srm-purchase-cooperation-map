@@ -225,7 +225,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                     sinochemintlPoPlanLineDTO.setPoPlanHeaderId(sinochemintlPoPlanHeaderDTO.getPoPlanHeaderId());
                     sinochemintlPoPlanLineDTO.setTenantId(sinochemintlPoPlanHeaderDTO.getTenantId());
                     sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_NEW);
-                    sinochemintlPoPlanLineDTO.setApplicant(user.getRealName());
                     sinochemintlPoPlanLineDTO.setCreationDate(date);
                     sinochemintlPoPlanLineDTO.setCreatedBy(user.getUserId());
                     sinochemintlPoPlanLineDTO.setLastUpdateDate(date);
@@ -367,13 +366,25 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         //获取行数据
         SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = new SinochemintlPoPlanLineDTO();
         SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO = sinochemintlPoPlanHeaderRepository.selectByKey(poPlanHeaderId);
-        if (sinochemintlPoPlanHeaderDTO.getStatus().equals(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_MIDDLE)
-                || sinochemintlPoPlanHeaderDTO.getStatus().equals(SinochemintlConstant.StatusCode.STATUS_NEW)) {
-            CustomUserDetails user = DetailsHelper.getUserDetails();
-            sinochemintlPoPlanLine.setApplicant(user.getRealName());
-        }
+        CustomUserDetails user = DetailsHelper.getUserDetails();
         sinochemintlPoPlanLine.setPoPlanHeaderId(poPlanHeaderId);
         sinochemintlPoPlanLine.setTenantId(organizationId);
+        if (!sinochemintlPoPlanHeaderDTO.getCreateId().equals(user.getUserId())) {
+            List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(user.getUserId());
+            HashSet<Long> poPlanLineIds = new HashSet<>();
+            if (!sinochemintlPoPlanLineDTOS.isEmpty()) {
+                if (!"1510".equals(sinochemintlPoPlanLineDTOS.get(0).getPlanSharedProvince())) {
+                    for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
+                        sinochemintlPoPlanLineDTO.setPoPlanHeaderId(poPlanHeaderId);
+                        poPlanLineIds.addAll(sinochemintlPoPlanLineRepository.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO));
+                    }
+                }
+            }
+            if (poPlanLineIds.size() > 0) {
+                sinochemintlPoPlanLine.setPoPlanLineIds(poPlanLineIds);
+            }
+            sinochemintlPoPlanLine.setApplicantId(user.getUserId());
+        }
         Page<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = PageHelper.doPage(pageRequest, () -> sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanLine));
         if (!sinochemintlPoPlanLineList.isEmpty() && !StringUtils.isEmpty(sinochemintlPoPlanLineList.get(0).getPoPlanLineId())) {
             int serialNum = 1;
@@ -407,8 +418,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = new SinochemintlPoPlanLineDTO();
             sinochemintlPoPlanLine.setPoPlanHeaderId(poPlanHeaderId);
             sinochemintlPoPlanLine.setTenantId(organizationId);
-            CustomUserDetails user = DetailsHelper.getUserDetails();
-            sinochemintlPoPlanLine.setApplicant(user.getRealName());
             List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanLine);
             sinochemintlPoPlanHeaderDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_MIDDLE);
             if (sinochemintlPoPlanLineList.isEmpty() || sinochemintlPoPlanLineList.get(0) == null) {
@@ -447,10 +456,15 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                         }
                     }
                 }
-                if (SinochemintlConstant.StatusCode.STATUS_NEW.equals(sinochemintlPoPlanLineDTO.getStatus())) {
-                    SinochemintlPoPlanLineDTO spellDocProvince = sinochemintlPoPlanLineRepository.selectByKey(sinochemintlPoPlanLineDTO.getSharedProvinceId());
-                    sinochemintlPoPlanLineRepository.updateByKey(spellDocProvince.setSpellDocProvince(spellDocProvince.getSpellDocProvince() + 1));
+                if (SinochemintlConstant.StatusCode.STATUS_NEW.equals(sinochemintlPoPlanLineDTO.getStatus()) &&
+                        sinochemintlPoPlanLineDTO.getSharedProvinceId() != 0) {
+                    Integer spellDocProvinceCount = sinochemintlPoPlanLineRepository.spellDocProvince(sinochemintlPoPlanLineDTO);
+                    if (spellDocProvinceCount == 0) {
+                        SinochemintlPoPlanLineDTO spellDocProvince = sinochemintlPoPlanLineRepository.selectByKey(sinochemintlPoPlanLineDTO.getSharedProvinceId());
+                        sinochemintlPoPlanLineRepository.updateByKey(spellDocProvince.setSpellDocProvince(spellDocProvince.getSpellDocProvince() + 1));
+                    }
                     sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_COMPLETE);
+                    sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
                 }
             }
             sinochemintlPoPlanHeaderDTO.setLastUpdateDate(new Date());
@@ -462,6 +476,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             //保存提交操作记录
             Date date = new Date();
             PrAction prAction = new PrAction();
+            CustomUserDetails user = DetailsHelper.getUserDetails();
             prAction.setTenantId(sinochemintlPoPlanHeaderDTO.getTenantId());
             prAction.setPrHeaderId(sinochemintlPoPlanHeaderDTO.getPoPlanHeaderId());
             prAction.setDisplayPrNum(sinochemintlPoPlanHeaderDTO.getPoPlanNumber());
@@ -544,6 +559,31 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         }
         lovValueHandle.process(null, excel);
         return excel;
+    }
+
+    @Override
+    public List<SinochemintlPoPlanExcelDTO> excelLine(String poPlanLineIds) {
+        List<String> list = Arrays.asList(poPlanLineIds.split(","));
+        List<SinochemintlPoPlanExcelDTO> excelLine = sinochemintlPoPlanHeaderRepository.excelLine(list);
+        //转换共享省区
+        for (SinochemintlPoPlanExcelDTO sinochemintlPoPlanExcelDTO : excelLine) {
+            if (!StringUtils.isEmpty(sinochemintlPoPlanExcelDTO.getPlanSharedProvince())) {
+                ArrayList<Map<String, String>> arrayList = null;
+                try {
+                    arrayList = objectMapper.readValue(sinochemintlPoPlanExcelDTO.getPlanSharedProvince(), ArrayList.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //获取共享计划省区
+                StringBuilder planSharedProvince = new StringBuilder();
+                for (Map<String, String> stringStringMap : arrayList) {
+                    planSharedProvince.append(stringStringMap.get("companyName")).append("、");
+                }
+                sinochemintlPoPlanExcelDTO.setPlanSharedProvince(planSharedProvince.toString());
+            }
+        }
+        lovValueHandle.process(null, excelLine);
+        return excelLine;
     }
 
     /**
@@ -653,8 +693,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = new SinochemintlPoPlanLineDTO();
             sinochemintlPoPlanLine.setPoPlanHeaderId(id);
             sinochemintlPoPlanLine.setTenantId(organizationId);
-            CustomUserDetails user = DetailsHelper.getUserDetails();
-            sinochemintlPoPlanLine.setApplicant(user.getRealName());
             List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanLine);
             sinochemintlPoPlanHeaderDTO.setSinochemintlPoPlanLineList(sinochemintlPoPlanLineList);
             this.confirm(sinochemintlPoPlanHeaderDTO);
@@ -721,6 +759,33 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
     }
 
     @Override
+    public List<Map<String, Object>> province(Long organizationId, Long companyId, Long applicantId) {
+        List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(companyId);
+        List<Map<String, Object>> maps = new ArrayList<>();
+        if (applicantId != 0) {
+            if (!sinochemintlPoPlanLineDTOS.isEmpty()) {
+                SinochemintlPoPlanLineDTO dto = sinochemintlPoPlanLineRepository.selectByKey(applicantId);
+                for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLine : sinochemintlPoPlanLineDTOS) {
+                    if (dto.getPlanSharedProvince().contains(":" + sinochemintlPoPlanLine.getProvinceCompanyId() + ",")) {
+                        HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+                        stringObjectHashMap.put("companyId", sinochemintlPoPlanLine.getProvinceCompanyId());
+                        stringObjectHashMap.put("companyName", sinochemintlPoPlanLine.getProvinceCompany());
+                        maps.add(stringObjectHashMap);
+                    }
+                }
+            }
+        } else {
+            for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLine : sinochemintlPoPlanLineDTOS) {
+                HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+                stringObjectHashMap.put("companyId", sinochemintlPoPlanLine.getProvinceCompanyId());
+                stringObjectHashMap.put("companyName", sinochemintlPoPlanLine.getProvinceCompany());
+                maps.add(stringObjectHashMap);
+            }
+        }
+        return maps;
+    }
+
+    @Override
     public void timedTaskHeader() {
         CustomUserDetails self = DetailsHelper.getUserDetails();
         Long organizationId = self.getOrganizationId();
@@ -729,8 +794,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = new SinochemintlPoPlanLineDTO();
             sinochemintlPoPlanLine.setPoPlanHeaderId(poPlanHeader.getPoPlanHeaderId());
             sinochemintlPoPlanLine.setTenantId(organizationId);
-            CustomUserDetails user = DetailsHelper.getUserDetails();
-            sinochemintlPoPlanLine.setApplicant(user.getRealName());
             List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanLine);
             for (SinochemintlPoPlanLineDTO poPlanLine : sinochemintlPoPlanLineList) {
                 if (poPlanLine == null) {
