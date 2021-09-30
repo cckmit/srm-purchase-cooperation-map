@@ -1,7 +1,6 @@
 package org.srm.purchasecooperation.cux.infra.mapper;
 
 import io.choerodon.mybatis.common.BaseMapper;
-import org.apache.ibatis.annotations.Param;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
@@ -47,11 +46,10 @@ public interface SinochemintlPoPlanLineMapper extends BaseMapper<SinochemintlPoP
     /**
      * 根据头表id查询
      *
-     * @param organizationId 租户id
-     * @param poPlanHeaderId 头表id
+     * @param sinochemintlPoPlanLineDTO 租户id
      * @return 行表数据
      */
-    List<SinochemintlPoPlanLineDTO> selectByHeaderId(@Param("organizationId") Long organizationId, @Param("poPlanHeaderId") Long poPlanHeaderId);
+    List<SinochemintlPoPlanLineDTO> selectByHeaderId(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
 
     /**
      * 获取共享计划省区
@@ -88,5 +86,5 @@ public interface SinochemintlPoPlanLineMapper extends BaseMapper<SinochemintlPoP
      */
     List<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
-    HashSet<Long> verifyPlanSharedProvince(@Param(value = "provinceCompany") String provinceCompany);
+    HashSet<Long> verifyPlanSharedProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
 }

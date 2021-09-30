@@ -49,11 +49,10 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
     /**
      * 根据头表id查询
      *
-     * @param organizationId 租户id
-     * @param poPlanHeaderId 头表id
+     * @param sinochemintlPoPlanLineDTO 租户id
      * @return 行表数据
      */
-    List<SinochemintlPoPlanLineDTO> selectByHeaderId(Long organizationId, Long poPlanHeaderId);
+    List<SinochemintlPoPlanLineDTO> selectByHeaderId(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
 
     /**
      * 获取共享计划省区
@@ -90,5 +89,5 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
      */
     List<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
-    HashSet<Long> verifyPlanSharedProvince(String provinceCompany);
+    HashSet<Long> verifyPlanSharedProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
 }

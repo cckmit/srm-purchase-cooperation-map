@@ -44,8 +44,8 @@ public class SinochemintlPoPlanLineRepositoryImpl extends BaseRepositoryImpl<Sin
     }
 
     @Override
-    public List<SinochemintlPoPlanLineDTO> selectByHeaderId(Long organizationId, Long poPlanHeaderId) {
-        return sinochemintlPoPlanLineMapper.selectByHeaderId(organizationId, poPlanHeaderId);
+    public List<SinochemintlPoPlanLineDTO> selectByHeaderId(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
+        return sinochemintlPoPlanLineMapper.selectByHeaderId(sinochemintlPoPlanLineDTO);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SinochemintlPoPlanLineRepositoryImpl extends BaseRepositoryImpl<Sin
     }
 
     @Override
-    public HashSet<Long> verifyPlanSharedProvince(String provinceCompany) {
-        return sinochemintlPoPlanLineMapper.verifyPlanSharedProvince(provinceCompany);
+    public HashSet<Long> verifyPlanSharedProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
+        return sinochemintlPoPlanLineMapper.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO);
     }
 }
