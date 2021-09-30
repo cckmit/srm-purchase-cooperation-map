@@ -208,8 +208,10 @@
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
         and sph.pr_header_id = #{poPlanHeaderId}
-        AND spl.pr_requested_name = #{applicant}
-        or spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE')
+        <if test="applicant != null and applicant != ''">
+            AND spl.pr_requested_name = #{applicant}
+            or spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE')
+        </if>
         GROUP BY spl.pr_line_id
         ORDER BY display_line_num
     </select>
