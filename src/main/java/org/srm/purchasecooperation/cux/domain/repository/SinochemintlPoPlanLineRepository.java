@@ -92,4 +92,6 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
     HashSet<Long> verifyPlanSharedProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
 
     Integer spellDocProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
+
+    List<SinochemintlPoPlanLineDTO> getPoPlanLine(SinochemintlPoPlanLineDTO sinochemintlPoPlanLine);
 }

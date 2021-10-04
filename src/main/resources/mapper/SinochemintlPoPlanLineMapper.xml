@@ -206,21 +206,46 @@
         WHERE spl.pr_line_id = #{poPlanLineId}
     </select>
 
-    <!--    根据头表id查询-->
-    <select id="selectByHeaderId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
+    <select id="verifyPlanSharedProvince" resultType="java.lang.Long">
+        SELECT pr_line_id
+        FROM sprm_pr_line
+        WHERE tenant_id = #{tenantId}
+        <if test="poPlanHeaderId != null and poPlanHeaderId != ''">
+            AND pr_header_id = #{poPlanHeaderId}
+        </if>
+        <bind name="provinceCompanyLike" value="'%:' + provinceCompanyId + ',%'"/>
+        AND attribute_longtext9 like #{provinceCompanyLike}
+    </select>
+
+    <select id="getPoPlanLine" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
-        and spl.pr_header_id = #{poPlanHeaderId}
+        AND spl.pr_header_id = #{poPlanHeaderId}
         <if test="poPlanLineIds != null">
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
                 #{id}
             </foreach>
-            OR spl.requested_by = #{applicantId}
-            and spl.pr_header_id = #{poPlanHeaderId}
         </if>
-        GROUP BY spl.pr_line_id
-        ORDER BY display_line_num
+        <if test="poPlanLineIds == null">
+            AND spl.requested_by = #{applicantId}
+        </if>
+        <if test="status == 'NEW'">
+            UNION
+            <include refid="mappingChanges"/>
+            WHERE sph.tenant_id = #{tenantId}
+            AND spl.pr_header_id = #{poPlanHeaderId}
+            AND spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE')
+        </if>
+        ORDER BY displayLineNum
+    </select>
+
+    <!--    根据头表id查询-->
+    <select id="selectByHeaderId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND spl.pr_header_id = #{poPlanHeaderId}
+        ORDER BY displayLineNum
     </select>
 
     <!--    获取共享计划省区-->
@@ -297,9 +322,6 @@
         <if test="applicant != null and applicant != ''">
             AND spl.pr_requested_name = #{applicant}
         </if>
-        <if test="createId != null and createId != ''">
-            AND sph.requested_by = #{createId}
-        </if>
         <if test="purchaseOrgId != null and purchaseOrgId != ''">
             AND sph.purchase_org_id = #{purchaseOrgId}
         </if>
@@ -318,17 +340,6 @@
         </if>
         GROUP BY spl.pr_line_id
         ORDER BY sph.creation_date DESC
-    </select>
-
-    <select id="verifyPlanSharedProvince" resultType="java.lang.Long">
-        SELECT pr_line_id
-        FROM sprm_pr_line
-        WHERE tenant_id = #{tenantId}
-        <if test="poPlanHeaderId != null and poPlanHeaderId != ''">
-            AND pr_header_id = #{poPlanHeaderId}
-        </if>
-        <bind name="provinceCompanyLike" value="'%:' + provinceCompanyId + ',%'"/>
-        AND attribute_longtext9 like #{provinceCompanyLike}
     </select>
 
     <select id="spellDocProvince"

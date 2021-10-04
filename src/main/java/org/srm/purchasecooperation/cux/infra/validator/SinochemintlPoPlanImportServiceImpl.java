@@ -57,12 +57,11 @@ public class SinochemintlPoPlanImportServiceImpl extends BatchImportHandler {
                 if ("人民币".equals(sinochemintlPoPlanLineDTO.getCurrencyName())) {
                     sinochemintlPoPlanLineDTO.setCurrencyName("");
                     importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
-                    sinochemintlPoPlanLineDTO.setCurrencyId("304");
-                    sinochemintlPoPlanLineDTO.setCurrencyName("人民币");
+                    importVerify.setCurrencyId("304");
                 } else {
                     importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
                 }
-                List<String> planSharedProvince = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().split(","));
+                List<String> planSharedProvince = Arrays.asList(sinochemintlPoPlanLineDTO.getPlanSharedProvince().split("、"));
                 List<SinochemintlPoPlanLineDTO> planSharedProvinceName = sinochemintlPoPlanLineRepository.sharedProvinceVerify(planSharedProvince);
                 List<Map<String, Object>> arrayList = new ArrayList<>();
                 for (SinochemintlPoPlanLineDTO poPlanLineDTO : planSharedProvinceName) {
@@ -73,7 +72,7 @@ public class SinochemintlPoPlanImportServiceImpl extends BatchImportHandler {
                 }
                 sinochemintlPoPlanLineDTO.setSharedProvinceId(0L);
                 sinochemintlPoPlanLineDTO.setPlanSharedProvinceName(arrayList);
-                sinochemintlPoPlanLineDTO.setPlanSharedProvince(sinochemintlPoPlanLineDTO.getPlanSharedProvince());
+                sinochemintlPoPlanLineDTO.setPlanSharedProvince(objectMapper.writeValueAsString(arrayList));
                 sinochemintlPoPlanLineDTO.setProvinceCompanyId(importVerify.getProvinceCompanyId());
                 sinochemintlPoPlanLineDTO.setInitialSupplierId(importVerify.getInitialSupplierId());
                 sinochemintlPoPlanLineDTO.setMaterialId(importVerify.getMaterialId());
@@ -86,10 +85,12 @@ public class SinochemintlPoPlanImportServiceImpl extends BatchImportHandler {
                 sinochemintlPoPlanLineDTO.setTenantId(user.getTenantId());
                 sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_NEW);
                 sinochemintlPoPlanLineDTO.setApplicant(user.getRealName());
+                sinochemintlPoPlanLineDTO.setApplicantId(user.getUserId());
                 sinochemintlPoPlanLineDTO.setCreationDate(date);
                 sinochemintlPoPlanLineDTO.setCreatedBy(user.getUserId());
                 sinochemintlPoPlanLineDTO.setLastUpdateDate(date);
                 sinochemintlPoPlanLineDTO.setLastUpdatedBy(user.getUserId());
+                sinochemintlPoPlanLineDTO.setSpellDocProvince(0L);
                 Integer serialNum = sinochemintlPoPlanLineRepository.getSerialNum(sinochemintlPoPlanLineDTO);
                 sinochemintlPoPlanLineDTO.setSerialNum(serialNum == null ? 1 : serialNum + 1);
                 sinochemintlPoPlanLineDTO.setDisplayLineNum(sinochemintlPoPlanLineDTO.getSerialNum());

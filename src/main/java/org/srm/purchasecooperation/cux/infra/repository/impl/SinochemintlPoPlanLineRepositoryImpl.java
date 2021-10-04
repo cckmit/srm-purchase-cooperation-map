@@ -87,4 +87,9 @@ public class SinochemintlPoPlanLineRepositoryImpl extends BaseRepositoryImpl<Sin
     public Integer spellDocProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
         return sinochemintlPoPlanLineMapper.spellDocProvince(sinochemintlPoPlanLineDTO);
     }
+
+    @Override
+    public List<SinochemintlPoPlanLineDTO> getPoPlanLine(SinochemintlPoPlanLineDTO sinochemintlPoPlanLine) {
+        return sinochemintlPoPlanLineMapper.getPoPlanLine(sinochemintlPoPlanLine);
+    }
 }
