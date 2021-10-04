@@ -63,7 +63,8 @@ public class SinochemintlPoPlanImportValidator extends ValidatorHandler {
         if ("人民币".equals(sinochemintlPoPlanLineDTO.getCurrencyName())) {
             sinochemintlPoPlanLineDTO.setCurrencyName("");
             importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
-            sinochemintlPoPlanLineDTO.setCurrencyId("304");
+            importVerify.setCurrencyId("304");
+            importVerify.setCurrencyName("人民币");
         } else {
             importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
         }

@@ -370,6 +370,12 @@
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
         AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanLineIds != null">
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
         <if test="poPlanNumber != null and poPlanNumber != ''">
             <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
             AND sph.pr_num like #{poPlanNumberLike}
@@ -403,8 +409,54 @@
         <if test="applicant != null and applicant != ''">
             AND sph.pr_requested_name = #{applicant}
         </if>
-        <if test="createId != null and createId != ''">
-            AND sph.requested_by = #{createId}
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        UNION
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="serialNum != null and serialNum != ''">
+            AND spl.display_line_num = #{serialNum}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
         </if>
         <if test="purchaseOrgId != null and purchaseOrgId != ''">
             AND sph.purchase_org_id = #{purchaseOrgId}
@@ -419,18 +471,9 @@
             AND sph.attribute_bigint11 = #{businessId}
         </if>
         <if test="createId != null and createId != ''">
-            AND spl.pr_line_id in
-            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
-                #{id}
-            </foreach>
-            OR sph.requested_by = #{createId}
-            AND sph.lot_num = 'PO_PLAN'
-            <if test="status != null and status != ''">
-                AND sph.pr_status_code = #{status}
-            </if>
+            AND sph.requested_by = #{createId}
         </if>
-        GROUP BY sph.pr_header_id
-        ORDER BY sph.creation_date DESC
+        ORDER BY establishDate DESC
     </select>
 
     <select id="maintain" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
@@ -529,19 +572,21 @@
     <!--    如果公司唯一则查询业务实体-->
     <select id="verifyBusiness"
             resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
-        SELECT unit_id   businessId,
-               unit_name businessName
-        FROM hpfm_unit
+        SELECT ou_id   businessId,
+               ou_code businessName
+        FROM hpfm_operation_unit
         WHERE company_id = #{companyId}
     </select>
 
     <!--    如果采购组织唯一查询所在部门是否唯一-->
     <select id="verifyDepartment"
             resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
-        SELECT unit_id   departmentId,
-               unit_name departmentName
-        FROM hpfm_unit
-        WHERE unit_company_id = #{businessId}
+        SELECT hu1.unit_id   departmentId,
+               hu1.unit_name departmentName
+        FROM hpfm_unit hu
+                 LEFT JOIN hpfm_operation_unit hou ON hou.company_id = hu.company_id
+                 LEFT JOIN hpfm_unit hu1 ON hu.unit_id = hu1.unit_company_id
+        WHERE hou.ou_id = #{businessId}
     </select>
 
     <!--    如果业务实体唯一查询采购组织-->
@@ -551,7 +596,8 @@
                hpo.organization_name purchaseOrgName
         FROM hpfm_unit hu
                  LEFT JOIN hpfm_purchase_organization hpo ON hu.unit_code = hpo.organization_code
-        WHERE hu.unit_id = #{businessId}
+                 LEFT JOIN hpfm_operation_unit hou ON hou.company_id = hu.company_id
+        WHERE hou.ou_id = #{businessId}
     </select>
 
     <select id="excelLine" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
