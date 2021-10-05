@@ -334,9 +334,6 @@
         <if test="materialClass != null and materialClass != ''">
             AND sic.category_name = #{materialClass}
         </if>
-        <if test="serialNum != null and serialNum != ''">
-            AND spl.display_line_num = #{serialNum}
-        </if>
         <if test="materialCoding != null and materialCoding != ''">
             AND spl.item_code = #{materialCoding}
         </if>
@@ -385,9 +382,6 @@
         </if>
         <if test="materialClass != null and materialClass != ''">
             AND sic.category_name = #{materialClass}
-        </if>
-        <if test="serialNum != null and serialNum != ''">
-            AND spl.display_line_num = #{serialNum}
         </if>
         <if test="materialCoding != null and materialCoding != ''">
             AND spl.item_code = #{materialCoding}

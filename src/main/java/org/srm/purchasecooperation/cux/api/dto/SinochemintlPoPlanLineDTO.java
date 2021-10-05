@@ -159,6 +159,9 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
 // 非数据库字段
 // ------------------------------------------------------------------------------
 
+    @ApiModelProperty(value = "头状态")
+    private String headerStatus;
+
     @ApiModelProperty(value = "序号")
     private Integer serialNum;
 
@@ -185,6 +188,14 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
 
     public void setPlanSharedProvinceName(List<Map<String, Object>> planSharedProvinceName) {
         this.planSharedProvinceName = planSharedProvinceName;
+    }
+
+    public String getHeaderStatus() {
+        return headerStatus;
+    }
+
+    public void setHeaderStatus(String headerStatus) {
+        this.headerStatus = headerStatus;
     }
 
     public Long getApplicantId() {

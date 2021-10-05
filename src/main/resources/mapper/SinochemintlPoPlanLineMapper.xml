@@ -56,6 +56,7 @@
                hpa.purchase_agent_name purchaseName,
                sph.unit_id             departmentId,
                hu.unit_name            departmentName,
+               sph.pr_status_code      headerStatus,
                sph.requested_by        createId,
                sph.pr_requested_name   createName,
                sph.creation_date       establishDate,
@@ -231,14 +232,14 @@
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
                 #{id}
             </foreach>
-            AND spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE')
+            AND spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE','INPUT_COMPLETE')
         </if>
         <if test="status == 'NEW'">
             UNION
             <include refid="mappingChanges"/>
             WHERE sph.tenant_id = #{tenantId}
             AND spl.pr_header_id = #{poPlanHeaderId}
-            AND spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE')
+            AND spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE','INPUT_COMPLETE')
         </if>
         ORDER BY displayLineNum
     </select>
@@ -316,8 +317,8 @@
         <if test="materialClass != null and materialClass != ''">
             AND sic.category_name = #{materialClass}
         </if>
-        <if test="serialNum != null and serialNum != ''">
-            AND spl.display_line_num = #{serialNum}
+        <if test="displayLineNum != null and displayLineNum != ''">
+            AND spl.display_line_num = #{displayLineNum}
         </if>
         <if test="materialCoding != null and materialCoding != ''">
             AND spl.item_code = #{materialCoding}
