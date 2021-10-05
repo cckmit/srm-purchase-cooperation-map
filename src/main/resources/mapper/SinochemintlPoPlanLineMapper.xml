@@ -221,14 +221,17 @@
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
         AND spl.pr_header_id = #{poPlanHeaderId}
+        AND spl.requested_by = #{applicantId}
         <if test="poPlanLineIds != null">
+            UNION
+            <include refid="mappingChanges"/>
+            WHERE sph.tenant_id = #{tenantId}
+            AND spl.pr_header_id = #{poPlanHeaderId}
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
                 #{id}
             </foreach>
-        </if>
-        <if test="poPlanLineIds == null">
-            AND spl.requested_by = #{applicantId}
+            AND spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE')
         </if>
         <if test="status == 'NEW'">
             UNION
