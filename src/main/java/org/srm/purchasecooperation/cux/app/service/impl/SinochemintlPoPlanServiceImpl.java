@@ -470,7 +470,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                     sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
                 }
             }
-            for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineList) {
+            for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanLine)) {
                 if (StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getSharedProvinceId())) {
                     sinochemintlPoPlanLineDTO.setSharedProvinceId(0L);
                 }

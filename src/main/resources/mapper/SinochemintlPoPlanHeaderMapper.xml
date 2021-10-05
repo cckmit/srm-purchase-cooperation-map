@@ -506,7 +506,7 @@
         <include refid="mappingChanges"/>
         where sph.attribute_datetime1 &lt; #{date}
         and sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
-        and previous_pr_status_code is not null
+        and previous_pr_status_code is null
     </select>
 
     <!--    如果公司唯一则查询业务实体-->

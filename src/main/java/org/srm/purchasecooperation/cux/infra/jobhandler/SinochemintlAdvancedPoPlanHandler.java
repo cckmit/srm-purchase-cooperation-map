@@ -56,7 +56,7 @@ public class SinochemintlAdvancedPoPlanHandler implements IJobHandler {
         //校验快到期采购计划
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1);
+        cal.add(Calendar.DATE, 1);
         List<SinochemintlPoPlanHeaderDTO> list = sinochemintlPoPlanHeaderRepository.getExpirationTime(cal.getTime());
         if (!list.isEmpty()) {
             for (SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO : list) {
@@ -64,8 +64,6 @@ public class SinochemintlAdvancedPoPlanHandler implements IJobHandler {
                 SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = new SinochemintlPoPlanLineDTO();
                 sinochemintlPoPlanLine.setPoPlanHeaderId(sinochemintlPoPlanHeaderDTO.getPoPlanHeaderId());
                 sinochemintlPoPlanLine.setTenantId(sinochemintlPoPlanHeaderDTO.getTenantId());
-                CustomUserDetails user = DetailsHelper.getUserDetails();
-                sinochemintlPoPlanLine.setApplicant(user.getRealName());
                 List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanLine);
                 for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
                     String planSharedProvince = sinochemintlPoPlanLineDTO.getPlanSharedProvince();

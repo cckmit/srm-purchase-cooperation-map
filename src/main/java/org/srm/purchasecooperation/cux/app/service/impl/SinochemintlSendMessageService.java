@@ -11,6 +11,8 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstant;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +24,7 @@ import java.util.Map;
  * @author jiaxing.huang@hand-china.com  2021/08/16 15:49
  */
 @Component
-public class SinochemintlSendMessageService{
+public class SinochemintlSendMessageService {
 
     @Autowired
     private MessageClient messageClient;
@@ -32,6 +34,7 @@ public class SinochemintlSendMessageService{
 
     /**
      * 发送邮件
+     *
      * @param messageSender
      */
     public void sendEmail(MessageSenderDTO messageSender) {
@@ -40,6 +43,7 @@ public class SinochemintlSendMessageService{
 
     /**
      * 发送短信
+     *
      * @param messageSender
      */
     public void sendSms(MessageSenderDTO messageSender) {
@@ -48,6 +52,7 @@ public class SinochemintlSendMessageService{
 
     /**
      * 发送站内消息
+     *
      * @param messageSender
      */
     public void sendWebMessage(MessageSenderDTO messageSender) {
@@ -56,6 +61,7 @@ public class SinochemintlSendMessageService{
 
     /**
      * 获取消息模板参数
+     *
      * @param poPlanHeader
      * @return
      */
@@ -65,12 +71,14 @@ public class SinochemintlSendMessageService{
         paramMap.put(SinochemintlMessageConstant.MessageTemplateParameters.Parameter_Applicant, poPlanHeader.getApplicant());
         paramMap.put(SinochemintlMessageConstant.MessageTemplateParameters.Parameter_Po_Plan_Number, poPlanHeader.getPoPlanNumber());
         paramMap.put(SinochemintlMessageConstant.MessageTemplateParameters.Parameter_Title, poPlanHeader.getTitle());
-        paramMap.put(SinochemintlMessageConstant.MessageTemplateParameters.Parameter_Deadline, poPlanHeader.getDeadline().toString());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        paramMap.put(SinochemintlMessageConstant.MessageTemplateParameters.Parameter_Deadline, dateFormat.format(poPlanHeader.getDeadline()));
         return paramMap;
     }
 
     /**
      * 获取接受者
+     *
      * @param string
      * @return
      */
