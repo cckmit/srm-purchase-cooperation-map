@@ -97,7 +97,7 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @ApiModelProperty(value = "物料分类")
     private String materialClass;
     @ApiModelProperty(value = "行号")
-    private Long serialNum;
+    private Long displayLineNum;
     @ApiModelProperty(value = "物料编码")
     private String materialCoding;
     @ApiModelProperty(value = "产品名称")
@@ -212,12 +212,12 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
         this.materialClass = materialClass;
     }
 
-    public Long getSerialNum() {
-        return serialNum;
+    public Long getDisplayLineNum() {
+        return displayLineNum;
     }
 
-    public void setSerialNum(Long serialNum) {
-        this.serialNum = serialNum;
+    public void setDisplayLineNum(Long displayLineNum) {
+        this.displayLineNum = displayLineNum;
     }
 
     public String getMaterialCoding() {

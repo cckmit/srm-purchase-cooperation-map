@@ -189,10 +189,9 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
     @ApiModelProperty(value = "最终行金额", required = true)
     @ExcelColumn(title = "最终行金额", zh = "最终行金额", en = "Final bank amount", order = 41)
     private BigDecimal totalPurchaseFinalPrice;
-    @ApiModelProperty(value = "采购总价", required = true)
-    @ExcelColumn(title = "采购总价", zh = "采购总价", en = "Purchase price", order = 42)
+    @ApiModelProperty(value = "行金额", required = true)
+    @ExcelColumn(title = "行金额", zh = "行金额", en = "Purchase price", order = 42)
     private BigDecimal totalPurchasePrice;
-
 
     public BigDecimal getApplicationFinalSum() {
         return applicationFinalSum;
