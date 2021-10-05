@@ -85,7 +85,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(user.getUserId());
         //采购计划维护分页查询逻辑重写
         if (StringUtils.isEmpty(sinochemintlPoPlanHeaderDTO.getCreateId())) {
-            sinochemintlPoPlanHeaderDTO.setCreateId(user.getUserId());
+            sinochemintlPoPlanHeaderDTO.setStandbyCreateId(user.getUserId());
         }
         if ("MAINTAIN".equals(sinochemintlPoPlanHeaderDTO.getStatus())) {
             return PageHelper.doPage(pageRequest, () -> sinochemintlPoPlanHeaderRepository.maintain(sinochemintlPoPlanHeaderDTO));
@@ -124,9 +124,11 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
                     poPlanLineIds.addAll(sinochemintlPoPlanLineRepository.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO));
                 }
-                sinochemintlPoPlanHeaderDTO.setCreateId(user.getUserId());
                 sinochemintlPoPlanHeaderDTO.setPoPlanLineIds(poPlanLineIds);
             }
+        }
+        if (StringUtils.isEmpty(sinochemintlPoPlanHeaderDTO.getCreateId())) {
+            sinochemintlPoPlanHeaderDTO.setStandbyCreateId(user.getUserId());
         }
         return PageHelper.doPage(pageRequest, () -> sinochemintlPoPlanLineRepository.detailList(sinochemintlPoPlanHeaderDTO));
     }
@@ -415,6 +417,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
      * @param ids 头表id
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void submit(Long organizationId, List<Long> ids) {
         for (Long poPlanHeaderId : ids) {
             //提交采购计划
@@ -455,6 +458,19 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             }
             int province = 0;
             for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineList) {
+                if (SinochemintlConstant.StatusCode.STATUS_NEW.equals(sinochemintlPoPlanLineDTO.getStatus()) &&
+                        sinochemintlPoPlanLineDTO.getSharedProvinceId() != 0 &&
+                        sinochemintlPoPlanLineDTO.getApplicantId().equals(user.getUserId())) {
+                    Integer spellDocProvinceCount = sinochemintlPoPlanLineRepository.spellDocProvince(sinochemintlPoPlanLineDTO);
+                    if (spellDocProvinceCount == 0) {
+                        SinochemintlPoPlanLineDTO spellDocProvince = sinochemintlPoPlanLineRepository.selectByKey(sinochemintlPoPlanLineDTO.getSharedProvinceId());
+                        sinochemintlPoPlanLineRepository.updateByKey(spellDocProvince.setSpellDocProvince(spellDocProvince.getSpellDocProvince() + 1));
+                    }
+                    sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_COMPLETE);
+                    sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
+                }
+            }
+            for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineList) {
                 if (StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getSharedProvinceId())) {
                     sinochemintlPoPlanLineDTO.setSharedProvinceId(0L);
                 }
@@ -475,17 +491,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                         province--;
                         sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_COMPLETE);
                     }
-                    sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
-                }
-                if (SinochemintlConstant.StatusCode.STATUS_NEW.equals(sinochemintlPoPlanLineDTO.getStatus()) &&
-                        sinochemintlPoPlanLineDTO.getSharedProvinceId() != 0 &&
-                        sinochemintlPoPlanLineDTO.getApplicantId().equals(user.getUserId())) {
-                    Integer spellDocProvinceCount = sinochemintlPoPlanLineRepository.spellDocProvince(sinochemintlPoPlanLineDTO);
-                    if (spellDocProvinceCount == 0) {
-                        SinochemintlPoPlanLineDTO spellDocProvince = sinochemintlPoPlanLineRepository.selectByKey(sinochemintlPoPlanLineDTO.getSharedProvinceId());
-                        sinochemintlPoPlanLineRepository.updateByKey(spellDocProvince.setSpellDocProvince(spellDocProvince.getSpellDocProvince() + 1));
-                    }
-                    sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_COMPLETE);
                     sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
                 }
             }

@@ -114,6 +114,8 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
     @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
     private Date establishDate;
+    @ApiModelProperty(value = "附件id")
+    private Long standbyCreateId;
 
     @Transient
     @ApiModelProperty(value = "行表数据")
@@ -128,6 +130,14 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
 
     public void setSinochemintlPoPlanLineList(List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList) {
         this.sinochemintlPoPlanLineList = sinochemintlPoPlanLineList;
+    }
+
+    public Long getStandbyCreateId() {
+        return standbyCreateId;
+    }
+
+    public void setStandbyCreateId(Long standbyCreateId) {
+        this.standbyCreateId = standbyCreateId;
     }
 
     public Set<Long> getPoPlanLineIds() {

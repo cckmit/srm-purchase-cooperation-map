@@ -64,5 +64,7 @@ public class SinochemintlConstant {
         String SCUX_ZHNY_RULES_PO_PLAN = "SCUX.ZHNY.RULES.PO_PLAN";
         //定时任务 : 根据拼单截至时间修改状态
         String SPUC_ZHNY_PO_PLAN_HANDLER = "SPUC.ZHNY.PO_PLAN.HANDLER";
+        //定时任务 : 根据拼单截至时间提前发起通知
+        String SPUC_ZHNY_ADVANCED_PO_PLAN = "SPUC.ZHNY.ADVANCED.PO_PLAN";
     }
 }
