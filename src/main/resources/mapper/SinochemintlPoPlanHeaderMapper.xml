@@ -450,12 +450,22 @@
 
     <!--    导入数据校验-->
     <select id="importVerify" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
-        select (SELECT company_id FROM hpfm_company WHERE company_name = #{provinceCompany})            provinceCompanyId,
+        select (SELECT company_id
+                FROM hpfm_company
+                WHERE company_name = #{provinceCompany})                                                provinceCompanyId,
                (SELECT company_id
                 FROM hpfm_company
                 WHERE company_name = #{initialSupplier})                                                initialSupplierId,
-               (SELECT item_id FROM smdm_item WHERE item_code = #{materialCoding})                      materialId,
-               (SELECT uom_id FROM smdm_uom WHERE uom_name = #{unitName})                               uomId,
+               (SELECT item_id
+                FROM smdm_item
+                WHERE item_code = #{materialCoding}
+                  and tenant_id = #{tenantId})                                                          materialId,
+               (SELECT uom_id
+                FROM smdm_uom
+                WHERE uom_name = #{unitName}
+                  and tenant_id = #{tenantId}
+                  and enabled_flag = '1'
+                  and uom_type_code = 'T006A')                                                          uomId,
                (SELECT currency_id
                 FROM smdm_currency
                 WHERE currency_name = #{currencyName}
