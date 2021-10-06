@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 采购计划头表
@@ -39,6 +40,7 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @LovValue(lovCode = "SCUX.SINOCHEMINTL.PO_PLAN_NUMBER", meaningField = "statusName")
     private String status;
     @ApiModelProperty(value = "状态名")
+    @Transient
     private String statusName;
     @ApiModelProperty(value = "计划类型", required = true)
     private String planType;
@@ -46,6 +48,8 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     private String poPlanNumber;
     @ApiModelProperty(value = "申请总额", required = true)
     private BigDecimal applicationSum;
+    @ApiModelProperty(value = "申请最终总额", required = true)
+    private BigDecimal applicationFinalSum;
     @ApiModelProperty(value = "创建人id")
     private Long createId;
     @ApiModelProperty(value = "创建人", required = true)
@@ -74,7 +78,7 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     private String poSource;
     @ApiModelProperty(value = "申请人", required = true)
     private String applicant;
-    @ApiModelProperty(value = "部门ID(SPUC.SD_PH_UNIT)")
+    @ApiModelProperty(value = "部门ID(SSRC.CREATED_UNIT)")
     private Long departmentId;
     @ApiModelProperty(value = "所属部门", required = true)
     private String departmentName;
@@ -93,7 +97,7 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @ApiModelProperty(value = "物料分类")
     private String materialClass;
     @ApiModelProperty(value = "行号")
-    private Long serialNum;
+    private Long displayLineNum;
     @ApiModelProperty(value = "物料编码")
     private String materialCoding;
     @ApiModelProperty(value = "产品名称")
@@ -110,11 +114,15 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
     @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
     private Date establishDate;
+    @ApiModelProperty(value = "附件id")
+    private Long standbyCreateId;
 
     @Transient
     @ApiModelProperty(value = "行表数据")
+    private Set<Long> poPlanLineIds;
+    @Transient
+    @ApiModelProperty(value = "行表数据")
     private List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList;
-
 
     public List<SinochemintlPoPlanLineDTO> getSinochemintlPoPlanLineList() {
         return sinochemintlPoPlanLineList;
@@ -122,6 +130,30 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
 
     public void setSinochemintlPoPlanLineList(List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList) {
         this.sinochemintlPoPlanLineList = sinochemintlPoPlanLineList;
+    }
+
+    public Long getStandbyCreateId() {
+        return standbyCreateId;
+    }
+
+    public void setStandbyCreateId(Long standbyCreateId) {
+        this.standbyCreateId = standbyCreateId;
+    }
+
+    public Set<Long> getPoPlanLineIds() {
+        return poPlanLineIds;
+    }
+
+    public void setPoPlanLineIds(Set<Long> poPlanLineIds) {
+        this.poPlanLineIds = poPlanLineIds;
+    }
+
+    public BigDecimal getApplicationFinalSum() {
+        return applicationFinalSum;
+    }
+
+    public void setApplicationFinalSum(BigDecimal applicationFinalSum) {
+        this.applicationFinalSum = applicationFinalSum;
     }
 
     public Date getEstablishDate() {
@@ -180,12 +212,12 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
         this.materialClass = materialClass;
     }
 
-    public Long getSerialNum() {
-        return serialNum;
+    public Long getDisplayLineNum() {
+        return displayLineNum;
     }
 
-    public void setSerialNum(Long serialNum) {
-        this.serialNum = serialNum;
+    public void setDisplayLineNum(Long displayLineNum) {
+        this.displayLineNum = displayLineNum;
     }
 
     public String getMaterialCoding() {
@@ -498,18 +530,6 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
 
     public SinochemintlPoPlanHeaderDTO setApplicationDate(Date applicationDate) {
         this.applicationDate = applicationDate;
-        return this;
-    }
-
-    /**
-     * @return 原币币种
-     */
-    public String getOriginalCurrency() {
-        return originalId;
-    }
-
-    public SinochemintlPoPlanHeaderDTO setOriginalCurrency(String originalId) {
-        this.originalId = originalId;
         return this;
     }
 

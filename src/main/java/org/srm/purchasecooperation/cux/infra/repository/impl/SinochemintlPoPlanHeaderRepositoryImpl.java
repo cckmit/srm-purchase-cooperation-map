@@ -1,5 +1,6 @@
 package org.srm.purchasecooperation.cux.infra.repository.impl;
 
+import org.hzero.boot.message.entity.Receiver;
 import org.hzero.mybatis.base.impl.BaseRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanHeaderMapper;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -57,14 +59,13 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     }
 
     @Override
-    public List<SinochemintlPoPlanExcelDTO> excel(List<Long> ids) {
+    public List<SinochemintlPoPlanExcelDTO> excel(List<String> ids) {
         return sinochemintlPoPlanHeaderMapper.excel(ids);
     }
 
     @Override
     public List<SinochemintlPoPlanHeaderDTO> maintain(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
-        List<SinochemintlPoPlanHeaderDTO> maintain = sinochemintlPoPlanHeaderMapper.maintain(sinochemintlPoPlanHeaderDTO);
-        return maintain.stream().sorted(Comparator.comparing(SinochemintlPoPlanHeaderDTO::getCreationDate)).collect(Collectors.toList());
+        return sinochemintlPoPlanHeaderMapper.maintain(sinochemintlPoPlanHeaderDTO);
     }
 
     @Override
@@ -73,17 +74,52 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     }
 
     @Override
-    public void timedTaskAlterState(Date date) {
-        sinochemintlPoPlanHeaderMapper.timedTaskAlterState(date);
+    public void timedTaskAlterState(Date date, String status) {
+        sinochemintlPoPlanHeaderMapper.timedTaskAlterState(date, status);
     }
 
     @Override
-    public SinochemintlPoPlanLineDTO getDefaultCompanyId(Long employeeId) {
+    public List<SinochemintlPoPlanHeaderDTO> timedTaskHeader(Date date) {
+        return sinochemintlPoPlanHeaderMapper.timedTaskHeader(date);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanLineDTO> getDefaultCompanyId(Long employeeId) {
         return sinochemintlPoPlanHeaderMapper.getDefaultCompanyId(employeeId);
     }
 
     @Override
-    public List<SinochemintlEmployeeInformationDTO> getDefaultEmployeeList(Long provinceCompanyId) {
-        return sinochemintlPoPlanHeaderMapper.getDefaultEmployeeList(provinceCompanyId);
+    public List<Receiver> getDefaultEmployeeList(List<Integer> integers) {
+        return sinochemintlPoPlanHeaderMapper.getDefaultEmployeeList(integers);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanExcelDTO> batchExcel(SinochemintlPoPlanHeaderDTO dto) {
+        return sinochemintlPoPlanHeaderMapper.batchExcel(dto);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanHeaderDTO> getExpirationTime(Date date) {
+        return sinochemintlPoPlanHeaderMapper.getExpirationTime(date);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanHeaderDTO> verifyBusiness(Long companyId) {
+        return sinochemintlPoPlanHeaderMapper.verifyBusiness(companyId);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanHeaderDTO> verifyDepartment(Long businessId) {
+        return sinochemintlPoPlanHeaderMapper.verifyDepartment(businessId);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId) {
+        return sinochemintlPoPlanHeaderMapper.verifyPurchaseOrg(businessId);
+    }
+
+    @Override
+    public List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list) {
+        return sinochemintlPoPlanHeaderMapper.excelLine(list);
     }
 }

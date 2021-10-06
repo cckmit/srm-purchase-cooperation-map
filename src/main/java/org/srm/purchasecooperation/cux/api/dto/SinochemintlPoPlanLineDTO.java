@@ -16,6 +16,8 @@ import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 采购计划行表
@@ -48,7 +50,7 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     private String planSharedProvince;
     @ApiModelProperty(value = "计划共享省区名称", required = true)
     @Transient
-    private List<String> planSharedProvinceName;
+    private List<Map<String, Object>> planSharedProvinceName;
     @ApiModelProperty(value = "省公司/项目ID(SPFM.USER_AUTH.COMPANY)", required = true)
     private Long provinceCompanyId;
     @ApiModelProperty(value = "省公司/项目", required = true)
@@ -81,9 +83,11 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     private Long uomId;
     @ApiModelProperty(value = "单位名称", required = true)
     private String unitName;
-    @ApiModelProperty(value = "采购总价", required = true)
+    @ApiModelProperty(value = "最终行金额", required = true)
+    private BigDecimal totalPurchaseFinalPrice;
+    @ApiModelProperty(value = "行金额", required = true)
     private BigDecimal totalPurchasePrice;
-    @ApiModelProperty(value = "币种(SPCM.CURRENCY)", required = true)
+    @ApiModelProperty(value = "币种(SPRM.EXCHANGE_RATE.CURRENCY)", required = true)
     private String currencyId;
     @ApiModelProperty(value = "币种名称", required = true)
     private String currencyName;
@@ -102,36 +106,292 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     @ApiModelProperty(value = "税率")
     private BigDecimal taxRate;
     @ApiModelProperty(value = "申请人")
+    private Long applicantId;
+    @ApiModelProperty(value = "申请人")
     private String applicant;
     @ApiModelProperty(value = "附件id")
     private String appendixId;
+
+    @ApiModelProperty(value = "标题", required = true)
+    private String title;
+    @ApiModelProperty(value = "采购计划单号", required = true)
+    private String poPlanNumber;
+    @ApiModelProperty(value = "计划类型", required = true)
+    private String planType;
+    @ApiModelProperty(value = "拼单截至时间", required = true)
+    @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
+    @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
+    private Date deadline;
+    @ApiModelProperty(value = "公司ID(SPFM.USER_AUTH.COMPANY)")
+    private Long companyId;
+    @ApiModelProperty(value = "公司", required = true)
+    private String companyName;
+    @ApiModelProperty(value = "业务实体ID(SPFM.USER_AUTH.OU)")
+    private Long businessId;
+    @ApiModelProperty(value = "业务实体", required = true)
+    private String businessName;
+    @ApiModelProperty(value = "采购组织ID(HPFM.PURCHASE_ORGANIZATION_M)")
+    private Long purchaseOrgId;
+    @ApiModelProperty(value = "采购组织", required = true)
+    private String purchaseOrgName;
+    @ApiModelProperty(value = "采购员ID(SPUC.PURCHASE_AGENT)")
+    private Long purchaseId;
+    @ApiModelProperty(value = "采购员", required = true)
+    private String purchaseName;
+    @ApiModelProperty(value = "部门ID(SPUC.SD_PH_UNIT)")
+    private Long departmentId;
+    @ApiModelProperty(value = "所属部门", required = true)
+    private String departmentName;
+    @ApiModelProperty(value = "创建人id")
+    private Long createId;
+    @ApiModelProperty(value = "创建人", required = true)
+    private String createName;
+    @ApiModelProperty(value = "创建日期")
+    @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
+    @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
+    private Date establishDate;
+    @ApiModelProperty(value = "申请总额", required = true)
+    private BigDecimal applicationSum;
+    @ApiModelProperty(value = "申请最终总额", required = true)
+    private BigDecimal applicationFinalSum;
 
 //
 // 非数据库字段
 // ------------------------------------------------------------------------------
 
+    @ApiModelProperty(value = "头状态")
+    private String headerStatus;
+
     @ApiModelProperty(value = "序号")
     private Integer serialNum;
+
+    @ApiModelProperty(value = "展示行号")
+    private Integer displayLineNum;
 
     @Transient
     @ApiModelProperty(value = "状态名")
     private String statusName;
 
+    @ApiModelProperty(value = "共享省区对应id")
+    private Long sharedProvinceId;
+
+    @Transient
+    @ApiModelProperty(value = "行表数据")
+    private Set<Long> poPlanLineIds;
 //
 // getter/setter
 // ------------------------------------------------------------------------------
 
-
-    public List<String> getPlanSharedProvinceName() {
+    public List<Map<String, Object>> getPlanSharedProvinceName() {
         return planSharedProvinceName;
     }
 
-    public void setPlanSharedProvinceName(List<String> planSharedProvinceName) {
+    public void setPlanSharedProvinceName(List<Map<String, Object>> planSharedProvinceName) {
         this.planSharedProvinceName = planSharedProvinceName;
+    }
+
+    public String getHeaderStatus() {
+        return headerStatus;
+    }
+
+    public void setHeaderStatus(String headerStatus) {
+        this.headerStatus = headerStatus;
+    }
+
+    public Long getApplicantId() {
+        return applicantId;
+    }
+
+    public void setApplicantId(Long applicantId) {
+        this.applicantId = applicantId;
+    }
+
+    public Set<Long> getPoPlanLineIds() {
+        return poPlanLineIds;
+    }
+
+    public void setPoPlanLineIds(Set<Long> poPlanLineIds) {
+        this.poPlanLineIds = poPlanLineIds;
+    }
+
+    public String getPlanType() {
+        return planType;
+    }
+
+    public void setPlanType(String planType) {
+        this.planType = planType;
+    }
+
+    public Date getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(Date deadline) {
+        this.deadline = deadline;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public Long getBusinessId() {
+        return businessId;
+    }
+
+    public void setBusinessId(Long businessId) {
+        this.businessId = businessId;
+    }
+
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
+    }
+
+    public Long getPurchaseOrgId() {
+        return purchaseOrgId;
+    }
+
+    public void setPurchaseOrgId(Long purchaseOrgId) {
+        this.purchaseOrgId = purchaseOrgId;
+    }
+
+    public String getPurchaseOrgName() {
+        return purchaseOrgName;
+    }
+
+    public void setPurchaseOrgName(String purchaseOrgName) {
+        this.purchaseOrgName = purchaseOrgName;
+    }
+
+    public Long getPurchaseId() {
+        return purchaseId;
+    }
+
+    public void setPurchaseId(Long purchaseId) {
+        this.purchaseId = purchaseId;
+    }
+
+    public String getPurchaseName() {
+        return purchaseName;
+    }
+
+    public void setPurchaseName(String purchaseName) {
+        this.purchaseName = purchaseName;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public Long getCreateId() {
+        return createId;
+    }
+
+    public void setCreateId(Long createId) {
+        this.createId = createId;
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName;
+    }
+
+    public Date getEstablishDate() {
+        return establishDate;
+    }
+
+    public void setEstablishDate(Date establishDate) {
+        this.establishDate = establishDate;
+    }
+
+    public BigDecimal getApplicationSum() {
+        return applicationSum;
+    }
+
+    public void setApplicationSum(BigDecimal applicationSum) {
+        this.applicationSum = applicationSum;
+    }
+
+    public BigDecimal getApplicationFinalSum() {
+        return applicationFinalSum;
+    }
+
+    public void setApplicationFinalSum(BigDecimal applicationFinalSum) {
+        this.applicationFinalSum = applicationFinalSum;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPoPlanNumber() {
+        return poPlanNumber;
+    }
+
+    public void setPoPlanNumber(String poPlanNumber) {
+        this.poPlanNumber = poPlanNumber;
+    }
+
+    public Integer getDisplayLineNum() {
+        return displayLineNum;
+    }
+
+    public void setDisplayLineNum(Integer displayLineNum) {
+        this.displayLineNum = displayLineNum;
+    }
+
+    public Long getSharedProvinceId() {
+        return sharedProvinceId;
+    }
+
+    public void setSharedProvinceId(Long sharedProvinceId) {
+        this.sharedProvinceId = sharedProvinceId;
     }
 
     public String getEndSupplier() {
         return endSupplier;
+    }
+
+    public BigDecimal getTotalPurchaseFinalPrice() {
+        return totalPurchaseFinalPrice;
+    }
+
+    public void setTotalPurchaseFinalPrice(BigDecimal totalPurchaseFinalPrice) {
+        this.totalPurchaseFinalPrice = totalPurchaseFinalPrice;
     }
 
     public void setEndSupplier(String endSupplier) {

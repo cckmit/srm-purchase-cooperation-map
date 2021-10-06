@@ -1,29 +1,20 @@
 package org.srm.purchasecooperation.cux.app.service.impl;
 
-import cfca.org.slf4j.Logger;
-import cfca.org.slf4j.LoggerFactory;
-import io.choerodon.core.oauth.CustomUserDetails;
-import io.choerodon.core.oauth.DetailsHelper;
 import org.hzero.boot.message.MessageClient;
 import org.hzero.boot.message.entity.Receiver;
-import org.hzero.boot.platform.lov.adapter.LovAdapter;
 import org.hzero.core.base.BaseConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.srm.purchasecooperation.cux.api.dto.MessageSenderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
-import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstant;
-import org.srm.purchasecooperation.cux.infra.repository.impl.SinochemintlPoPlanHeaderRepositoryImpl;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * description
@@ -31,7 +22,7 @@ import java.util.Map;
  * @author jiaxing.huang@hand-china.com  2021/08/16 15:49
  */
 @Component
-public class SinochemintlSendMessageService{
+public class SinochemintlSendMessageService {
 
     @Autowired
     private MessageClient messageClient;
@@ -41,6 +32,7 @@ public class SinochemintlSendMessageService{
 
     /**
      * 发送邮件
+     *
      * @param messageSender
      */
     public void sendEmail(MessageSenderDTO messageSender) {
@@ -49,6 +41,7 @@ public class SinochemintlSendMessageService{
 
     /**
      * 发送短信
+     *
      * @param messageSender
      */
     public void sendSms(MessageSenderDTO messageSender) {
@@ -57,6 +50,7 @@ public class SinochemintlSendMessageService{
 
     /**
      * 发送站内消息
+     *
      * @param messageSender
      */
     public void sendWebMessage(MessageSenderDTO messageSender) {
@@ -65,6 +59,7 @@ public class SinochemintlSendMessageService{
 
     /**
      * 获取消息模板参数
+     *
      * @param poPlanHeader
      * @return
      */
@@ -74,26 +69,19 @@ public class SinochemintlSendMessageService{
         paramMap.put(SinochemintlMessageConstant.MessageTemplateParameters.Parameter_Applicant, poPlanHeader.getApplicant());
         paramMap.put(SinochemintlMessageConstant.MessageTemplateParameters.Parameter_Po_Plan_Number, poPlanHeader.getPoPlanNumber());
         paramMap.put(SinochemintlMessageConstant.MessageTemplateParameters.Parameter_Title, poPlanHeader.getTitle());
-        paramMap.put(SinochemintlMessageConstant.MessageTemplateParameters.Parameter_Deadline, poPlanHeader.getDeadline().toString());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        paramMap.put(SinochemintlMessageConstant.MessageTemplateParameters.Parameter_Deadline, dateFormat.format(poPlanHeader.getDeadline()));
         return paramMap;
     }
 
     /**
      * 获取接受者
-     * @param string
+     *
+     * @param companyIds
      * @return
      */
-    public List<Receiver> getReceiverList(String string) {
-        List<Receiver> receiverList = new ArrayList<>();
-        List<SinochemintlEmployeeInformationDTO> employeeList = new ArrayList<>();
-        Long provinceCompanyId = Long.valueOf(string);
-        employeeList = sinochemintlPoPlanHeaderRepository.getDefaultEmployeeList(provinceCompanyId);
-        for (SinochemintlEmployeeInformationDTO dto : employeeList) {
-            Receiver receiver = new Receiver().setUserId(dto.getId()).setTargetUserTenantId(dto.getOrganizationId()).setEmail(dto.getEmail()).setPhone(dto.getPhone()).setIdd(dto.getInternationalTelCode());
-            receiverList.add(receiver);
-        }
-
-        return receiverList;
+    public List<Receiver> getReceiverList(Set<Integer> companyIds) {
+        return sinochemintlPoPlanHeaderRepository.getDefaultEmployeeList(new ArrayList<Integer>(companyIds));
     }
 }
 

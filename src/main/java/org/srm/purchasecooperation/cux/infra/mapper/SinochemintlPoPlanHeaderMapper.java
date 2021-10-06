@@ -1,6 +1,8 @@
 package org.srm.purchasecooperation.cux.infra.mapper;
 
 import io.choerodon.mybatis.common.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+import org.hzero.boot.message.entity.Receiver;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
@@ -61,7 +63,7 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @param ids 勾选的头表id
      * @return 需要导出的结果
      */
-    List<SinochemintlPoPlanExcelDTO> excel(List<Long> ids);
+    List<SinochemintlPoPlanExcelDTO> excel(List<String> ids);
 
     List<SinochemintlPoPlanHeaderDTO> maintain(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
@@ -78,7 +80,14 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      *
      * @param date 当前时间
      */
-    void timedTaskAlterState(Date date);
+    void timedTaskAlterState(@Param("date") Date date, @Param("status") String status);
+
+    /**
+     * 根据拼单截至时间获取订单信息
+     *
+     * @param date 当前时间
+     */
+    List<SinochemintlPoPlanHeaderDTO> timedTaskHeader(Date date);
 
     /**
      * 根据员工id获取当前用户所在公司id和公司编码
@@ -86,12 +95,55 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @param employeeId 员工id
      * @return 公司id和公司编码
      */
-    SinochemintlPoPlanLineDTO getDefaultCompanyId(Long employeeId);
+    List<SinochemintlPoPlanLineDTO> getDefaultCompanyId(Long employeeId);
 
     /**
      * 通过省区代码，获取对应人员
-     * @param provinceCompanyId
+     *
+     * @param integers
      * @return
      */
-    List<SinochemintlEmployeeInformationDTO> getDefaultEmployeeList(Long provinceCompanyId);
+    List<Receiver> getDefaultEmployeeList(List<Integer> integers);
+
+    /**
+     * 采购计划批量导出
+     *
+     * @param dto 查询数据
+     * @return 结果
+     */
+    List<SinochemintlPoPlanExcelDTO> batchExcel(SinochemintlPoPlanHeaderDTO dto);
+
+    /**
+     * 获取快到期采购计划
+     *
+     * @param date 截至时间
+     * @return 头数据
+     */
+    List<SinochemintlPoPlanHeaderDTO> getExpirationTime(Date date);
+
+    /**
+     * 如果公司唯一则查询业务实体
+     *
+     * @param companyId 公司id
+     * @return 查询结果
+     */
+    List<SinochemintlPoPlanHeaderDTO> verifyBusiness(Long companyId);
+
+    /**
+     * 如果业务实体唯一查询所在部门是否唯一
+     *
+     * @param businessId 业务实体id
+     * @return 查询结果
+     */
+    List<SinochemintlPoPlanHeaderDTO> verifyDepartment(Long businessId);
+
+    /**
+     * 如果业务实体唯一查询采购组织
+     *
+     * @param businessId 业务实体id
+     * @return 查询结果
+     */
+    List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId);
+
+    List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list);
 }

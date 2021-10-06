@@ -6,10 +6,10 @@
         SELECT spl.pr_line_id          poPlanLineId,
                spl.pr_header_id        poPlanHeaderId,
                spl.tenant_id           tenantId,
-               sph.pr_status_code      status,
+               spl.attribute_varchar37 status,
                spl.attribute_bigint14  spellDocProvince,
                spl.needed_date         needDate,
-               spl.attribute_varchar23 planSharedProvince,
+               spl.attribute_longtext9 planSharedProvince,
                spl.company_id          provinceCompanyId,
                hc.company_name         provinceCompany,
                spl.product_name        productName,
@@ -30,30 +30,63 @@
                sc.currency_name        currencyName,
                spl.attribute_varchar38 freightSupplier,
                spl.line_freight        freightPrice,
-               spl.attribute_varchar39 priceTerms,
+               spl.attribute_varchar40 priceTerms,
                spl.remark              remark,
                spl.tax_id              taxId,
-               spl.tax_code            taxType,
+               st.description          taxType,
                spl.tax_rate            taxRate,
+               spl.requested_by        applicantId,
                spl.pr_requested_name   applicant,
-               spl.display_line_num    serialNum,
-               spl.attachment_uuid     appendixId
+               spl.line_num            serialNum,
+               spl.display_line_num    displayLineNum,
+               spl.attribute_bigint15  sharedProvinceId,
+               spl.attribute_decimal4  totalPurchasePrice,
+               spl.attribute_decimal5  totalPurchaseFinalPrice,
+               spl.attachment_uuid     appendixId,
+               sph.title               title,
+               sph.attribute_varchar23 planType,
+               sph.attribute_datetime1 deadline,
+               sph.parent_unit_id      companyId,
+               hc1.company_name        companyName,
+               sph.attribute_bigint11  businessId,
+               hou.ou_name             businessName,
+               sph.purchase_org_id     purchaseOrgId,
+               hpo.organization_name   purchaseOrgName,
+               sph.purchase_agent_id   purchaseId,
+               hpa.purchase_agent_name purchaseName,
+               sph.unit_id             departmentId,
+               hu.unit_name            departmentName,
+               sph.pr_status_code      headerStatus,
+               sph.requested_by        createId,
+               sph.pr_requested_name   createName,
+               sph.creation_date       establishDate,
+               sph.attribute_decimal1  applicationSum,
+               sph.attribute_decimal2  applicationFinalSum,
+               sph.pr_num              poPlanNumber
         FROM sprm_pr_header sph
                  LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
                  LEFT JOIN smdm_item si ON si.item_id = spl.item_id
-                 LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
+                 LEFT JOIN smdm_item_category sic
+                           ON sic.category_code = si.attribute_varchar5 and sic.tenant_id = spl.tenant_id
+                 LEFT JOIN smdm_tax st ON spl.tax_id = st.tax_id
                  LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
                  LEFT JOIN smdm_currency sc ON sc.currency_id = spl.currency_code
                  LEFT JOIN hpfm_company hc ON hc.company_id = spl.company_id
+                 LEFT JOIN hpfm_company hc1 ON hc1.company_id = sph.parent_unit_id
+                 LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
+                 LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = sph.unit_id
+                 LEFT JOIN hpfm_operation_unit hou ON hou.ou_id = sph.attribute_bigint11
     </sql>
 
     <!--    保存行表-->
     <insert id="setOne">
         INSERT INTO sprm_pr_line (pr_header_id,
                                   tenant_id,
+                                  attribute_varchar37,
                                   attribute_bigint14,
                                   needed_date,
-                                  attribute_varchar23,
+                                  attribute_longtext9,
                                   product_name,
                                   attribute_varchar24,
                                   supplier_id,
@@ -67,16 +100,22 @@
                                   currency_code,
                                   attribute_varchar38,
                                   line_freight,
-                                  attribute_varchar39,
+                                  attribute_varchar40,
                                   remark,
-                                  tax_code,
+                                  tax_id,
                                   tax_rate,
+                                  requested_by,
                                   pr_requested_name,
+                                  line_num,
                                   display_line_num,
                                   company_id,
+                                  attribute_bigint15,
+                                  attribute_decimal4,
+                                  attribute_decimal5,
                                   attachment_uuid)
             VALUE (#{poPlanHeaderId},
             #{tenantId},
+            #{status},
             #{spellDocProvince},
             #{needDate},
             #{planSharedProvince},
@@ -95,11 +134,16 @@
             #{freightPrice},
             #{priceTerms},
             #{remark},
-            #{taxType},
+            #{taxId},
             #{taxRate},
+            #{applicantId},
             #{applicant},
             #{serialNum},
+            #{displayLineNum},
             #{provinceCompanyId},
+            #{sharedProvinceId},
+            #{totalPurchasePrice},
+            #{totalPurchaseFinalPrice},
             #{appendixId}
             )
     </insert>
@@ -109,7 +153,8 @@
         update sprm_pr_line
         set attribute_bigint14  = #{spellDocProvince},
             needed_date         = #{needDate},
-            attribute_varchar23 = #{planSharedProvince},
+            attribute_varchar37 = #{status},
+            attribute_longtext9 = #{planSharedProvince},
             company_id          = #{provinceCompanyId},
             product_name        = #{productName},
             attribute_varchar24 = #{specification},
@@ -126,13 +171,27 @@
             currency_code       = #{currencyId},
             attribute_varchar38 = #{freightSupplier},
             line_freight        = #{freightPrice},
-            attribute_varchar39 = #{priceTerms},
+            attribute_varchar40 = #{priceTerms},
             remark              = #{remark},
-            tax_code            = #{taxType},
+            tax_id              = #{taxId},
             tax_rate            = #{taxRate},
             pr_requested_name   = #{applicant},
+            attribute_bigint15  = #{sharedProvinceId},
+            attribute_decimal4  = #{totalPurchasePrice},
+            attribute_decimal5  = #{totalPurchaseFinalPrice},
             attachment_uuid     = #{appendixId}
         where pr_line_id = #{poPlanLineId}
+    </update>
+
+    <!--    批量维护-->
+    <update id="batchMaint">
+        update sprm_pr_line
+        set tenant_id = #{tenantId}
+        <if test="needDate != null">
+            ,needed_date = #{needDate}
+        </if>
+        where pr_header_id = #{poPlanHeaderId}
+        and tenant_id = #{tenantId}
     </update>
 
     <!--    根据头表id删除-->
@@ -148,11 +207,49 @@
         WHERE spl.pr_line_id = #{poPlanLineId}
     </select>
 
+    <select id="verifyPlanSharedProvince" resultType="java.lang.Long">
+        SELECT pr_line_id
+        FROM sprm_pr_line
+        WHERE tenant_id = #{tenantId}
+        <if test="poPlanHeaderId != null and poPlanHeaderId != ''">
+            AND pr_header_id = #{poPlanHeaderId}
+        </if>
+        <bind name="provinceCompanyLike" value="'%:' + provinceCompanyId + ',%'"/>
+        AND attribute_longtext9 like #{provinceCompanyLike}
+    </select>
+
+    <select id="getPoPlanLine" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND spl.pr_header_id = #{poPlanHeaderId}
+        AND spl.requested_by = #{applicantId}
+        <if test="poPlanLineIds != null">
+            UNION
+            <include refid="mappingChanges"/>
+            WHERE sph.tenant_id = #{tenantId}
+            AND spl.pr_header_id = #{poPlanHeaderId}
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            AND spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE','INPUT_COMPLETE')
+        </if>
+        <if test="status == 'NEW'">
+            UNION
+            <include refid="mappingChanges"/>
+            WHERE sph.tenant_id = #{tenantId}
+            AND spl.pr_header_id = #{poPlanHeaderId}
+            AND spl.attribute_varchar37 in('SPLICING_DOC_MIDDLE','SPLICING_DOC_COMPLETE','INPUT_COMPLETE')
+        </if>
+        ORDER BY displayLineNum
+    </select>
+
     <!--    根据头表id查询-->
     <select id="selectByHeaderId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
         <include refid="mappingChanges"/>
-        WHERE sph.tenant_id = #{organizationId}
-        and sph.pr_header_id = #{poPlanHeaderId}
+        WHERE sph.tenant_id = #{tenantId}
+        AND spl.pr_header_id = #{poPlanHeaderId}
+        ORDER BY displayLineNum
     </select>
 
     <!--    获取共享计划省区-->
@@ -166,11 +263,96 @@
 
     <!--    获取当前排序-->
     <select id="getSerialNum" resultType="java.lang.Integer">
+        SELECT line_num
+        FROM sprm_pr_line
+        where pr_header_id = #{poPlanHeaderId}
+        ORDER BY line_num DESC LIMIT 1
+    </select>
+    <select id="getDisplayLineNum" resultType="java.lang.Integer">
         SELECT display_line_num
         FROM sprm_pr_line
         where pr_header_id = #{poPlanHeaderId}
-        GROUP BY display_line_num DESC
-        LIMIT 1
+            and attribute_bigint15 = #{sharedProvinceId}
+           OR pr_line_id = #{sharedProvinceId}
+        ORDER BY display_line_num DESC LIMIT 1
+    </select>
+
+    <!--    共享计划省区校验-->
+    <select id="sharedProvinceVerify" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
+        SELECT company_id provinceCompanyId,
+        company_name provinceCompany
+        FROM hpfm_company
+        WHERE company_name in
+        <foreach collection="list" item="name" open="(" close=")" separator=",">
+            #{name}
+        </foreach>
+    </select>
+
+    <!--    采购计划明细查询-->
+    <select id="detailList" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="displayLineNum != null and displayLineNum != ''">
+            AND spl.display_line_num = #{displayLineNum}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND spl.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            OR sph.requested_by = #{createId}
+        </if>
+        GROUP BY spl.pr_line_id
+        ORDER BY sph.creation_date DESC
+    </select>
+
+    <select id="spellDocProvince"
+            resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM sprm_pr_line
+        WHERE attribute_bigint15 = #{sharedProvinceId}
+          and company_id = #{provinceCompanyId}
+          and attribute_varchar37 = 'SPLICING_DOC_COMPLETE'
     </select>
 
 </mapper>

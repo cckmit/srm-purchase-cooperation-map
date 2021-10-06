@@ -3,8 +3,10 @@ package org.srm.purchasecooperation.cux.domain.repository;
 
 import org.hzero.mybatis.base.BaseRepository;
 import org.springframework.stereotype.Component;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -47,11 +49,10 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
     /**
      * 根据头表id查询
      *
-     * @param organizationId 租户id
-     * @param poPlanHeaderId 头表id
+     * @param sinochemintlPoPlanLineDTO 租户id
      * @return 行表数据
      */
-    List<SinochemintlPoPlanLineDTO> selectByHeaderId(Long organizationId, Long poPlanHeaderId);
+    List<SinochemintlPoPlanLineDTO> selectByHeaderId(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
 
     /**
      * 获取共享计划省区
@@ -61,5 +62,36 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
     /**
      * 获取当前排序
      */
-    Integer getSerialNum(String poPlanHeaderId);
+    Integer getSerialNum(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
+
+    Integer getDisplayLineNum(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
+
+    /**
+     * 共享计划省区校验
+     *
+     * @param planSharedProvince 共享计划省区
+     * @return 省区
+     */
+    List<SinochemintlPoPlanLineDTO> sharedProvinceVerify(List<String> planSharedProvince);
+
+    /**
+     * 批量维护
+     *
+     * @param dto 批量维护信息
+     */
+    void batchMaint(SinochemintlPoPlanLineDTO dto);
+
+    /**
+     * 采购计划明细查询
+     *
+     * @param sinochemintlPoPlanHeaderDTO 查询条件
+     * @return 查询结果
+     */
+    List<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
+
+    HashSet<Long> verifyPlanSharedProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
+
+    Integer spellDocProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
+
+    List<SinochemintlPoPlanLineDTO> getPoPlanLine(SinochemintlPoPlanLineDTO sinochemintlPoPlanLine);
 }

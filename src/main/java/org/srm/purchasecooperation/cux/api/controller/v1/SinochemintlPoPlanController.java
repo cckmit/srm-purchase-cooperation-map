@@ -21,11 +21,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.app.service.SinochemintlPoPlanService;
+import org.srm.purchasecooperation.pr.api.dto.PrActionDTO;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 采购计划 管理 API
@@ -49,7 +52,7 @@ public class SinochemintlPoPlanController extends BaseController {
     @ApiOperation(value = "采购计划头表列表")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/list")
-    @ProcessLovValue
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
     public ResponseEntity<Page<SinochemintlPoPlanHeaderDTO>> list(@PathVariable("organizationId") Long organizationId, SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO, @ApiIgnore @SortDefault(value = "poPlanHeaderId",
             direction = Sort.Direction.DESC) PageRequest pageRequest) {
         sinochemintlPoPlanHeaderDTO.setTenantId(organizationId);
@@ -57,23 +60,47 @@ public class SinochemintlPoPlanController extends BaseController {
         return Results.success(list);
     }
 
+    @ApiOperation(value = "采购计划明细查询")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/detailList")
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
+    public ResponseEntity<Page<SinochemintlPoPlanLineDTO>> detailList(@PathVariable("organizationId") Long organizationId, SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO, @ApiIgnore @SortDefault(value = "poPlanHeaderId",
+            direction = Sort.Direction.DESC) PageRequest pageRequest) {
+        sinochemintlPoPlanHeaderDTO.setTenantId(organizationId);
+        Page<SinochemintlPoPlanLineDTO> list = sinochemintlPoPlanHeaderService.detailList(sinochemintlPoPlanHeaderDTO, pageRequest);
+        return Results.success(list);
+    }
+
     @ApiOperation(value = "新增/保存/修改采购计划")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/addPoPlan")
-    @ProcessLovValue
-    public ResponseEntity<SinochemintlPoPlanHeaderDTO> addPoPlan(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto) {
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
+    public ResponseEntity<SinochemintlPoPlanHeaderDTO> addPoPlan(@PathVariable("organizationId") Long organizationId,
+                                                                 @RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto,
+                                                                 @ApiIgnore @SortDefault(value = "poPlanHeaderId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
         dto.setTenantId(organizationId);
-        SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO = sinochemintlPoPlanHeaderService.addPoPlan(dto);
+        SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO = sinochemintlPoPlanHeaderService.addPoPlan(dto, pageRequest);
         return Results.success(sinochemintlPoPlanHeaderDTO);
     }
 
     @ApiOperation(value = "获取头行单表")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/getPoPlan/{poPlanHeaderId}")
-    @ProcessLovValue
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
     public ResponseEntity<SinochemintlPoPlanHeaderDTO> getPoPlan(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId, @ApiIgnore @SortDefault(value = "poPlanHeaderId",
             direction = Sort.Direction.DESC) PageRequest pageRequest) {
         SinochemintlPoPlanHeaderDTO result = sinochemintlPoPlanHeaderService.getPoPlan(organizationId, poPlanHeaderId, pageRequest);
+        return Results.success(result);
+    }
+
+    @ApiOperation(value = "获取行表列表")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/getPoPlanLine/{poPlanHeaderId}")
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
+    public ResponseEntity<Page<SinochemintlPoPlanLineDTO>> getPoPlanLine(@PathVariable("organizationId") Long organizationId,
+                                                                         @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId,
+                                                                         @ApiIgnore @SortDefault(value = "poPlanHeaderId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
+        Page<SinochemintlPoPlanLineDTO> result = sinochemintlPoPlanHeaderService.getPoPlanLine(organizationId, poPlanHeaderId, pageRequest);
         return Results.success(result);
     }
 
@@ -93,11 +120,11 @@ public class SinochemintlPoPlanController extends BaseController {
         return Results.success();
     }
 
-    @ApiOperation(value = "提交采购计划")
+    @ApiOperation(value = "提交采购计划头")
     @Permission(level = ResourceLevel.ORGANIZATION)
-    @GetMapping("/submit/{poPlanHeaderId}")
-    public ResponseEntity<Void> submit(@PathVariable("organizationId") Long organizationId, @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId) {
-        sinochemintlPoPlanHeaderService.submit(organizationId, poPlanHeaderId);
+    @PostMapping("/submit")
+    public ResponseEntity<Void> submit(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt List<Long> ids) {
+        sinochemintlPoPlanHeaderService.submit(organizationId, ids);
         return Results.success();
     }
 
@@ -111,16 +138,41 @@ public class SinochemintlPoPlanController extends BaseController {
 
     @ApiOperation(value = "采购计划导出")
     @Permission(level = ResourceLevel.ORGANIZATION)
-    @PostMapping ("/excel")
+    @GetMapping("/excel")
     @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
     @CustomPageRequest
-    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
     public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> excel(@PathVariable("organizationId") Long tenantId,
-                                                                  @RequestBody @Encrypt List<Long> ids,
-                                                                  PageRequest pageRequest,
+                                                                  String poPlanHeaderIds,
                                                                   ExportParam exportParam,
                                                                   HttpServletResponse response) {
-        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.excel(ids);
+        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.excel(poPlanHeaderIds);
+        return Results.success(list);
+    }
+
+    @ApiOperation(value = "采购计划行级导出")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/excelLine")
+    @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
+    @CustomPageRequest
+    public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> excelLine(@PathVariable("organizationId") Long tenantId,
+                                                                      String poPlanLineIds,
+                                                                      ExportParam exportParam,
+                                                                      HttpServletResponse response) {
+        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.excelLine(poPlanLineIds);
+        return Results.success(list);
+    }
+
+    @ApiOperation(value = "采购计划批量导出")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/batchExcel")
+    @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
+    @CustomPageRequest
+    public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> batchExcel(@PathVariable("organizationId") Long tenantId,
+                                                                       SinochemintlPoPlanHeaderDTO dto,
+                                                                       ExportParam exportParam,
+                                                                       HttpServletResponse response) {
+        dto.setTenantId(tenantId);
+        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.batchExcel(dto);
         return Results.success(list);
     }
 
@@ -133,4 +185,52 @@ public class SinochemintlPoPlanController extends BaseController {
         return Results.success();
     }
 
+    @ApiOperation(value = "批量采购计划确认")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @PostMapping("/batchConfirm")
+    public ResponseEntity<Void> batchConfirm(@PathVariable("organizationId") Long organizationId, @RequestBody @Encrypt List<Long> ids) {
+        sinochemintlPoPlanHeaderService.batchConfirm(organizationId, ids);
+        return Results.success();
+    }
+
+    @ApiOperation(value = "操作记录")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/operatingRecord/{poPlanHeaderId}")
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
+    public ResponseEntity<Page<PrActionDTO>> operatingRecord(@PathVariable("organizationId") Long organizationId,
+                                                             @Encrypt @PathVariable("poPlanHeaderId") Long poPlanHeaderId,
+                                                             @ApiIgnore @SortDefault(value = "poPlanHeaderId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
+        Page<PrActionDTO> response = sinochemintlPoPlanHeaderService.operatingRecord(organizationId, poPlanHeaderId, pageRequest);
+        return Results.success(response);
+    }
+
+    @ApiOperation(value = "批量维护")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @PostMapping("/batchMaint")
+    public ResponseEntity<Void> batchMaint(@PathVariable("organizationId") Long organizationId,
+                                           @RequestBody @Encrypt SinochemintlPoPlanLineDTO dto) {
+        dto.setTenantId(organizationId);
+        sinochemintlPoPlanHeaderService.batchMaint(dto);
+        return Results.success();
+    }
+
+    @ApiOperation(value = "拼单")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @PostMapping("/shareTheBill")
+    public ResponseEntity<SinochemintlPoPlanLineDTO> shareBill(@PathVariable("organizationId") Long organizationId,
+                                                               @RequestBody @Encrypt SinochemintlPoPlanLineDTO dto) {
+        dto.setTenantId(organizationId);
+        SinochemintlPoPlanLineDTO response = sinochemintlPoPlanHeaderService.shareTheBill(dto);
+        return Results.success(response);
+    }
+
+    @ApiOperation(value = "根据登陆人公司和共享省区取交集")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/province/{userId}/{applicantId}")
+    public ResponseEntity<List<Map<String, Object>>> province(@PathVariable("organizationId") Long organizationId,
+                                                              @PathVariable("userId") Long userId,
+                                                              @PathVariable("applicantId") Long applicantId) {
+        List<Map<String, Object>> result = sinochemintlPoPlanHeaderService.province(organizationId, userId, applicantId);
+        return Results.success(result);
+    }
 }

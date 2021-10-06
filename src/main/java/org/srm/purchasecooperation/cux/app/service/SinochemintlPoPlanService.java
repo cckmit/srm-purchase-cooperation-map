@@ -5,8 +5,11 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
+import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
+import org.srm.purchasecooperation.pr.api.dto.PrActionDTO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 采购计划应用服务
@@ -29,7 +32,7 @@ public interface SinochemintlPoPlanService {
      *
      * @param dto 采购计划头表和行表数据
      */
-    SinochemintlPoPlanHeaderDTO addPoPlan(SinochemintlPoPlanHeaderDTO dto);
+    SinochemintlPoPlanHeaderDTO addPoPlan(SinochemintlPoPlanHeaderDTO dto, PageRequest pageRequest);
 
     /**
      * 删除采购计划头表
@@ -56,9 +59,9 @@ public interface SinochemintlPoPlanService {
     /**
      * 提交采购计划
      *
-     * @param poPlanHeaderId 头表id
+     * @param ids 头表id
      */
-    void submit(Long organizationId, Long poPlanHeaderId);
+    void submit(Long organizationId, List<Long> ids);
 
     /**
      * 取消采购计划
@@ -73,7 +76,7 @@ public interface SinochemintlPoPlanService {
      * @param ids 勾选的头表id
      * @return 需要导出的结果
      */
-    List<SinochemintlPoPlanExcelDTO> excel(List<Long> ids);
+    List<SinochemintlPoPlanExcelDTO> excel(String ids);
 
     /**
      * 采购计划确认
@@ -82,4 +85,71 @@ public interface SinochemintlPoPlanService {
      */
     void confirm(SinochemintlPoPlanHeaderDTO dto);
 
+    /**
+     * 获取行表列表
+     *
+     * @param organizationId 租户id
+     * @param poPlanHeaderId 头表id
+     * @param pageRequest    分页参数
+     * @return 行表列表
+     */
+    Page<SinochemintlPoPlanLineDTO> getPoPlanLine(Long organizationId, Long poPlanHeaderId, PageRequest pageRequest);
+
+    /**
+     * 批量采购计划确认
+     *
+     * @param ids 修改后的数据
+     */
+    void batchConfirm(Long organizationId, List<Long> ids);
+
+    /**
+     * 操作记录
+     *
+     * @param organizationId 租户id
+     * @param poPlanHeaderId 头表id
+     * @param pageRequest    分页参数
+     * @return 操作记录
+     */
+    Page<PrActionDTO> operatingRecord(Long organizationId, Long poPlanHeaderId, PageRequest pageRequest);
+
+    /**
+     * 批量维护
+     *
+     * @param dto 批量维护信息
+     */
+    void batchMaint(SinochemintlPoPlanLineDTO dto);
+
+    /**
+     * 拼单
+     *
+     * @param dto 拼单数据
+     * @return 结果
+     */
+    SinochemintlPoPlanLineDTO shareTheBill(SinochemintlPoPlanLineDTO dto);
+
+    /**
+     * 采购计划批量导出
+     *
+     * @param dto 查询数据
+     * @return 结果
+     */
+    List<SinochemintlPoPlanExcelDTO> batchExcel(SinochemintlPoPlanHeaderDTO dto);
+
+    /**
+     * 采购计划明细查询
+     *
+     * @param sinochemintlPoPlanHeaderDTO 查询条件
+     * @param pageRequest                 分页参数
+     * @return 查询结果
+     */
+    Page<SinochemintlPoPlanLineDTO> detailList(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO, PageRequest pageRequest);
+    /**
+     * 采购计划拼单截止时间到达通知（定时任务触发）
+     *
+     */
+    void timedTaskHeader();
+
+    List<Map<String, Object>> province(Long organizationId, Long companyId, Long applicantId);
+
+    List<SinochemintlPoPlanExcelDTO> excelLine(String poPlanLineIds);
 }
