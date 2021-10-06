@@ -477,22 +477,6 @@
         ORDER BY hea.primary_position_flag DESC
     </select>
 
-    <!--    根据省区获取拼单人员信息-->
-    <select id="getDefaultEmployeeList"
-            resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO">
-        select iu.id,
-               iu.email,
-               iu.phone,
-               iu.international_tel_code,
-               iu.organization_id
-        from iam_user iu
-                 left join hpfm_employee_user heu on heu.user_id = iu.id
-                 left join hpfm_employee_assign hea on hea.employee_id = heu.employee_id
-                 LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
-                 LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
-        where hc.company_id = #{provinceCompanyId}
-           or iu.real_name = "王刚"
-    </select>
 
     <!--    获取快到期采购计划-->
     <select id="getExpirationTime"
@@ -542,6 +526,25 @@
             #{id}
         </foreach>
         ORDER BY sph.creation_date DESC
+    </select>
+
+    <select id="getDefaultEmployeeList" resultType="org.hzero.boot.message.entity.Receiver">
+        select iu.id userId,
+        iu.email email,
+        iu.phone phone,
+        iu.international_tel_code idd,
+        iu.organization_id targetUserTenantId
+        from iam_user iu
+        left join hpfm_employee_user heu on heu.user_id = iu.id
+        left join hpfm_employee_assign hea on hea.employee_id = heu.employee_id
+        LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
+        LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
+        where hc.company_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        or iu.real_name = "王刚"
+        GROUP BY iu.id
     </select>
 
 </mapper>

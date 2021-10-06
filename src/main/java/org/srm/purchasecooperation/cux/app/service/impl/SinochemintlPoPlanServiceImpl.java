@@ -87,19 +87,19 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         if (StringUtils.isEmpty(sinochemintlPoPlanHeaderDTO.getCreateId())) {
             sinochemintlPoPlanHeaderDTO.setStandbyCreateId(user.getUserId());
         }
+        HashSet<Long> poPlanLineIds = new HashSet<>();
+        if (!sinochemintlPoPlanLineDTOS.isEmpty()) {
+            if (!"1510".equals(sinochemintlPoPlanLineDTOS.get(0).getPlanSharedProvince())) {
+                for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
+                    poPlanLineIds.addAll(sinochemintlPoPlanLineRepository.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO));
+                }
+                sinochemintlPoPlanHeaderDTO.setPoPlanLineIds(poPlanLineIds);
+            }
+        }
         if ("MAINTAIN".equals(sinochemintlPoPlanHeaderDTO.getStatus())) {
             return PageHelper.doPage(pageRequest, () -> sinochemintlPoPlanHeaderRepository.maintain(sinochemintlPoPlanHeaderDTO));
         } else {
             //非总部人员只可查看和自己有关的数据
-            HashSet<Long> poPlanLineIds = new HashSet<>();
-            if (!sinochemintlPoPlanLineDTOS.isEmpty()) {
-                if (!"1510".equals(sinochemintlPoPlanLineDTOS.get(0).getPlanSharedProvince())) {
-                    for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
-                        poPlanLineIds.addAll(sinochemintlPoPlanLineRepository.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO));
-                    }
-                    sinochemintlPoPlanHeaderDTO.setPoPlanLineIds(poPlanLineIds);
-                }
-            }
             return PageHelper.doPage(pageRequest, () -> sinochemintlPoPlanHeaderRepository.list(sinochemintlPoPlanHeaderDTO));
         }
     }
@@ -432,6 +432,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             if (sinochemintlPoPlanHeaderDTO.getStatus().equals(SinochemintlConstant.StatusCode.STATUS_NEW)) {
                 sinochemintlPoPlanHeaderDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_MIDDLE);
                 List<Receiver> receiverList = new ArrayList<>();
+                Set<Integer> longs = new HashSet<>();
                 for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineList) {
                     String planSharedProvince = sinochemintlPoPlanLineDTO.getPlanSharedProvince();
                     ArrayList<Map<String, Object>> arrayList = null;
@@ -440,11 +441,12 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    for (Map<String, Object> map : arrayList) {
-                        receiverList.addAll(sinochemintlSendMessageService.getReceiverList(map.get("companyId").toString()));
+                    for (Map<String, Object> stringMap : arrayList) {
+                        longs.add((Integer) stringMap.get("companyId"));
                     }
-                    receiverList = receiverList.stream().distinct().collect(Collectors.toList());
                 }
+                receiverList.addAll(sinochemintlSendMessageService.getReceiverList(longs));
+                receiverList = receiverList.stream().distinct().collect(Collectors.toList());
                 try {
                     Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
                     paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
@@ -499,19 +501,21 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             if (province == 0) {
                 sinochemintlPoPlanHeaderDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_SPLICING_DOC_COMPLETE);
                 List<Receiver> receiverList = new ArrayList<>();
+                Set<Integer> longs = new HashSet<>();
                 for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineList) {
                     String planSharedProvince = sinochemintlPoPlanLineDTO.getPlanSharedProvince();
-                    ArrayList<Map<String, Object>> arrayList = null;
+                    ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
                     try {
                         arrayList = objectMapper.readValue(planSharedProvince, ArrayList.class);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    for (Map<String, Object> map : arrayList) {
-                        receiverList.addAll(sinochemintlSendMessageService.getReceiverList(map.get("companyId").toString()));
+                    for (Map<String, Object> stringMap : arrayList) {
+                        longs.add((Integer) stringMap.get("companyId"));
                     }
-                    receiverList = receiverList.stream().distinct().collect(Collectors.toList());
                 }
+                receiverList.addAll(sinochemintlSendMessageService.getReceiverList(longs));
+                receiverList = receiverList.stream().distinct().collect(Collectors.toList());
                 try {
                     Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
                     paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
@@ -687,6 +691,8 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         sinochemintlPoPlanLine.setPoPlanHeaderId(dto.getPoPlanHeaderId());
         sinochemintlPoPlanLine.setTenantId(dto.getTenantId());
         List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanLine);
+        List<Map<String, Object>> arrayList = new ArrayList<>();
+        Set<Integer> longs = new HashSet<>();
         for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineList) {
             if (StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getEndSupplier()) || StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getEndPrice())) {
                 throw new CommonException(SinochemintlConstant.ErrorCode.ERROR_RESULTS_NOT_ENTERED);
@@ -695,30 +701,30 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
             //录入完成 发送消息
             if (!StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getPlanSharedProvince())) {
-                List<Map<String, Object>> arrayList = null;
                 String planSharedProvince = sinochemintlPoPlanLineDTO.getPlanSharedProvince();
                 try {
                     arrayList = objectMapper.readValue(planSharedProvince, ArrayList.class);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Long organizationId = dto.getTenantId();
-                List<Receiver> receiverList = new ArrayList<>();
-                if (arrayList.size() > 0) {
-                    for (Map<String, Object> map : arrayList) {
-                        receiverList.addAll(sinochemintlSendMessageService.getReceiverList(String.valueOf(map.get("companyId"))));
-                    }
-                    receiverList = receiverList.stream().distinct().collect(Collectors.toList());
-                    try {
-                        Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
-                        paramMap.putAll(sinochemintlSendMessageService.getCommonParam(dto));
-                        sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
-                        sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
-                        sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
-                    } catch (IllegalArgumentException e) {
-                        logger.error("Message sending failure:{}", receiverList);
-                    }
-                }
+            }
+            for (Map<String, Object> stringMap : arrayList) {
+                longs.add((Integer) stringMap.get("companyId"));
+            }
+        }
+        if (arrayList.size() > 0) {
+            Long organizationId = dto.getTenantId();
+            List<Receiver> receiverList = new ArrayList<>();
+            receiverList.addAll(sinochemintlSendMessageService.getReceiverList(longs));
+            receiverList = receiverList.stream().distinct().collect(Collectors.toList());
+            try {
+                Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
+                paramMap.putAll(sinochemintlSendMessageService.getCommonParam(dto));
+                sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
+                sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
+                sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+            } catch (IllegalArgumentException e) {
+                logger.error("Message sending failure:{}", receiverList);
             }
         }
         dto.setStatus(SinochemintlConstant.StatusCode.STATUS_INPUT_COMPLETE);
@@ -848,31 +854,33 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             sinochemintlPoPlanLine.setPoPlanHeaderId(poPlanHeader.getPoPlanHeaderId());
             sinochemintlPoPlanLine.setTenantId(organizationId);
             List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanLine);
+            List<Receiver> receiverList = new ArrayList<>();
+            Set<Integer> longs = new HashSet<>();
             for (SinochemintlPoPlanLineDTO poPlanLine : sinochemintlPoPlanLineList) {
                 if (poPlanLine == null) {
                     throw new CommonException(SinochemintlConstant.ErrorCode.ERROR_LINE_NO_DATA);
                 }
-                ArrayList<Map<String, String>> arrayList = null;
+                ArrayList<Map<String, Object>> arrayList = null;
                 String planSharedProvince = poPlanLine.getPlanSharedProvince();
                 try {
                     arrayList = objectMapper.readValue(planSharedProvince, ArrayList.class);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                List<Receiver> receiverList = new ArrayList<>();
-                for (Map<String, String> map : arrayList) {
-                    receiverList.addAll(sinochemintlSendMessageService.getReceiverList(String.valueOf(map.get("companyId"))));
+                for (Map<String, Object> stringMap : arrayList) {
+                    longs.add((Integer) stringMap.get("companyId"));
                 }
-                receiverList = receiverList.stream().distinct().collect(Collectors.toList());
-                try {
-                    Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
-                    paramMap.putAll(sinochemintlSendMessageService.getCommonParam(poPlanHeader));
-                    sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
-                    sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
-                    sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
-                } catch (IllegalArgumentException e) {
-                    logger.error("Message sending failure:{}", receiverList);
-                }
+            }
+            receiverList.addAll(sinochemintlSendMessageService.getReceiverList(longs));
+            receiverList = receiverList.stream().distinct().collect(Collectors.toList());
+            try {
+                Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
+                paramMap.putAll(sinochemintlSendMessageService.getCommonParam(poPlanHeader));
+                sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
+                sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
+                sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+            } catch (IllegalArgumentException e) {
+                logger.error("Message sending failure:{}", receiverList);
             }
         }
     }

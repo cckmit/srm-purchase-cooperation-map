@@ -2,6 +2,7 @@ package org.srm.purchasecooperation.cux.infra.mapper;
 
 import io.choerodon.mybatis.common.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+import org.hzero.boot.message.entity.Receiver;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
@@ -99,10 +100,10 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
     /**
      * 通过省区代码，获取对应人员
      *
-     * @param provinceCompanyId
+     * @param integers
      * @return
      */
-    List<SinochemintlEmployeeInformationDTO> getDefaultEmployeeList(Long provinceCompanyId);
+    List<Receiver> getDefaultEmployeeList(List<Integer> integers);
 
     /**
      * 采购计划批量导出

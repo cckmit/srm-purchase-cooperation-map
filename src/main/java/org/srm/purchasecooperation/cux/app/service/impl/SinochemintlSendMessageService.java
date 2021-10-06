@@ -13,10 +13,8 @@ import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstan
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * description
@@ -79,20 +77,11 @@ public class SinochemintlSendMessageService {
     /**
      * 获取接受者
      *
-     * @param string
+     * @param companyIds
      * @return
      */
-    public List<Receiver> getReceiverList(String string) {
-        List<Receiver> receiverList = new ArrayList<>();
-        List<SinochemintlEmployeeInformationDTO> employeeList = new ArrayList<>();
-        Long provinceCompanyId = Long.valueOf(string);
-        employeeList = sinochemintlPoPlanHeaderRepository.getDefaultEmployeeList(provinceCompanyId);
-        for (SinochemintlEmployeeInformationDTO dto : employeeList) {
-            Receiver receiver = new Receiver().setUserId(dto.getId()).setTargetUserTenantId(dto.getOrganizationId()).setEmail(dto.getEmail()).setPhone(dto.getPhone()).setIdd(dto.getInternationalTelCode());
-            receiverList.add(receiver);
-        }
-
-        return receiverList;
+    public List<Receiver> getReceiverList(Set<Integer> companyIds) {
+        return sinochemintlPoPlanHeaderRepository.getDefaultEmployeeList(new ArrayList<Integer>(companyIds));
     }
 }
 
