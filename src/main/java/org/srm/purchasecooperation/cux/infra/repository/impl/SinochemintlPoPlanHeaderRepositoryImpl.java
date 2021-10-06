@@ -1,5 +1,6 @@
 package org.srm.purchasecooperation.cux.infra.repository.impl;
 
+import org.hzero.boot.message.entity.Receiver;
 import org.hzero.mybatis.base.impl.BaseRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanHeaderMapper;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -87,8 +89,8 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     }
 
     @Override
-    public List<SinochemintlEmployeeInformationDTO> getDefaultEmployeeList(Long provinceCompanyId) {
-        return sinochemintlPoPlanHeaderMapper.getDefaultEmployeeList(provinceCompanyId);
+    public List<Receiver> getDefaultEmployeeList(List<Integer> integers) {
+        return sinochemintlPoPlanHeaderMapper.getDefaultEmployeeList(integers);
     }
 
     @Override

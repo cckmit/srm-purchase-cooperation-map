@@ -1,6 +1,7 @@
 package org.srm.purchasecooperation.cux.domain.repository;
 
 
+import org.hzero.boot.message.entity.Receiver;
 import org.hzero.mybatis.base.BaseRepository;
 import org.springframework.stereotype.Component;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
@@ -8,6 +9,7 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -107,10 +109,10 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
     /**
      * 通过省区代码，获取对应人员
      *
-     * @param provinceCompanyId
+     * @param integers
      * @return
      */
-    List<SinochemintlEmployeeInformationDTO> getDefaultEmployeeList(Long provinceCompanyId);
+    List<Receiver> getDefaultEmployeeList(List<Integer> integers);
 
     /**
      * 采购计划批量导出

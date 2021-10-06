@@ -79,18 +79,16 @@ public class SinochemintlAdvancedPoPlanHandler implements IJobHandler {
                         }
                     }
                 }
-                for (Integer aLong : longs) {
-                    List<Receiver> receiverList = new ArrayList<>(sinochemintlSendMessageService.getReceiverList(String.valueOf(aLong)));
-                    receiverList = receiverList.stream().distinct().collect(Collectors.toList());
-                    try {
-                        Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
-                        paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
-                        sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(sinochemintlPoPlanHeaderDTO.getTenantId(), SinochemintlMessageConstant.MESSAGE_INFORM_ADVANCE_CODE, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
-                        sinochemintlSendMessageService.sendSms(new MessageSenderDTO(sinochemintlPoPlanHeaderDTO.getTenantId(), SinochemintlMessageConstant.MESSAGE_INFORM_ADVANCE_CODE, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
-                        sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(sinochemintlPoPlanHeaderDTO.getTenantId(), SinochemintlMessageConstant.MESSAGE_INFORM_ADVANCE_CODE, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
-                    } catch (IllegalArgumentException e) {
-                        logger.error("Message sending failure:{}", receiverList);
-                    }
+                List<Receiver> receiverList = new ArrayList<>(sinochemintlSendMessageService.getReceiverList(longs));
+                receiverList = receiverList.stream().distinct().collect(Collectors.toList());
+                try {
+                    Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
+                    paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
+                    sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(sinochemintlPoPlanHeaderDTO.getTenantId(), SinochemintlMessageConstant.MESSAGE_INFORM_ADVANCE_CODE, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
+                    sinochemintlSendMessageService.sendSms(new MessageSenderDTO(sinochemintlPoPlanHeaderDTO.getTenantId(), SinochemintlMessageConstant.MESSAGE_INFORM_ADVANCE_CODE, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
+                    sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(sinochemintlPoPlanHeaderDTO.getTenantId(), SinochemintlMessageConstant.MESSAGE_INFORM_ADVANCE_CODE, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                } catch (IllegalArgumentException e) {
+                    logger.error("Message sending failure:{}", receiverList);
                 }
             }
         }
