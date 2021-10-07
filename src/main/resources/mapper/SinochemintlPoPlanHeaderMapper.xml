@@ -426,6 +426,40 @@
             AND sph.requested_by = #{standbyCreateId}
         </if>
         AND sph.pr_status_code in('SPLICING_DOC_MIDDLE','NEW')
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
         UNION
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
@@ -437,6 +471,40 @@
         <if test="title != null and title != ''">
             <bind name="titleLike" value="'%' + title + '%'"/>
             AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
         </if>
         AND sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
         <if test="poPlanLineIds != null">

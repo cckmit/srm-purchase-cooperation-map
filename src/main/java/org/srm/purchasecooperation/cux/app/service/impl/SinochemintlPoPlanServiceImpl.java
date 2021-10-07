@@ -90,8 +90,12 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         HashSet<Long> poPlanLineIds = new HashSet<>();
         if (!sinochemintlPoPlanLineDTOS.isEmpty()) {
             if (!"1510".equals(sinochemintlPoPlanLineDTOS.get(0).getPlanSharedProvince())) {
-                for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
-                    poPlanLineIds.addAll(sinochemintlPoPlanLineRepository.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO));
+                if (StringUtils.isEmpty(sinochemintlPoPlanHeaderDTO.getStatus()) || !sinochemintlPoPlanHeaderDTO.getStatus().equals(SinochemintlConstant.StatusCode.STATUS_NEW)) {
+                    for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
+                        poPlanLineIds.addAll(sinochemintlPoPlanLineRepository.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO));
+                    }
+                } else {
+                    poPlanLineIds.add(0L);
                 }
                 sinochemintlPoPlanHeaderDTO.setPoPlanLineIds(poPlanLineIds);
             }
