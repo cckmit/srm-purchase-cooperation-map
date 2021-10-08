@@ -114,7 +114,7 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
     @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
     private Date establishDate;
-    @ApiModelProperty(value = "附件id")
+    @ApiModelProperty(value = "创建人id")
     private Long standbyCreateId;
 
     @Transient

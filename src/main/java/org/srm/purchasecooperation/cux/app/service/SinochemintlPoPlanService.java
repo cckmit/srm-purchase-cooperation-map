@@ -152,4 +152,6 @@ public interface SinochemintlPoPlanService {
     List<Map<String, Object>> province(Long organizationId, Long companyId, Long applicantId);
 
     List<SinochemintlPoPlanExcelDTO> excelLine(String poPlanLineIds);
+
+    List<SinochemintlPoPlanExcelDTO> batchExcelLine(SinochemintlPoPlanHeaderDTO dto);
 }

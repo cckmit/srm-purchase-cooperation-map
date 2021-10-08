@@ -92,4 +92,9 @@ public class SinochemintlPoPlanLineRepositoryImpl extends BaseRepositoryImpl<Sin
     public List<SinochemintlPoPlanLineDTO> getPoPlanLine(SinochemintlPoPlanLineDTO sinochemintlPoPlanLine) {
         return sinochemintlPoPlanLineMapper.getPoPlanLine(sinochemintlPoPlanLine);
     }
+
+    @Override
+    public SinochemintlPoPlanLineDTO getCnyCurrency(Long tenantId) {
+        return sinochemintlPoPlanLineMapper.getCnyCurrency(tenantId);
+    }
 }
