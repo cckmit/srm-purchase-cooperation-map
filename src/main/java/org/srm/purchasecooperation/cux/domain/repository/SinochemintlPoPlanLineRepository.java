@@ -94,4 +94,7 @@ public interface SinochemintlPoPlanLineRepository extends BaseRepository<Sinoche
     Integer spellDocProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
 
     List<SinochemintlPoPlanLineDTO> getPoPlanLine(SinochemintlPoPlanLineDTO sinochemintlPoPlanLine);
+
+    SinochemintlPoPlanLineDTO getCnyCurrency(Long tenantId);
+
 }

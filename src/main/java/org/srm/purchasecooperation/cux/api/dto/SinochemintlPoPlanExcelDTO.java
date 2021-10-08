@@ -50,6 +50,10 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
     @ApiModelProperty(value = "采购计划单号", required = true)
     @ExcelColumn(title = "采购计划单号", zh = "采购计划单号", en = "Purchase plan number", order = 4)
     private String poPlanNumber;
+    @ApiModelProperty(value = "创建日期")
+    @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
+    @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
+    private Date establishDate;
     @ApiModelProperty(value = "创建人id")
     private Long createId;
     @ApiModelProperty(value = "创建人", required = true)
@@ -207,6 +211,14 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
 
     public void setTotalPurchaseFinalPrice(BigDecimal totalPurchaseFinalPrice) {
         this.totalPurchaseFinalPrice = totalPurchaseFinalPrice;
+    }
+
+    public Date getEstablishDate() {
+        return establishDate;
+    }
+
+    public void setEstablishDate(Date establishDate) {
+        this.establishDate = establishDate;
     }
 
     public String getPlanName() {

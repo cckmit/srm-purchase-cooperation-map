@@ -149,6 +149,20 @@ public class SinochemintlPoPlanController extends BaseController {
         return Results.success(list);
     }
 
+    @ApiOperation(value = "采购计划批量导出")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @GetMapping("/batchExcel")
+    @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
+    @CustomPageRequest
+    public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> batchExcel(@PathVariable("organizationId") Long tenantId,
+                                                                       SinochemintlPoPlanHeaderDTO dto,
+                                                                       ExportParam exportParam,
+                                                                       HttpServletResponse response) {
+        dto.setTenantId(tenantId);
+        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.batchExcel(dto);
+        return Results.success(list);
+    }
+
     @ApiOperation(value = "采购计划行级导出")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/excelLine")
@@ -162,17 +176,17 @@ public class SinochemintlPoPlanController extends BaseController {
         return Results.success(list);
     }
 
-    @ApiOperation(value = "采购计划批量导出")
+    @ApiOperation(value = "采购计划行级全导出")
     @Permission(level = ResourceLevel.ORGANIZATION)
-    @GetMapping("/batchExcel")
+    @GetMapping("/batchExcelLine")
     @ExcelExport(value = SinochemintlPoPlanExcelDTO.class)
     @CustomPageRequest
-    public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> batchExcel(@PathVariable("organizationId") Long tenantId,
+    public ResponseEntity<List<SinochemintlPoPlanExcelDTO>> batchExcelLine(@PathVariable("organizationId") Long tenantId,
                                                                        SinochemintlPoPlanHeaderDTO dto,
                                                                        ExportParam exportParam,
                                                                        HttpServletResponse response) {
         dto.setTenantId(tenantId);
-        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.batchExcel(dto);
+        List<SinochemintlPoPlanExcelDTO> list = sinochemintlPoPlanHeaderService.batchExcelLine(dto);
         return Results.success(list);
     }
 
@@ -233,4 +247,5 @@ public class SinochemintlPoPlanController extends BaseController {
         List<Map<String, Object>> result = sinochemintlPoPlanHeaderService.province(organizationId, userId, applicantId);
         return Results.success(result);
     }
+
 }

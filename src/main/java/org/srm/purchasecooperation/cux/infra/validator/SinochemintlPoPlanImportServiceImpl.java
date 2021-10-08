@@ -59,7 +59,8 @@ public class SinochemintlPoPlanImportServiceImpl extends BatchImportHandler {
                 if ("人民币".equals(sinochemintlPoPlanLineDTO.getCurrencyName())) {
                     sinochemintlPoPlanLineDTO.setCurrencyName("");
                     importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
-                    importVerify.setCurrencyId("304");
+                    SinochemintlPoPlanLineDTO cnyCurrency = sinochemintlPoPlanLineRepository.getCnyCurrency(user.getTenantId());
+                    importVerify.setCurrencyId(cnyCurrency.getCurrencyId());
                 } else {
                     importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
                 }
@@ -91,6 +92,7 @@ public class SinochemintlPoPlanImportServiceImpl extends BatchImportHandler {
                 sinochemintlPoPlanLineDTO.setLastUpdateDate(date);
                 sinochemintlPoPlanLineDTO.setLastUpdatedBy(user.getUserId());
                 sinochemintlPoPlanLineDTO.setSpellDocProvince(0L);
+                sinochemintlPoPlanLineDTO.setTotalPurchasePrice(sinochemintlPoPlanLineDTO.getRequiredQuantity().multiply(sinochemintlPoPlanLineDTO.getFactoryPrice()));
                 Integer serialNum = sinochemintlPoPlanLineRepository.getSerialNum(sinochemintlPoPlanLineDTO);
                 sinochemintlPoPlanLineDTO.setSerialNum(serialNum == null ? 1 : serialNum + 1);
                 sinochemintlPoPlanLineDTO.setDisplayLineNum(sinochemintlPoPlanLineDTO.getSerialNum());
