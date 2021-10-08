@@ -1,6 +1,7 @@
 package org.srm.purchasecooperation.cux.infra.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import org.hzero.boot.imported.app.service.ValidatorHandler;
 import org.hzero.boot.imported.infra.validator.annotation.ImportValidator;
@@ -59,12 +60,15 @@ public class SinochemintlPoPlanImportValidator extends ValidatorHandler {
      */
     private boolean checkData(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO) {
         //供应商名称必填
+        CustomUserDetails user = DetailsHelper.getUserDetails();
+        sinochemintlPoPlanLineDTO.setTenantId(user.getTenantId());
         SinochemintlPoPlanLineDTO importVerify;
         if ("人民币".equals(sinochemintlPoPlanLineDTO.getCurrencyName())) {
             sinochemintlPoPlanLineDTO.setCurrencyName("");
             importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
-            importVerify.setCurrencyId("304");
-            importVerify.setCurrencyName("人民币");
+            SinochemintlPoPlanLineDTO cnyCurrency = sinochemintlPoPlanLineRepository.getCnyCurrency(user.getTenantId());
+            importVerify.setCurrencyId(cnyCurrency.getCurrencyId());
+            importVerify.setCurrencyName(cnyCurrency.getCurrencyName());
         } else {
             importVerify = sinochemintlPoPlanHeaderRepository.importVerify(sinochemintlPoPlanLineDTO);
         }

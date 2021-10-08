@@ -91,4 +91,7 @@ public interface SinochemintlPoPlanLineMapper extends BaseMapper<SinochemintlPoP
     Integer spellDocProvince(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO);
 
     List<SinochemintlPoPlanLineDTO> getPoPlanLine(SinochemintlPoPlanLineDTO sinochemintlPoPlanLine);
+
+    SinochemintlPoPlanLineDTO getCnyCurrency(Long tenantId);
+
 }

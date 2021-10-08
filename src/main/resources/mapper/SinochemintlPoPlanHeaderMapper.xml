@@ -95,6 +95,7 @@
                         spl.tax_id              taxId,
                         st.description          taxType,
                         spl.tax_rate            taxRate,
+                        sph.creation_date       establishDate,
                         spl.pr_requested_name   lineApplicant,
                         sph.attribute_decimal1  applicationSum,
                         sph.attribute_decimal2  applicationFinalSum,
@@ -251,6 +252,13 @@
         <include refid="excelChanges"/>
         WHERE sph.tenant_id = #{tenantId}
         AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanLineIds != null">
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            AND sph.pr_status_code != 'NEW'
+        </if>
         <if test="poPlanNumber != null and poPlanNumber != ''">
             <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
             AND sph.pr_num like #{poPlanNumberLike}
@@ -275,17 +283,11 @@
         <if test="materialClass != null and materialClass != ''">
             AND sic.category_name = #{materialClass}
         </if>
-        <if test="serialNum != null and serialNum != ''">
-            AND spl.display_line_num = #{serialNum}
-        </if>
         <if test="materialCoding != null and materialCoding != ''">
             AND spl.item_code = #{materialCoding}
         </if>
         <if test="applicant != null and applicant != ''">
             AND sph.pr_requested_name = #{applicant}
-        </if>
-        <if test="createId != null and createId != ''">
-            AND sph.requested_by = #{createId}
         </if>
         <if test="purchaseOrgId != null and purchaseOrgId != ''">
             AND sph.purchase_org_id = #{purchaseOrgId}
@@ -296,7 +298,65 @@
         <if test="planType != null and planType != ''">
             AND sph.attribute_varchar23 = #{planType}
         </if>
-        ORDER BY sph.creation_date DESC
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        UNION
+        <include refid="excelChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        <if test="standbyCreateId != null and standbyCreateId != ''">
+            AND sph.requested_by = #{standbyCreateId}
+        </if>
+        ORDER BY establishDate DESC
     </select>
 
     <!--    采购计划头表查询参数-->
@@ -309,6 +369,7 @@
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
                 #{id}
             </foreach>
+            AND sph.pr_status_code != 'NEW'
         </if>
         <if test="poPlanNumber != null and poPlanNumber != ''">
             <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
@@ -425,7 +486,46 @@
         <if test="standbyCreateId != null and standbyCreateId != ''">
             AND sph.requested_by = #{standbyCreateId}
         </if>
-        AND sph.pr_status_code in('SPLICING_DOC_MIDDLE','NEW')
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="status == null">
+            AND sph.pr_status_code in('SPLICING_DOC_MIDDLE','NEW')
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
         UNION
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
@@ -438,7 +538,46 @@
             <bind name="titleLike" value="'%' + title + '%'"/>
             AND sph.title like #{titleLike}
         </if>
-        AND sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        <if test="status == null">
+            AND sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
+        </if>
         <if test="poPlanLineIds != null">
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
@@ -450,12 +589,22 @@
 
     <!--    导入数据校验-->
     <select id="importVerify" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
-        select (SELECT company_id FROM hpfm_company WHERE company_name = #{provinceCompany})            provinceCompanyId,
+        select (SELECT company_id
+                FROM hpfm_company
+                WHERE company_name = #{provinceCompany})                                                provinceCompanyId,
                (SELECT company_id
                 FROM hpfm_company
                 WHERE company_name = #{initialSupplier})                                                initialSupplierId,
-               (SELECT item_id FROM smdm_item WHERE item_code = #{materialCoding})                      materialId,
-               (SELECT uom_id FROM smdm_uom WHERE uom_name = #{unitName})                               uomId,
+               (SELECT item_id
+                FROM smdm_item
+                WHERE item_code = #{materialCoding}
+                  and tenant_id = #{tenantId})                                                          materialId,
+               (SELECT uom_id
+                FROM smdm_uom
+                WHERE uom_name = #{unitName}
+                  and tenant_id = #{tenantId}
+                  and enabled_flag = '1'
+                  and uom_type_code = 'T006A')                                                          uomId,
                (SELECT currency_id
                 FROM smdm_currency
                 WHERE currency_name = #{currencyName}
@@ -491,7 +640,7 @@
     <select id="verifyBusiness"
             resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         SELECT ou_id   businessId,
-               ou_code businessName
+               ou_name businessName
         FROM hpfm_operation_unit
         WHERE company_id = #{companyId}
     </select>
@@ -545,6 +694,116 @@
         </foreach>
         or iu.real_name = "王刚"
         GROUP BY iu.id
+    </select>
+
+    <select id="batchExcelLine"
+            resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
+        <include refid="excelChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="displayLineNum != null and displayLineNum != ''">
+            AND spl.display_line_num = #{displayLineNum}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND spl.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        <if test="poPlanLineIds != null">
+            AND sph.pr_status_code != 'NEW'
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="standbyCreateId != null and standbyCreateId != ''">
+            UNION
+            <include refid="excelChanges"/>
+            WHERE sph.tenant_id = #{tenantId}
+            AND sph.lot_num = 'PO_PLAN'
+            <if test="poPlanNumber != null and poPlanNumber != ''">
+                <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+                AND sph.pr_num like #{poPlanNumberLike}
+            </if>
+            <if test="title != null and title != ''">
+                <bind name="titleLike" value="'%' + title + '%'"/>
+                AND sph.title like #{titleLike}
+            </if>
+            <if test="poSource != null and poSource != ''">
+                <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+                AND sph.pr_source_platform like #{poSourceLike}
+            </if>
+            <if test="status != null and status != ''">
+                AND sph.pr_status_code = #{status}
+            </if>
+            <if test="departmentId != null and departmentId != ''">
+                AND sph.unit_id = #{departmentId}
+            </if>
+            <if test="companyId != null and companyId != ''">
+                AND sph.parent_unit_id = #{companyId}
+            </if>
+            <if test="materialClass != null and materialClass != ''">
+                AND sic.category_name = #{materialClass}
+            </if>
+            <if test="displayLineNum != null and displayLineNum != ''">
+                AND spl.display_line_num = #{displayLineNum}
+            </if>
+            <if test="materialCoding != null and materialCoding != ''">
+                AND spl.item_code = #{materialCoding}
+            </if>
+            <if test="applicant != null and applicant != ''">
+                AND spl.pr_requested_name = #{applicant}
+            </if>
+            <if test="purchaseOrgId != null and purchaseOrgId != ''">
+                AND sph.purchase_org_id = #{purchaseOrgId}
+            </if>
+            <if test="purchaseId != null and purchaseId != ''">
+                AND sph.purchase_agent_id = #{purchaseId}
+            </if>
+            <if test="planType != null and planType != ''">
+                AND sph.attribute_varchar23 = #{planType}
+            </if>
+            AND sph.requested_by = #{standbyCreateId}
+        </if>
+        GROUP BY poPlanLineId
+        ORDER BY establishDate DESC
     </select>
 
 </mapper>

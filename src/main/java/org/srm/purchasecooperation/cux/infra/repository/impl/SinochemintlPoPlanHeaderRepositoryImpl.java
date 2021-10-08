@@ -122,4 +122,9 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     public List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list) {
         return sinochemintlPoPlanHeaderMapper.excelLine(list);
     }
+
+    @Override
+    public List<SinochemintlPoPlanExcelDTO> batchExcelLine(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
+        return sinochemintlPoPlanHeaderMapper.batchExcelLine(sinochemintlPoPlanHeaderDTO);
+    }
 }

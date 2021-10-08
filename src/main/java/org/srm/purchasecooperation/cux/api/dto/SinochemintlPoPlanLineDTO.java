@@ -59,7 +59,7 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     private String productName;
     @ApiModelProperty(value = "包装规格", required = true)
     private String specification;
-    @ApiModelProperty(value = "初步沟通供应商Id(SMAL.TENANT_SUPPLIER_ALL)", required = true)
+    @ApiModelProperty(value = "初步沟通供应商Id(SPFM.USER_AUTH.SUPPLIER)", required = true)
     private Long initialSupplierId;
     @ApiModelProperty(value = "初步沟通供应商", required = true)
     private String initialSupplier;
