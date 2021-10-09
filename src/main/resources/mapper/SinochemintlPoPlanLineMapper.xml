@@ -210,7 +210,7 @@
 
     <select id="verifyPlanSharedProvince" resultType="java.lang.Long">
         SELECT pr_line_id
-        FROM sprm_pr_line
+            FROM sprm_pr_line
         WHERE tenant_id = #{tenantId}
         <if test="poPlanHeaderId != null and poPlanHeaderId != ''">
             AND pr_header_id = #{poPlanHeaderId}

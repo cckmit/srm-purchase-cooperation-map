@@ -90,7 +90,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         HashSet<Long> poPlanLineIds = new HashSet<>();
         if (!sinochemintlPoPlanLineDTOS.isEmpty()) {
             if (!"1510".equals(sinochemintlPoPlanLineDTOS.get(0).getPlanSharedProvince())) {
-                if (!"NEW".equals(sinochemintlPoPlanHeaderDTO.getStatus()) || !"MAINTAIN".equals(sinochemintlPoPlanHeaderDTO.getStatusName())) {
+                if (!SinochemintlConstant.StatusCode.STATUS_NEW.equals(sinochemintlPoPlanHeaderDTO.getStatus()) || !SinochemintlConstant.StatusCode.STATUS_MAINTAIN.equals(sinochemintlPoPlanHeaderDTO.getStatusName())) {
                     for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
                         poPlanLineIds.addAll(sinochemintlPoPlanLineRepository.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO));
                     }
@@ -98,12 +98,17 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                     poPlanLineIds.add(0L);
                 }
                 sinochemintlPoPlanHeaderDTO.setPoPlanLineIds(poPlanLineIds);
+            } else {
+                if (SinochemintlConstant.StatusCode.STATUS_NEW.equals(sinochemintlPoPlanHeaderDTO.getStatus())) {
+                    poPlanLineIds.add(0L);
+                    sinochemintlPoPlanHeaderDTO.setPoPlanLineIds(poPlanLineIds);
+                }
             }
         } else {
             poPlanLineIds.add(0L);
             sinochemintlPoPlanHeaderDTO.setPoPlanLineIds(poPlanLineIds);
         }
-        if ("MAINTAIN".equals(sinochemintlPoPlanHeaderDTO.getStatusName())) {
+        if (SinochemintlConstant.StatusCode.STATUS_MAINTAIN.equals(sinochemintlPoPlanHeaderDTO.getStatusName())) {
             return PageHelper.doPage(pageRequest, () -> sinochemintlPoPlanHeaderRepository.maintain(sinochemintlPoPlanHeaderDTO));
         } else {
             //非总部人员只可查看和自己有关的数据
@@ -222,6 +227,11 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             prAction.setProcessUserId(user.getUserId());
             prAction.setProcessUserName(user.getRealName());
             prActionRepository.insert(prAction);
+        } else {
+            //有值 修改操作
+            sinochemintlPoPlanHeaderDTO.setLastUpdateDate(date);
+            sinochemintlPoPlanHeaderDTO.setLastUpdatedBy(user.getUserId());
+            sinochemintlPoPlanHeaderRepository.updateByKey(sinochemintlPoPlanHeaderDTO);
         }
         //获取行表数据
         List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = sinochemintlPoPlanHeaderDTO.getSinochemintlPoPlanLineList();
@@ -281,10 +291,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 }
             }
         }
-        //有值 修改操作
-        sinochemintlPoPlanHeaderDTO.setLastUpdateDate(date);
-        sinochemintlPoPlanHeaderDTO.setLastUpdatedBy(user.getUserId());
-        sinochemintlPoPlanHeaderRepository.updateByKey(sinochemintlPoPlanHeaderDTO);
         return sinochemintlPoPlanHeaderDTO;
     }
 
@@ -715,7 +721,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         HashSet<Long> poPlanLineIds = new HashSet<>();
         if (!sinochemintlPoPlanLineDTOS.isEmpty()) {
             if (!"1510".equals(sinochemintlPoPlanLineDTOS.get(0).getPlanSharedProvince())) {
-                if (!"NEW".equals(sinochemintlPoPlanHeaderDTO.getStatus()) || !"MAINTAIN".equals(sinochemintlPoPlanHeaderDTO.getStatusName())) {
+                if (!SinochemintlConstant.StatusCode.STATUS_NEW.equals(sinochemintlPoPlanHeaderDTO.getStatus()) || !SinochemintlConstant.StatusCode.STATUS_MAINTAIN.equals(sinochemintlPoPlanHeaderDTO.getStatusName())) {
                     for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
                         poPlanLineIds.addAll(sinochemintlPoPlanLineRepository.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO));
                     }
@@ -723,6 +729,11 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                     poPlanLineIds.add(0L);
                 }
                 sinochemintlPoPlanHeaderDTO.setPoPlanLineIds(poPlanLineIds);
+            } else {
+                if (SinochemintlConstant.StatusCode.STATUS_NEW.equals(sinochemintlPoPlanHeaderDTO.getStatus())) {
+                    poPlanLineIds.add(0L);
+                    sinochemintlPoPlanHeaderDTO.setPoPlanLineIds(poPlanLineIds);
+                }
             }
         } else {
             poPlanLineIds.add(0L);
@@ -876,7 +887,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLine : sinochemintlPoPlanLineDTOS) {
                 if (dto.getPlanSharedProvince().contains(":" + sinochemintlPoPlanLine.getProvinceCompanyId() + ",")) {
                     sinochemintlPoPlanLineDTO = sinochemintlPoPlanLine;
-
                 }
             }
             if (sinochemintlPoPlanLineDTO == null) {

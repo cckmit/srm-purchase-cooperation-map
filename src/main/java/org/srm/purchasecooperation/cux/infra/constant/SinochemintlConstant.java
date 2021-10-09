@@ -34,6 +34,8 @@ public class SinochemintlConstant {
         String STATUS_INPUT_COMPLETE = "INPUT_COMPLETE";
         //已取消
         String STATUS_CANCELLED = "CANCELLED";
+        //拼单标识
+        String STATUS_MAINTAIN = "MAINTAIN";
     }
 
     /**
@@ -66,5 +68,7 @@ public class SinochemintlConstant {
         String SPUC_ZHNY_PO_PLAN_HANDLER = "SPUC.ZHNY.PO_PLAN.HANDLER";
         //定时任务 : 根据拼单截至时间提前发起通知
         String SPUC_ZHNY_ADVANCED_PO_PLAN = "SPUC.ZHNY.ADVANCED.PO_PLAN";
+        //短信提醒人配置
+        String SPUC_SINOCHEMINTL_PURCHASING_AGENT = "SPUC.SINOCHEMINTL.PURCHASING_AGENT";
     }
 }

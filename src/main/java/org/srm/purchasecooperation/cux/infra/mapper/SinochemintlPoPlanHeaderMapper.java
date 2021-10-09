@@ -3,7 +3,7 @@ package org.srm.purchasecooperation.cux.infra.mapper;
 import io.choerodon.mybatis.common.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.hzero.boot.message.entity.Receiver;
-import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
+import org.hzero.boot.platform.lov.dto.LovValueDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
@@ -103,7 +103,7 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @param integers
      * @return
      */
-    List<Receiver> getDefaultEmployeeList(List<Integer> integers);
+    List<Receiver> getDefaultEmployeeList(@Param("integers") List<Integer> integers, @Param("lovValues") List<LovValueDTO> lovValues);
 
     /**
      * 采购计划批量导出
