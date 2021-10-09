@@ -4,12 +4,10 @@ package org.srm.purchasecooperation.cux.domain.repository;
 import org.hzero.boot.message.entity.Receiver;
 import org.hzero.mybatis.base.BaseRepository;
 import org.springframework.stereotype.Component;
-import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

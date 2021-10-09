@@ -6,7 +6,6 @@ import org.hzero.core.base.BaseConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.srm.purchasecooperation.cux.api.dto.MessageSenderDTO;
-import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstant;
@@ -14,7 +13,6 @@ import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstan
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * description
