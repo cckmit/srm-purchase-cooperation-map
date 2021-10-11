@@ -224,7 +224,7 @@
         WHERE sph.tenant_id = #{tenantId}
         AND spl.pr_header_id = #{poPlanHeaderId}
         AND spl.requested_by = #{applicantId}
-        <if test="poPlanLineIds != null">
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
             UNION
             <include refid="mappingChanges"/>
             WHERE sph.tenant_id = #{tenantId}
@@ -339,7 +339,7 @@
         <if test="createId != null and createId != ''">
             AND sph.requested_by = #{createId}
         </if>
-        <if test="poPlanLineIds != null">
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
             AND sph.pr_status_code != 'NEW'
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">

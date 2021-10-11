@@ -253,7 +253,7 @@
         <include refid="excelChanges"/>
         WHERE sph.tenant_id = #{tenantId}
         AND sph.lot_num = 'PO_PLAN'
-        <if test="poPlanLineIds != null">
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
                 #{id}
@@ -366,7 +366,7 @@
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
         AND sph.lot_num = 'PO_PLAN'
-        <if test="poPlanLineIds != null">
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
                 #{id}
@@ -580,7 +580,7 @@
         <if test="status == null">
             AND sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
         </if>
-        <if test="poPlanLineIds != null">
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
                 #{id}
@@ -630,8 +630,7 @@
 
 
     <!--    获取快到期采购计划-->
-    <select id="getExpirationTime"
-            resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+    <select id="getExpirationTime" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
         where sph.attribute_datetime1 &lt; #{date}
         and sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
@@ -751,7 +750,7 @@
         <if test="createId != null and createId != ''">
             AND sph.requested_by = #{createId}
         </if>
-        <if test="poPlanLineIds != null">
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
             AND sph.pr_status_code != 'NEW'
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">

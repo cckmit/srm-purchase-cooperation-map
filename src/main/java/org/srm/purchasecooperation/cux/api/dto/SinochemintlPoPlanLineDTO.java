@@ -87,7 +87,7 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     private BigDecimal totalPurchaseFinalPrice;
     @ApiModelProperty(value = "行金额", required = true)
     private BigDecimal totalPurchasePrice;
-    @ApiModelProperty(value = "币种(SPRM.EXCHANGE_RATE.CURRENCY)", required = true)
+    @ApiModelProperty(value = "币种(SPFM.TENANT_CURRENCY)", required = true)
     private String currencyId;
     @ApiModelProperty(value = "币种名称", required = true)
     private String currencyName;
