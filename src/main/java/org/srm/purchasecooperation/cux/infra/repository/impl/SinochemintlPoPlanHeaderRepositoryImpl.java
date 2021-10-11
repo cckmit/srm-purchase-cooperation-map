@@ -110,18 +110,18 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     }
 
     @Override
-    public List<SinochemintlPoPlanHeaderDTO> verifyBusiness(Long companyId) {
-        return sinochemintlPoPlanHeaderMapper.verifyBusiness(companyId);
+    public List<SinochemintlPoPlanHeaderDTO> verifyBusiness(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
+        return sinochemintlPoPlanHeaderMapper.verifyBusiness(sinochemintlPoPlanHeaderDTO);
     }
 
     @Override
-    public List<SinochemintlPoPlanHeaderDTO> verifyDepartment(Long businessId) {
-        return sinochemintlPoPlanHeaderMapper.verifyDepartment(businessId);
+    public List<SinochemintlPoPlanHeaderDTO> verifyDepartment(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
+        return sinochemintlPoPlanHeaderMapper.verifyDepartment(sinochemintlPoPlanHeaderDTO);
     }
 
     @Override
-    public List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId) {
-        return sinochemintlPoPlanHeaderMapper.verifyPurchaseOrg(businessId);
+    public List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
+        return sinochemintlPoPlanHeaderMapper.verifyPurchaseOrg(sinochemintlPoPlanHeaderDTO);
     }
 
     @Override

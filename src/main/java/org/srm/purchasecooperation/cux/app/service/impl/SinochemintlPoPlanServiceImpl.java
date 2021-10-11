@@ -165,33 +165,36 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 sinochemintlPoPlanHeaderDTO.setCreateName(user.getRealName());
                 //系统自动带出单据来源于哪个系统 暂时只默认SRM系统
                 sinochemintlPoPlanHeaderDTO.setPoSource("SRM");
+                //采购人默认使用当前登陆人
+                sinochemintlPoPlanHeaderDTO.setPurchaseId(user.getUserId());
+                sinochemintlPoPlanHeaderDTO.setPurchaseName(user.getRealName());
                 //默认使用人民币
                 SinochemintlPoPlanLineDTO cnyCurrency = sinochemintlPoPlanLineRepository.getCnyCurrency(sinochemintlPoPlanHeaderDTO.getTenantId());
                 sinochemintlPoPlanHeaderDTO.setCurrencyName(cnyCurrency.getCurrencyName());
                 sinochemintlPoPlanHeaderDTO.setOriginalId(cnyCurrency.getCurrencyId());
                 //判断用户当前公司是否唯一
                 List<SinochemintlPoPlanLineDTO> defaultCompanyId = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(user.getUserId());
-                if (defaultCompanyId != null && defaultCompanyId.size() == 1) {
+                if (defaultCompanyId != null && defaultCompanyId.size() > 0) {
                     sinochemintlPoPlanHeaderDTO.setCompanyId(defaultCompanyId.get(0).getProvinceCompanyId());
                     sinochemintlPoPlanHeaderDTO.setCompanyName(defaultCompanyId.get(0).getProvinceCompany());
                     //如果公司唯一则查询业务实体
-                    List<SinochemintlPoPlanHeaderDTO> verifyBusiness = sinochemintlPoPlanHeaderRepository.verifyBusiness(sinochemintlPoPlanHeaderDTO.getCompanyId());
+                    List<SinochemintlPoPlanHeaderDTO> verifyBusiness = sinochemintlPoPlanHeaderRepository.verifyBusiness(sinochemintlPoPlanHeaderDTO);
                     if (verifyBusiness != null && verifyBusiness.size() == 1) {
                         sinochemintlPoPlanHeaderDTO.setBusinessId(verifyBusiness.get(0).getBusinessId());
                         sinochemintlPoPlanHeaderDTO.setBusinessName(verifyBusiness.get(0).getBusinessName());
-                        //如果业务实体唯一查询采购组织
-                        List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg = sinochemintlPoPlanHeaderRepository.verifyPurchaseOrg(sinochemintlPoPlanHeaderDTO.getBusinessId());
-                        if (verifyPurchaseOrg != null && verifyPurchaseOrg.size() == 1) {
-                            sinochemintlPoPlanHeaderDTO.setPurchaseOrgId(verifyPurchaseOrg.get(0).getPurchaseOrgId());
-                            sinochemintlPoPlanHeaderDTO.setPurchaseOrgName(verifyPurchaseOrg.get(0).getPurchaseOrgName());
-                        }
-                        //如果业务实体唯一查询所在部门是否唯一
-                        List<SinochemintlPoPlanHeaderDTO> verifyDepartment = sinochemintlPoPlanHeaderRepository.verifyDepartment(sinochemintlPoPlanHeaderDTO.getBusinessId());
-                        if (verifyDepartment != null && verifyDepartment.size() == 1) {
-                            sinochemintlPoPlanHeaderDTO.setDepartmentId(verifyDepartment.get(0).getDepartmentId());
-                            sinochemintlPoPlanHeaderDTO.setDepartmentName(verifyDepartment.get(0).getDepartmentName());
-                        }
                     }
+                }
+                //如果业务实体唯一查询采购组织
+                List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg = sinochemintlPoPlanHeaderRepository.verifyPurchaseOrg(sinochemintlPoPlanHeaderDTO);
+                if (verifyPurchaseOrg != null && verifyPurchaseOrg.size() > 0) {
+                    sinochemintlPoPlanHeaderDTO.setPurchaseOrgId(verifyPurchaseOrg.get(0).getPurchaseOrgId());
+                    sinochemintlPoPlanHeaderDTO.setPurchaseOrgName(verifyPurchaseOrg.get(0).getPurchaseOrgName());
+                }
+                //如果业务实体唯一查询所在部门是否唯一
+                List<SinochemintlPoPlanHeaderDTO> verifyDepartment = sinochemintlPoPlanHeaderRepository.verifyDepartment(sinochemintlPoPlanHeaderDTO);
+                if (verifyDepartment != null && verifyDepartment.size() > 0) {
+                    sinochemintlPoPlanHeaderDTO.setDepartmentId(verifyDepartment.get(0).getDepartmentId());
+                    sinochemintlPoPlanHeaderDTO.setDepartmentName(verifyDepartment.get(0).getDepartmentName());
                 }
                 return sinochemintlPoPlanHeaderDTO;
             }

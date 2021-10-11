@@ -124,26 +124,26 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
     /**
      * 如果公司唯一则查询业务实体
      *
-     * @param companyId 公司id
+     * @param sinochemintlPoPlanHeaderDTO 公司id
      * @return 查询结果
      */
-    List<SinochemintlPoPlanHeaderDTO> verifyBusiness(Long companyId);
+    List<SinochemintlPoPlanHeaderDTO> verifyBusiness(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     /**
      * 如果业务实体唯一查询所在部门是否唯一
      *
-     * @param businessId 业务实体id
+     * @param sinochemintlPoPlanHeaderDTO 业务实体id
      * @return 查询结果
      */
-    List<SinochemintlPoPlanHeaderDTO> verifyDepartment(Long businessId);
+    List<SinochemintlPoPlanHeaderDTO> verifyDepartment(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     /**
      * 如果业务实体唯一查询采购组织
      *
-     * @param businessId 业务实体id
+     * @param sinochemintlPoPlanHeaderDTO 业务实体id
      * @return 查询结果
      */
-    List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId);
+    List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list);
 
