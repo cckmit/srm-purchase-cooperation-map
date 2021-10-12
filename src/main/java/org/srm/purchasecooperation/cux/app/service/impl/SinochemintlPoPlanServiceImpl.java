@@ -165,9 +165,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 sinochemintlPoPlanHeaderDTO.setCreateName(user.getRealName());
                 //系统自动带出单据来源于哪个系统 暂时只默认SRM系统
                 sinochemintlPoPlanHeaderDTO.setPoSource("SRM");
-                //采购人默认使用当前登陆人
-                sinochemintlPoPlanHeaderDTO.setPurchaseId(user.getUserId());
-                sinochemintlPoPlanHeaderDTO.setPurchaseName(user.getRealName());
                 //默认使用人民币
                 SinochemintlPoPlanLineDTO cnyCurrency = sinochemintlPoPlanLineRepository.getCnyCurrency(sinochemintlPoPlanHeaderDTO.getTenantId());
                 sinochemintlPoPlanHeaderDTO.setCurrencyName(cnyCurrency.getCurrencyName());
@@ -189,6 +186,9 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 if (verifyPurchaseOrg != null && verifyPurchaseOrg.size() > 0) {
                     sinochemintlPoPlanHeaderDTO.setPurchaseOrgId(verifyPurchaseOrg.get(0).getPurchaseOrgId());
                     sinochemintlPoPlanHeaderDTO.setPurchaseOrgName(verifyPurchaseOrg.get(0).getPurchaseOrgName());
+                    //采购人默认使用当前登陆人
+                    sinochemintlPoPlanHeaderDTO.setPurchaseId(verifyPurchaseOrg.get(0).getPurchaseId());
+                    sinochemintlPoPlanHeaderDTO.setPurchaseName(verifyPurchaseOrg.get(0).getPurchaseName());
                 }
                 //如果业务实体唯一查询所在部门是否唯一
                 List<SinochemintlPoPlanHeaderDTO> verifyDepartment = sinochemintlPoPlanHeaderRepository.verifyDepartment(sinochemintlPoPlanHeaderDTO);
