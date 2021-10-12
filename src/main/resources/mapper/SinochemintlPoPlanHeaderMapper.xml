@@ -44,6 +44,7 @@
 
     <sql id="excelChanges">
         SELECT distinct sph.pr_header_id        poPlanHeaderId,
+                        spl.pr_line_id          poPlanLineId,
                         sph.tenant_id           tenantId,
                         sph.title               title,
                         sph.pr_status_code      status,
@@ -252,7 +253,7 @@
         <include refid="excelChanges"/>
         WHERE sph.tenant_id = #{tenantId}
         AND sph.lot_num = 'PO_PLAN'
-        <if test="poPlanLineIds != null">
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
                 #{id}
@@ -356,6 +357,7 @@
         <if test="standbyCreateId != null and standbyCreateId != ''">
             AND sph.requested_by = #{standbyCreateId}
         </if>
+        GROUP BY poPlanHeaderId
         ORDER BY establishDate DESC
     </select>
 
@@ -364,7 +366,7 @@
         <include refid="mappingChanges"/>
         WHERE sph.tenant_id = #{tenantId}
         AND sph.lot_num = 'PO_PLAN'
-        <if test="poPlanLineIds != null">
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
                 #{id}
@@ -578,7 +580,7 @@
         <if test="status == null">
             AND sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
         </if>
-        <if test="poPlanLineIds != null">
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
                 #{id}
@@ -628,8 +630,7 @@
 
 
     <!--    获取快到期采购计划-->
-    <select id="getExpirationTime"
-            resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+    <select id="getExpirationTime" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         <include refid="mappingChanges"/>
         where sph.attribute_datetime1 &lt; #{date}
         and sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
@@ -648,12 +649,13 @@
     <!--    如果采购组织唯一查询所在部门是否唯一-->
     <select id="verifyDepartment"
             resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
-        SELECT hu1.unit_id   departmentId,
-               hu1.unit_name departmentName
-        FROM hpfm_unit hu
-                 LEFT JOIN hpfm_operation_unit hou ON hou.company_id = hu.company_id
-                 LEFT JOIN hpfm_unit hu1 ON hu.unit_id = hu1.unit_company_id
-        WHERE hou.ou_id = #{businessId}
+        SELECT hu.unit_id   departmentId,
+               hu.unit_name departmentName
+        FROM hpfm_employee_assign hea
+                 LEFT JOIN hpfm_employee_user heu ON heu.employee_id = hea.employee_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_id
+        WHERE heu.user_id = #{createId}
+        ORDER BY hea.primary_position_flag DESC
     </select>
 
     <!--    如果业务实体唯一查询采购组织-->
@@ -661,10 +663,13 @@
             resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
         SELECT hpo.purchase_org_id   purchaseOrgId,
                hpo.organization_name purchaseOrgName
-        FROM hpfm_unit hu
+        FROM hpfm_employee_assign hea
+                 LEFT JOIN hpfm_employee_user heu ON heu.employee_id = hea.employee_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
                  LEFT JOIN hpfm_purchase_organization hpo ON hu.unit_code = hpo.organization_code
                  LEFT JOIN hpfm_operation_unit hou ON hou.company_id = hu.company_id
-        WHERE hou.ou_id = #{businessId}
+        WHERE heu.user_id = #{createId}
+        ORDER BY hea.primary_position_flag DESC
     </select>
 
     <select id="excelLine" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
@@ -689,11 +694,14 @@
         LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
         LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
         where hc.company_id in
-        <foreach collection="list" item="id" open="(" close=")" separator=",">
+        <foreach collection="integers" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
-        or iu.real_name = "王刚"
-        GROUP BY iu.id
+        OR iu.real_name in
+        <foreach collection="lovValues" item="LovValueDTO" open="(" close=")" separator=",">
+            #{LovValueDTO.meaning}
+        </foreach>
+        GROUP BY userId
     </select>
 
     <select id="batchExcelLine"
@@ -746,7 +754,7 @@
         <if test="createId != null and createId != ''">
             AND sph.requested_by = #{createId}
         </if>
-        <if test="poPlanLineIds != null">
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
             AND sph.pr_status_code != 'NEW'
             AND spl.pr_line_id in
             <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">

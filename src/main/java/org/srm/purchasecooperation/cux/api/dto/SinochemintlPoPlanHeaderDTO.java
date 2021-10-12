@@ -86,7 +86,7 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
     @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
     private Date applicationDate;
-    @ApiModelProperty(value = "原币币种(SPRM.EXCHANGE_RATE.CURRENCY)")
+    @ApiModelProperty(value = "原币币种(SPFM.TENANT_CURRENCY)")
     private String originalId;
     @ApiModelProperty(value = "币种名称", required = true)
     private String currencyName;

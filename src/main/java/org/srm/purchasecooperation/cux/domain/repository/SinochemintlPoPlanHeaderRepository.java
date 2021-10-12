@@ -4,12 +4,10 @@ package org.srm.purchasecooperation.cux.domain.repository;
 import org.hzero.boot.message.entity.Receiver;
 import org.hzero.mybatis.base.BaseRepository;
 import org.springframework.stereotype.Component;
-import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -133,26 +131,26 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
     /**
      * 如果公司唯一则查询组织
      *
-     * @param companyId 公司id
+     * @param sinochemintlPoPlanHeaderDTO 公司id
      * @return 查询结果
      */
-    List<SinochemintlPoPlanHeaderDTO> verifyBusiness(Long companyId);
+    List<SinochemintlPoPlanHeaderDTO> verifyBusiness(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     /**
      * 如果业务实体唯一查询所在部门是否唯一
      *
-     * @param businessId 业务实体id
+     * @param sinochemintlPoPlanHeaderDTO 业务实体id
      * @return 查询结果
      */
-    List<SinochemintlPoPlanHeaderDTO> verifyDepartment(Long businessId);
+    List<SinochemintlPoPlanHeaderDTO> verifyDepartment(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     /**
      * 如果业务实体唯一查询采购组织
      *
-     * @param businessId 业务实体id
+     * @param sinochemintlPoPlanHeaderDTO 业务实体id
      * @return 查询结果
      */
-    List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId);
+    List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list);
 

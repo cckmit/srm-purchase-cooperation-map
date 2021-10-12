@@ -3,7 +3,7 @@ package org.srm.purchasecooperation.cux.infra.mapper;
 import io.choerodon.mybatis.common.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.hzero.boot.message.entity.Receiver;
-import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
+import org.hzero.boot.platform.lov.dto.LovValueDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
@@ -103,7 +103,7 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @param integers
      * @return
      */
-    List<Receiver> getDefaultEmployeeList(List<Integer> integers);
+    List<Receiver> getDefaultEmployeeList(@Param("integers") List<Integer> integers, @Param("lovValues") List<LovValueDTO> lovValues);
 
     /**
      * 采购计划批量导出
@@ -124,26 +124,26 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
     /**
      * 如果公司唯一则查询业务实体
      *
-     * @param companyId 公司id
+     * @param sinochemintlPoPlanHeaderDTO 公司id
      * @return 查询结果
      */
-    List<SinochemintlPoPlanHeaderDTO> verifyBusiness(Long companyId);
+    List<SinochemintlPoPlanHeaderDTO> verifyBusiness(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     /**
      * 如果业务实体唯一查询所在部门是否唯一
      *
-     * @param businessId 业务实体id
+     * @param sinochemintlPoPlanHeaderDTO 业务实体id
      * @return 查询结果
      */
-    List<SinochemintlPoPlanHeaderDTO> verifyDepartment(Long businessId);
+    List<SinochemintlPoPlanHeaderDTO> verifyDepartment(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     /**
      * 如果业务实体唯一查询采购组织
      *
-     * @param businessId 业务实体id
+     * @param sinochemintlPoPlanHeaderDTO 业务实体id
      * @return 查询结果
      */
-    List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId);
+    List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list);
 

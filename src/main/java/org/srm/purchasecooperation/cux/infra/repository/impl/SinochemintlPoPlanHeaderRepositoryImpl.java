@@ -1,21 +1,22 @@
 package org.srm.purchasecooperation.cux.infra.repository.impl;
 
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import org.hzero.boot.message.entity.Receiver;
+import org.hzero.boot.platform.lov.adapter.LovAdapter;
+import org.hzero.boot.platform.lov.dto.LovValueDTO;
 import org.hzero.mybatis.base.impl.BaseRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.srm.purchasecooperation.cux.api.dto.SinochemintlEmployeeInformationDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
+import org.srm.purchasecooperation.cux.infra.constant.SinochemintlConstant;
 import org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanHeaderMapper;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 采购计划头表 资源库实现
@@ -88,9 +89,14 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
         return sinochemintlPoPlanHeaderMapper.getDefaultCompanyId(employeeId);
     }
 
+    @Autowired
+    public LovAdapter lovAdapter;
+
     @Override
     public List<Receiver> getDefaultEmployeeList(List<Integer> integers) {
-        return sinochemintlPoPlanHeaderMapper.getDefaultEmployeeList(integers);
+        CustomUserDetails user = DetailsHelper.getUserDetails();
+        List<LovValueDTO> lovValues = lovAdapter.queryLovValue(SinochemintlConstant.CodingCode.SPUC_SINOCHEMINTL_PURCHASING_AGENT, user.getTenantId());
+        return sinochemintlPoPlanHeaderMapper.getDefaultEmployeeList(integers, lovValues);
     }
 
     @Override
@@ -104,18 +110,18 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     }
 
     @Override
-    public List<SinochemintlPoPlanHeaderDTO> verifyBusiness(Long companyId) {
-        return sinochemintlPoPlanHeaderMapper.verifyBusiness(companyId);
+    public List<SinochemintlPoPlanHeaderDTO> verifyBusiness(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
+        return sinochemintlPoPlanHeaderMapper.verifyBusiness(sinochemintlPoPlanHeaderDTO);
     }
 
     @Override
-    public List<SinochemintlPoPlanHeaderDTO> verifyDepartment(Long businessId) {
-        return sinochemintlPoPlanHeaderMapper.verifyDepartment(businessId);
+    public List<SinochemintlPoPlanHeaderDTO> verifyDepartment(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
+        return sinochemintlPoPlanHeaderMapper.verifyDepartment(sinochemintlPoPlanHeaderDTO);
     }
 
     @Override
-    public List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(Long businessId) {
-        return sinochemintlPoPlanHeaderMapper.verifyPurchaseOrg(businessId);
+    public List<SinochemintlPoPlanHeaderDTO> verifyPurchaseOrg(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
+        return sinochemintlPoPlanHeaderMapper.verifyPurchaseOrg(sinochemintlPoPlanHeaderDTO);
     }
 
     @Override
