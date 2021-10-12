@@ -661,13 +661,17 @@
     <!--    如果业务实体唯一查询采购组织-->
     <select id="verifyPurchaseOrg"
             resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
-        SELECT hpo.purchase_org_id   purchaseOrgId,
-               hpo.organization_name purchaseOrgName
+        SELECT hpo.purchase_org_id     purchaseOrgId,
+               hpo.organization_name   purchaseOrgName,
+               hpa.purchase_agent_id   purchaseId,
+               hpa.purchase_agent_name purchaseName
         FROM hpfm_employee_assign hea
                  LEFT JOIN hpfm_employee_user heu ON heu.employee_id = hea.employee_id
                  LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
                  LEFT JOIN hpfm_purchase_organization hpo ON hu.unit_code = hpo.organization_code
                  LEFT JOIN hpfm_operation_unit hou ON hou.company_id = hu.company_id
+                 LEFT JOIN hpfm_purchase_agent_user hpau ON hpau.user_id = heu.user_id
+                 LEFT JOIN hpfm_purchase_agent hpa ON hpau.purchase_agent_id = hpa.purchase_agent_id
         WHERE heu.user_id = #{createId}
         ORDER BY hea.primary_position_flag DESC
     </select>
