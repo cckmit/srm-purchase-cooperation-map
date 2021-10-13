@@ -17,15 +17,15 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 采购计划头表
+ * 拼单计划头表
  *
  * @author tianjing.gui@hand-china.com 2021-09-06 09:59:20
  */
-@ApiModel("采购计划头表")
+@ApiModel("拼单计划头表")
 @VersionAudit
 @ModifyAudit
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ExcelSheet(zh = "采购计划单", en = "Purchase plan")
+@ExcelSheet(zh = "拼单计划表", en = "Purchase plan")
 public class SinochemintlPoPlanExcelDTO extends AuditDomain {
 
     @ApiModelProperty("表ID，主键，供其他表做外键")
@@ -47,10 +47,10 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
     @LovValue(lovCode = "SINOCHEMINTL.PROJECT_TYPE", meaningField = "planName")
     private String planType;
     @ApiModelProperty(value = "计划类型名称", required = true)
-    @ExcelColumn(title = "计划类型", zh = "计划类型", en = "plan type", order = 3)
+    @ExcelColumn(title = "计划类型", zh = "计划类型", en = "plan type", order = 4)
     private String planName;
-    @ApiModelProperty(value = "采购计划单号", required = true)
-    @ExcelColumn(title = "采购计划单号", zh = "采购计划单号", en = "Purchase plan number", order = 4)
+    @ApiModelProperty(value = "拼单计划单号", required = true)
+    @ExcelColumn(title = "拼单计划单号", zh = "拼单计划单号", en = "Purchase plan number", order = 3)
     private String poPlanNumber;
     @ApiModelProperty(value = "创建日期")
     @ExcelColumn(title = "创建日期", zh = "创建日期", en = "establishDate", order = 5)
@@ -62,10 +62,10 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
     @ApiModelProperty(value = "创建人", required = true)
     @ExcelColumn(title = "创建人", zh = "创建人", en = "founder", order = 6)
     private String createName;
-    @ApiModelProperty(value = "拼单截至时间", required = true)
+    @ApiModelProperty(value = "拼单截止时间", required = true)
     @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
     @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
-    @ExcelColumn(title = "拼单截至时间", zh = "拼单截至时间", en = "Order deadline", order = 7)
+    @ExcelColumn(title = "拼单截止时间", zh = "拼单截止时间", en = "Order deadline", order = 7)
     private Date deadline;
     @ApiModelProperty(value = "公司ID(SPFM.USER_AUTH.COMPANY)")
     private Long companyId;
@@ -90,12 +90,12 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
     @ApiModelProperty(value = "单据来源", required = true)
     private String poSource;
     @ApiModelProperty(value = "申请人", required = true)
-    @ExcelColumn(title = "申请人", zh = "申请人", en = "applicant", order = 12)
+    @ExcelColumn(title = "申请人", zh = "申请人", en = "applicant", order = 13)
     private String applicant;
     @ApiModelProperty(value = "部门ID(SPUC.SD_PH_UNIT)")
     private Long departmentId;
     @ApiModelProperty(value = "所属部门", required = true)
-    @ExcelColumn(title = "所属部门", zh = "所属部门", en = "Department", order = 13)
+    @ExcelColumn(title = "所属部门", zh = "所属部门", en = "Department", order = 12)
     private String departmentName;
     @ApiModelProperty(value = "申请日期", required = true)
     @DateTimeFormat(pattern = BaseConstants.Pattern.DATETIME)
@@ -108,7 +108,7 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
     @ExcelColumn(title = "币种名称", zh = "币种名称", en = "Original currency", order = 15)
     private String currencyName;
     @ApiModelProperty(value = "计划说明")
-    @ExcelColumn(title = "计划说明", zh = "计划说明", en = "Plan description", order = 16)
+    @ExcelColumn(title = "计划说明", zh = "计划说明", en = "Plan description", order = 50)
     private String planIllustrate;
     @ApiModelProperty(value = "已拼单省区数量", required = true)
     @ExcelColumn(title = "已拼单省区数量", zh = "已拼单省区数量", en = "Number of provinces and regions that have been consolidated", order = 17)
@@ -118,13 +118,13 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
     @JsonFormat(pattern = BaseConstants.Pattern.DATETIME)
     @ExcelColumn(title = "需求日期", zh = "需求日期", en = "Demand date", order = 18)
     private Date needDate;
-    @ApiModelProperty(value = "计划共享省区(SPFM.USER_AUTH.COMPANY)", required = true)
-    @ExcelColumn(title = "计划共享省区", zh = "计划共享省区", en = "Plan to share provinces", order = 19)
+    @ApiModelProperty(value = "邀请拼单省区(SPFM.USER_AUTH.COMPANY)", required = true)
+    @ExcelColumn(title = "邀请拼单省区", zh = "邀请拼单省区", en = "Plan to share provinces", order = 19)
     private String planSharedProvince;
-    @ApiModelProperty(value = "省公司/项目ID(SPFM.USER_AUTH.COMPANY)", required = true)
+    @ApiModelProperty(value = "行拼单公司ID(SPFM.USER_AUTH.COMPANY)", required = true)
     private Long provinceCompanyId;
-    @ApiModelProperty(value = "省公司/项目", required = true)
-    @ExcelColumn(title = "省公司/项目", zh = "省公司/项目", en = "company", order = 20)
+    @ApiModelProperty(value = "行拼单公司", required = true)
+    @ExcelColumn(title = "行拼单公司", zh = "行拼单公司", en = "company", order = 20)
     private String provinceCompany;
     @ApiModelProperty(value = "产品名称", required = true)
     @ExcelColumn(title = "产品名称", zh = "产品名称", en = "product name", order = 21)
@@ -166,55 +166,39 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
     @ExcelColumn(title = "单位", zh = "单位", en = "company name", order = 31)
     private String unitName;
     @ApiModelProperty(value = "运费供应商")
-    @ExcelColumn(title = "运费供应商", zh = "运费供应商", en = "Freight supplier", order = 33)
+    @ExcelColumn(title = "运费供应商", zh = "运费供应商", en = "Freight supplier", order = 37)
     private String freightSupplier;
     @ApiModelProperty(value = "运费价格")
-    @ExcelColumn(title = "运费价格", zh = "运费价格", en = "Shipping price", order = 34)
+    @ExcelColumn(title = "运费价格", zh = "运费价格", en = "Shipping price", order = 38)
     private BigDecimal freightPrice;
     @ApiModelProperty(value = "价格条款")
-    @ExcelColumn(title = "价格条款", zh = "价格条款", en = "pricing term", order = 35)
+    @ExcelColumn(title = "价格条款", zh = "价格条款", en = "pricing term", order = 39)
     private String priceTerms;
     @ApiModelProperty(value = "备注")
     private String remark;
     @ApiModelProperty(value = "税种ID(SPRM.TAX)")
     private Long taxId;
     @ApiModelProperty(value = "税种")
-    @ExcelColumn(title = "税种", zh = "税种", en = "Tax", order = 36)
+    @ExcelColumn(title = "税种", zh = "税种", en = "Tax", order = 40)
     private String taxType;
     @ApiModelProperty(value = "税率")
-    @ExcelColumn(title = "税率", zh = "税率", en = "tax rate", order = 37)
+    @ExcelColumn(title = "税率", zh = "税率", en = "tax rate", order = 41)
     private BigDecimal taxRate;
     @ApiModelProperty(value = "行申请人")
-    @ExcelColumn(title = "行申请人", zh = "行申请人", en = "Applicant", order = 38)
+    @ExcelColumn(title = "行申请人", zh = "行申请人", en = "Applicant", order = 32)
     private String lineApplicant;
     @ApiModelProperty(value = "申请总额", required = true)
-    @ExcelColumn(title = "申请总额", zh = "申请总额", en = "Total application", order = 39)
+    @ExcelColumn(title = "申请总额", zh = "申请总额", en = "Total application", order = 35)
     private BigDecimal applicationSum;
     @ApiModelProperty(value = "申请最终总额", required = true)
-    @ExcelColumn(title = "申请最终总额", zh = "申请最终总额", en = "Final application amount", order = 40)
+    @ExcelColumn(title = "申请最终总额", zh = "申请最终总额", en = "Final application amount", order = 36)
     private BigDecimal applicationFinalSum;
     @ApiModelProperty(value = "最终行金额", required = true)
-    @ExcelColumn(title = "最终行金额", zh = "最终行金额", en = "Final bank amount", order = 41)
+    @ExcelColumn(title = "最终行金额", zh = "最终行金额", en = "Final bank amount", order = 34)
     private BigDecimal totalPurchaseFinalPrice;
     @ApiModelProperty(value = "行金额", required = true)
-    @ExcelColumn(title = "行金额", zh = "行金额", en = "Purchase price", order = 42)
+    @ExcelColumn(title = "行金额", zh = "行金额", en = "Purchase price", order = 33)
     private BigDecimal totalPurchasePrice;
-
-    public BigDecimal getApplicationFinalSum() {
-        return applicationFinalSum;
-    }
-
-    public void setApplicationFinalSum(BigDecimal applicationFinalSum) {
-        this.applicationFinalSum = applicationFinalSum;
-    }
-
-    public BigDecimal getTotalPurchaseFinalPrice() {
-        return totalPurchaseFinalPrice;
-    }
-
-    public void setTotalPurchaseFinalPrice(BigDecimal totalPurchaseFinalPrice) {
-        this.totalPurchaseFinalPrice = totalPurchaseFinalPrice;
-    }
 
     public Long getPoPlanLineId() {
         return poPlanLineId;
@@ -230,6 +214,22 @@ public class SinochemintlPoPlanExcelDTO extends AuditDomain {
 
     public void setEstablishDate(Date establishDate) {
         this.establishDate = establishDate;
+    }
+
+    public BigDecimal getApplicationFinalSum() {
+        return applicationFinalSum;
+    }
+
+    public void setApplicationFinalSum(BigDecimal applicationFinalSum) {
+        this.applicationFinalSum = applicationFinalSum;
+    }
+
+    public BigDecimal getTotalPurchaseFinalPrice() {
+        return totalPurchaseFinalPrice;
+    }
+
+    public void setTotalPurchaseFinalPrice(BigDecimal totalPurchaseFinalPrice) {
+        this.totalPurchaseFinalPrice = totalPurchaseFinalPrice;
     }
 
     public String getPlanName() {
