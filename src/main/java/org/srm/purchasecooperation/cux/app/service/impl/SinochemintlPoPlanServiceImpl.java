@@ -778,13 +778,15 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList = sinochemintlPoPlanLineRepository.selectByHeaderId(sinochemintlPoPlanLine);
         Set<Integer> longs = new HashSet<>();
         for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineList) {
-            if (StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getEndSupplier()) || StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getEndPrice())) {
-                throw new CommonException(SinochemintlConstant.ErrorCode.ERROR_RESULTS_NOT_ENTERED);
-            }
-            sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_INPUT_COMPLETE);
-            sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
-            if (StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getSpellDocProvince())) {
-                longs.add(Math.toIntExact(sinochemintlPoPlanLineDTO.getProvinceCompanyId()));
+            if (!sinochemintlPoPlanLineDTO.getStatus().equals(SinochemintlConstant.StatusCode.STATUS_NEW)) {
+                if (StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getEndSupplier()) || StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getEndPrice())) {
+                    throw new CommonException(SinochemintlConstant.ErrorCode.ERROR_RESULTS_NOT_ENTERED);
+                }
+                sinochemintlPoPlanLineDTO.setStatus(SinochemintlConstant.StatusCode.STATUS_INPUT_COMPLETE);
+                sinochemintlPoPlanLineRepository.updateByKey(sinochemintlPoPlanLineDTO);
+                if (StringUtils.isEmpty(sinochemintlPoPlanLineDTO.getSpellDocProvince())) {
+                    longs.add(Math.toIntExact(sinochemintlPoPlanLineDTO.getProvinceCompanyId()));
+                }
             }
         }
         if (longs.size() > 0) {
