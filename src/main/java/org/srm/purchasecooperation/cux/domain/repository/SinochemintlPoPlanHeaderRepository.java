@@ -155,6 +155,4 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
     List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list);
 
     List<SinochemintlPoPlanExcelDTO> batchExcelLine(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
-
-    SinochemintlPoPlanLineDTO getCompany(String planSharedProvince);
 }
