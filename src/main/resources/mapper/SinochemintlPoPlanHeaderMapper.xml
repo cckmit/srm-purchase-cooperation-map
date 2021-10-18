@@ -818,14 +818,4 @@
         ORDER BY establishDate DESC
     </select>
 
-    <!--根据公司编码获取公司id和公司名称-->
-    <select id="getCompany" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
-        SELECT
-        hc.company_id   provinceCompanyId,
-        hc.company_name provinceCompany,
-        hc.company_num planSharedProvince
-        FROM hpfm_company hc
-        WHERE hc.company_num = #{planSharedProvince}
-    </select>
-
 </mapper>
