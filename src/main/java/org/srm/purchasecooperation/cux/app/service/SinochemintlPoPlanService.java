@@ -154,4 +154,6 @@ public interface SinochemintlPoPlanService {
     List<SinochemintlPoPlanExcelDTO> excelLine(String poPlanLineIds);
 
     List<SinochemintlPoPlanExcelDTO> batchExcelLine(SinochemintlPoPlanHeaderDTO dto);
+
+    SinochemintlPoPlanLineDTO addPoPlanLine(SinochemintlPoPlanHeaderDTO dto);
 }

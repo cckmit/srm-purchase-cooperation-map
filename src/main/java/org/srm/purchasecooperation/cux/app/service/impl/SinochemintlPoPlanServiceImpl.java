@@ -11,7 +11,9 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.hzero.boot.message.entity.Receiver;
 import org.hzero.boot.platform.code.builder.CodeRuleBuilder;
 import org.hzero.boot.platform.code.constant.CodeConstants;
+import org.hzero.boot.platform.lov.adapter.LovAdapter;
 import org.hzero.boot.platform.lov.annotation.ProcessLovValue;
+import org.hzero.boot.platform.lov.dto.LovValueDTO;
 import org.hzero.boot.platform.lov.handler.LovValueHandle;
 import org.hzero.core.base.BaseAppService;
 import org.hzero.core.base.BaseConstants;
@@ -62,6 +64,9 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
 
     @Autowired
     private PrActionRepository prActionRepository;
+
+    @Autowired
+    public LovAdapter lovAdapter;
 
     @Autowired
     public SinochemintlPoPlanServiceImpl(SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository, SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository, SinochemintlSendMessageService sinochemintlSendMessageService) {
@@ -962,6 +967,48 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 logger.error("Message sending failure:{}", receiverList);
             }
         }
+    }
+
+
+    /**
+     * 新建拼单计划行信息时返回默认共享省区
+     * @param dto
+     * @return 行信息
+     */
+    @Override
+    public SinochemintlPoPlanLineDTO addPoPlanLine(SinochemintlPoPlanHeaderDTO dto) {
+        CustomUserDetails user = DetailsHelper.getUserDetails();
+        List<LovValueDTO> lovValues = lovAdapter.queryLovValue(SinochemintlConstant.CodingCode.SPUC_SINOCHEMINTL_PLAN_SHARED_PROVINCE, user.getTenantId());
+        List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(user.getUserId());
+        StringBuffer provinses= new StringBuffer();
+        List<Map<String, Object>> planSharedProvinceName = new ArrayList<>();;
+        Set<String> self = new HashSet<>();
+        for(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS){
+            self.add(sinochemintlPoPlanLineDTO.getPlanSharedProvince());
+            for(LovValueDTO lovValueDTO : lovValues){
+                String meaning = lovValueDTO.getMeaning();
+                if(meaning.contains(sinochemintlPoPlanLineDTO.getPlanSharedProvince())){
+                    provinses.append(meaning).append(",");
+                }
+            }
+        }
+        //去重
+        String[] province = provinses.toString().replaceAll(" ","").trim().split(",");
+        List<String> list = Arrays.asList(province);
+        Set<String> set = new HashSet(list);
+        //过滤掉自己
+        set.removeAll(self);
+        for (String string : set) {
+            SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = sinochemintlPoPlanHeaderRepository.getCompany(string);
+            HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+            stringObjectHashMap.put("companyId", sinochemintlPoPlanLine.getProvinceCompanyId());
+            stringObjectHashMap.put("companyName", sinochemintlPoPlanLine.getProvinceCompany());
+            stringObjectHashMap.put("companyNum", sinochemintlPoPlanLine.getPlanSharedProvince());
+            planSharedProvinceName.add(stringObjectHashMap);
+        }
+        SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = new SinochemintlPoPlanLineDTO();
+        sinochemintlPoPlanLine.setPlanSharedProvinceName(planSharedProvinceName);
+        return sinochemintlPoPlanLine;
     }
 
 }

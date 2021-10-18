@@ -248,4 +248,14 @@ public class SinochemintlPoPlanController extends BaseController {
         return Results.success(result);
     }
 
+    @ApiOperation(value = "新增行采购计划")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @PostMapping("/addPoPlanLine")
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
+    public ResponseEntity<SinochemintlPoPlanLineDTO> addPoPlanLine(@PathVariable("organizationId") Long organizationId,
+                                                                 @RequestBody @Encrypt SinochemintlPoPlanHeaderDTO dto) {
+        dto.setTenantId(organizationId);
+        SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO = sinochemintlPoPlanHeaderService.addPoPlanLine(dto);
+        return Results.success(sinochemintlPoPlanLineDTO);
+    }
 }

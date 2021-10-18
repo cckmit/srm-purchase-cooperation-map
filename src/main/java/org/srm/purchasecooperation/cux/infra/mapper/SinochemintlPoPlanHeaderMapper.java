@@ -148,4 +148,12 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
     List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list);
 
     List<SinochemintlPoPlanExcelDTO> batchExcelLine(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
+
+    /**
+     * 根据公司编码获取公司id和公司名称
+     *
+     * @param planSharedProvince 公司编码
+     * @return 公司id和公司名称
+     */
+    SinochemintlPoPlanLineDTO getCompany(String planSharedProvince);
 }
