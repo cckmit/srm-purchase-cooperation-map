@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanHeaderMapper">
+
+    <sql id="mappingChanges">
+        SELECT distinct sph.pr_header_id        poPlanHeaderId,
+                        sph.tenant_id           tenantId,
+                        sph.title               title,
+                        sph.pr_status_code      status,
+                        sph.attribute_varchar23 planType,
+                        sph.pr_num              poPlanNumber,
+                        sph.requested_by        createId,
+                        sph.pr_requested_name   createName,
+                        sph.attribute_datetime1 deadline,
+                        sph.parent_unit_id      companyId,
+                        hc.company_name         companyName,
+                        sph.attribute_bigint11  businessId,
+                        hou.ou_name             businessName,
+                        sph.purchase_org_id     purchaseOrgId,
+                        hpo.organization_name   purchaseOrgName,
+                        sph.purchase_agent_id   purchaseId,
+                        hpa.purchase_agent_name purchaseName,
+                        sph.pr_source_platform  poSource,
+                        sph.pr_requested_name   applicant,
+                        sph.unit_id             departmentId,
+                        hu.unit_name            departmentName,
+                        sph.request_date        applicationDate,
+                        sph.original_currency   originalId,
+                        sc.currency_name        currencyName,
+                        sph.attribute_varchar24 planIllustrate,
+                        sph.attachment_uuid     appendixId,
+                        sph.creation_date       establishDate,
+                        sph.attribute_decimal1  applicationSum,
+                        sph.attribute_decimal2  applicationFinalSum
+        FROM sprm_pr_header sph
+                 LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
+                 LEFT JOIN hpfm_company hc ON hc.company_id = sph.parent_unit_id
+                 LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
+                 LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = sph.unit_id
+                 LEFT JOIN smdm_currency sc ON sc.currency_id = sph.original_currency
+                 LEFT JOIN hpfm_operation_unit hou ON hou.ou_id = sph.attribute_bigint11
+    </sql>
+
+    <sql id="excelChanges">
+        SELECT distinct sph.pr_header_id        poPlanHeaderId,
+                        spl.pr_line_id          poPlanLineId,
+                        sph.tenant_id           tenantId,
+                        sph.title               title,
+                        sph.pr_status_code      status,
+                        sph.attribute_varchar23 planType,
+                        sph.pr_num              poPlanNumber,
+                        sph.requested_by        createId,
+                        sph.pr_requested_name   createName,
+                        sph.attribute_datetime1 deadline,
+                        sph.parent_unit_id      companyId,
+                        hc1.company_name        companyName,
+                        sph.attribute_bigint11  businessId,
+                        hou.ou_name             businessName,
+                        sph.purchase_org_id     purchaseOrgId,
+                        hpo.organization_name   purchaseOrgName,
+                        sph.purchase_agent_id   purchaseId,
+                        hpa.purchase_agent_name purchaseName,
+                        sph.pr_source_platform  poSource,
+                        sph.pr_requested_name   applicant,
+                        sph.unit_id             departmentId,
+                        hu.unit_name            departmentName,
+                        sph.request_date        applicationDate,
+                        sph.original_currency   originalId,
+                        sc.currency_name        currencyName,
+                        sph.attribute_varchar24 planIllustrate,
+                        sph.creation_date       creationDate,
+                        spl.attribute_bigint14  spellDocProvince,
+                        spl.needed_date         needDate,
+                        spl.attribute_longtext9 planSharedProvince,
+                        spl.company_id          provinceCompanyId,
+                        hc2.company_name        provinceCompany,
+                        spl.product_name        productName,
+                        spl.attribute_varchar24 specification,
+                        spl.supplier_id         initialSupplierId,
+                        spl.supplier_name       initialSupplier,
+                        spl.attribute_varchar39 endSupplier,
+                        spl.attribute_decimal3  endPrice,
+                        spl.unit_price          factoryPrice,
+                        spl.attribute_varchar25 deliveryAddress,
+                        spl.item_id             materialId,
+                        spl.item_code           materialCoding,
+                        sic.category_name       materialClass,
+                        spl.quantity            requiredQuantity,
+                        spl.uom_id              uomId,
+                        su.uom_name             unitName,
+                        spl.attribute_varchar38 freightSupplier,
+                        spl.line_freight        freightPrice,
+                        spl.attribute_varchar39 priceTerms,
+                        spl.remark              remark,
+                        spl.tax_id              taxId,
+                        st.description          taxType,
+                        spl.tax_rate            taxRate,
+                        sph.creation_date       establishDate,
+                        spl.pr_requested_name   lineApplicant,
+                        sph.attribute_decimal1  applicationSum,
+                        sph.attribute_decimal2  applicationFinalSum,
+                        spl.attribute_decimal5  totalPurchaseFinalPrice,
+                        spl.attribute_decimal4  totalPurchasePrice
+        FROM sprm_pr_header sph
+                 LEFT JOIN sprm_pr_line spl ON spl.pr_header_id = sph.pr_header_id
+                 LEFT JOIN hpfm_company hc1 ON hc1.company_id = sph.parent_unit_id
+                 LEFT JOIN hpfm_purchase_organization hpo ON hpo.purchase_org_id = sph.purchase_org_id
+                 LEFT JOIN hpfm_purchase_agent hpa ON hpa.purchase_agent_id = sph.purchase_agent_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = sph.unit_id
+                 LEFT JOIN smdm_tax st ON spl.tax_id = st.tax_id
+                 LEFT JOIN smdm_currency sc ON sc.currency_id = sph.original_currency
+                 LEFT JOIN hpfm_operation_unit hou ON hou.ou_id = sph.attribute_bigint11
+                 LEFT JOIN smdm_item si ON si.item_id = spl.item_id
+                 LEFT JOIN smdm_uom su ON su.uom_id = spl.uom_id
+                 LEFT JOIN hpfm_company hc2 ON hc2.company_id = spl.company_id
+                 LEFT JOIN smdm_item_category sic ON sic.category_code = si.attribute_varchar5
+    </sql>
+
+    <!--    保存头表-->
+    <insert id="setOne">
+        INSERT INTO sprm_pr_header (tenant_id,
+                                    title,
+                                    pr_status_code,
+                                    attribute_varchar23,
+                                    pr_num,
+                                    requested_by,
+                                    pr_requested_name,
+                                    attribute_datetime1,
+                                    parent_unit_id,
+                                    purchase_org_id,
+                                    purchase_agent_id,
+                                    pr_source_platform,
+                                    unit_id,
+                                    request_date,
+                                    original_currency,
+                                    attribute_varchar24,
+                                    creation_date,
+                                    created_by,
+                                    last_update_date,
+                                    last_updated_by,
+                                    display_pr_num,
+                                    attribute_decimal1,
+                                    attribute_decimal2,
+                                    lot_num,
+                                    attachment_uuid,
+                                    attribute_bigint11)
+            VALUE (#{tenantId},
+            #{title},
+            #{status},
+            #{planType},
+            #{poPlanNumber},
+            #{createId},
+            #{createName},
+            #{deadline},
+            #{companyId},
+            #{purchaseOrgId},
+            #{purchaseId},
+            #{poSource},
+            #{departmentId},
+            #{applicationDate},
+            #{originalId},
+            #{planIllustrate},
+            #{creationDate},
+            #{createdBy},
+            #{lastUpdateDate},
+            #{lastUpdatedBy},
+            #{poPlanNumber},
+            #{applicationSum},
+            #{applicationFinalSum},
+            'PO_PLAN',
+            #{appendixId},
+            #{businessId}
+            )
+    </insert>
+
+    <!--    根据头表id修改-->
+    <update id="updateByKey">
+        update sprm_pr_header
+        set title               = #{title},
+            pr_status_code      = #{status},
+            attribute_varchar23 = #{planType},
+            attribute_datetime1 = #{deadline},
+            parent_unit_id      = #{companyId},
+            purchase_org_id     = #{purchaseOrgId},
+            purchase_agent_id   = #{purchaseId},
+            pr_source_platform  = #{poSource},
+            unit_id             = #{departmentId},
+            request_date        = #{applicationDate},
+            original_currency   = #{originalId},
+            attribute_varchar24 = #{planIllustrate},
+            attribute_bigint11  = #{businessId},
+            attachment_uuid     = #{appendixId},
+            attribute_decimal1  = (SELECT SUM(attribute_decimal4)
+                                   FROM sprm_pr_line
+                                   WHERE pr_header_id = #{poPlanHeaderId}),
+            attribute_decimal2  = (SELECT SUM(attribute_decimal5)
+                                   FROM sprm_pr_line
+                                   WHERE pr_header_id = #{poPlanHeaderId}),
+            last_updated_by     = #{lastUpdatedBy},
+            last_update_date    = #{lastUpdateDate}
+        where pr_header_id = #{poPlanHeaderId}
+    </update>
+
+    <!--    根据拼单截至时间修改状态-->
+    <update id="timedTaskAlterState">
+        update sprm_pr_header
+        set pr_status_code          = #{status},
+            previous_pr_status_code = 'SENT'
+        where attribute_datetime1 &lt; #{date}
+          and pr_status_code = 'SPLICING_DOC_MIDDLE'
+    </update>
+
+    <!--    根据拼单截至时间获取订单信息-->
+    <select id="timedTaskHeader" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        where sph.attribute_datetime1 &lt; #{date}
+        and sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
+    </select>
+
+    <!--    根据头表id删除-->
+    <delete id="deleteByKey">
+        DELETE
+        FROM sprm_pr_header
+        WHERE pr_header_id = #{poPlanHeaderId}
+    </delete>
+
+    <!--    根据头表id查询-->
+    <select id="selectByKey" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        WHERE sph.pr_header_id = #{poPlanHeaderId}
+    </select>
+
+    <select id="getPoPlanHeaderId" resultType="java.lang.Long">
+        SELECT pr_header_id
+        FROM sprm_pr_header
+        ORDER BY pr_header_id DESC LIMIT 1
+    </select>
+
+    <!--    采购计划导出-->
+    <select id="excel" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
+        <include refid="excelChanges"/>
+        WHERE sph.lot_num = 'PO_PLAN'
+        AND sph.pr_header_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        ORDER BY sph.creation_date DESC
+    </select>
+
+    <!--    采购计划批量导出-->
+    <select id="batchExcel" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
+        <include refid="excelChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            AND sph.pr_status_code != 'NEW'
+        </if>
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        UNION
+        <include refid="excelChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        <if test="standbyCreateId != null and standbyCreateId != ''">
+            AND sph.requested_by = #{standbyCreateId}
+        </if>
+        GROUP BY poPlanHeaderId
+        ORDER BY establishDate DESC
+    </select>
+
+    <!--    采购计划头表查询参数-->
+    <select id="list" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            AND sph.pr_status_code != 'NEW'
+        </if>
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        UNION
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        <if test="standbyCreateId != null and standbyCreateId != ''">
+            AND sph.requested_by = #{standbyCreateId}
+        </if>
+        ORDER BY establishDate DESC
+    </select>
+
+    <select id="maintain" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="standbyCreateId != null and standbyCreateId != ''">
+            AND sph.requested_by = #{standbyCreateId}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="status == null">
+            AND sph.pr_status_code in('SPLICING_DOC_MIDDLE','NEW')
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        UNION
+        <include refid="mappingChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND sph.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="businessId != null and businessId != ''">
+            AND sph.attribute_bigint11 = #{businessId}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        <if test="status == null">
+            AND sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
+        </if>
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        ORDER BY establishDate DESC
+    </select>
+
+    <!--    导入数据校验-->
+    <select id="importVerify" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
+        select (SELECT company_id
+                FROM hpfm_company
+                WHERE company_name = #{provinceCompany})                                                provinceCompanyId,
+               (SELECT company_id
+                FROM hpfm_company
+                WHERE company_name = #{initialSupplier})                                                initialSupplierId,
+               (SELECT item_id
+                FROM smdm_item
+                WHERE item_code = #{materialCoding}
+                  and tenant_id = #{tenantId})                                                          materialId,
+               (SELECT uom_id
+                FROM smdm_uom
+                WHERE uom_name = #{unitName}
+                  and tenant_id = #{tenantId}
+                  and enabled_flag = '1'
+                  and uom_type_code = 'T006A')                                                          uomId,
+               (SELECT currency_id
+                FROM smdm_currency
+                WHERE currency_name = #{currencyName}
+                  and tenant_id = '0')                                                                  currencyId,
+               (SELECT tax_id FROM smdm_tax WHERE description = #{taxType} and tenant_id = #{tenantId}) taxId
+    </select>
+
+    <!--    根据员工id获取当前用户所在公司id和公司编码-->
+    <select id="getDefaultCompanyId" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
+        SELECT hc.company_id   provinceCompanyId,
+               hc.company_name provinceCompany,
+               hc.company_num  planSharedProvince,
+               hc.tenant_id    tenantId
+        FROM hpfm_employee_user heu
+                 LEFT JOIN hpfm_employee_assign hea ON heu.employee_id = hea.employee_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
+                 LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
+        WHERE heu.user_id = #{employeeId}
+        ORDER BY hea.primary_position_flag DESC
+    </select>
+
+
+    <!--    获取快到期采购计划-->
+    <select id="getExpirationTime" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        <include refid="mappingChanges"/>
+        where sph.attribute_datetime1 &lt; #{date}
+        and sph.pr_status_code = 'SPLICING_DOC_MIDDLE'
+        and previous_pr_status_code is null
+    </select>
+
+    <!--    如果公司唯一则查询业务实体-->
+    <select id="verifyBusiness"
+            resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        SELECT ou_id   businessId,
+               ou_name businessName
+        FROM hpfm_operation_unit
+        WHERE company_id = #{companyId}
+    </select>
+
+    <!--    如果采购组织唯一查询所在部门是否唯一-->
+    <select id="verifyDepartment"
+            resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        SELECT hu.unit_id   departmentId,
+               hu.unit_name departmentName
+        FROM hpfm_employee_assign hea
+                 LEFT JOIN hpfm_employee_user heu ON heu.employee_id = hea.employee_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_id
+        WHERE heu.user_id = #{createId}
+        ORDER BY hea.primary_position_flag DESC
+    </select>
+
+    <!--    如果业务实体唯一查询采购组织-->
+    <select id="verifyPurchaseOrg"
+            resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO">
+        SELECT hpo.purchase_org_id     purchaseOrgId,
+               hpo.organization_name   purchaseOrgName,
+               hpa.purchase_agent_id   purchaseId,
+               hpa.purchase_agent_name purchaseName
+        FROM hpfm_employee_assign hea
+                 LEFT JOIN hpfm_employee_user heu ON heu.employee_id = hea.employee_id
+                 LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
+                 LEFT JOIN hpfm_purchase_organization hpo ON hu.unit_code = hpo.organization_code
+                 LEFT JOIN hpfm_operation_unit hou ON hou.company_id = hu.company_id
+                 LEFT JOIN hpfm_purchase_agent_user hpau ON hpau.user_id = heu.user_id
+                 LEFT JOIN hpfm_purchase_agent hpa ON hpau.purchase_agent_id = hpa.purchase_agent_id
+        WHERE heu.user_id = #{createId}
+        ORDER BY hea.primary_position_flag DESC
+    </select>
+
+    <select id="excelLine" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
+        <include refid="excelChanges"/>
+        WHERE sph.lot_num = 'PO_PLAN'
+        AND spl.pr_line_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        ORDER BY sph.creation_date DESC
+    </select>
+
+    <select id="getDefaultEmployeeList" resultType="org.hzero.boot.message.entity.Receiver">
+        select iu.id userId,
+        iu.email email,
+        iu.phone phone,
+        iu.international_tel_code idd,
+        iu.organization_id targetUserTenantId
+        from iam_user iu
+        left join hpfm_employee_user heu on heu.user_id = iu.id
+        left join hpfm_employee_assign hea on hea.employee_id = heu.employee_id
+        LEFT JOIN hpfm_unit hu ON hu.unit_id = hea.unit_company_id
+        LEFT JOIN hpfm_company hc ON hc.company_num = hu.unit_code
+        where hc.company_id in
+        <foreach collection="integers" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        OR iu.real_name in
+        <foreach collection="lovValues" item="LovValueDTO" open="(" close=")" separator=",">
+            #{LovValueDTO.meaning}
+        </foreach>
+        GROUP BY userId
+    </select>
+
+    <select id="batchExcelLine"
+            resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO">
+        <include refid="excelChanges"/>
+        WHERE sph.tenant_id = #{tenantId}
+        AND sph.lot_num = 'PO_PLAN'
+        <if test="poPlanNumber != null and poPlanNumber != ''">
+            <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+            AND sph.pr_num like #{poPlanNumberLike}
+        </if>
+        <if test="title != null and title != ''">
+            <bind name="titleLike" value="'%' + title + '%'"/>
+            AND sph.title like #{titleLike}
+        </if>
+        <if test="poSource != null and poSource != ''">
+            <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+            AND sph.pr_source_platform like #{poSourceLike}
+        </if>
+        <if test="status != null and status != ''">
+            AND sph.pr_status_code = #{status}
+        </if>
+        <if test="departmentId != null and departmentId != ''">
+            AND sph.unit_id = #{departmentId}
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND sph.parent_unit_id = #{companyId}
+        </if>
+        <if test="materialClass != null and materialClass != ''">
+            AND sic.category_name = #{materialClass}
+        </if>
+        <if test="displayLineNum != null and displayLineNum != ''">
+            AND spl.display_line_num = #{displayLineNum}
+        </if>
+        <if test="materialCoding != null and materialCoding != ''">
+            AND spl.item_code = #{materialCoding}
+        </if>
+        <if test="applicant != null and applicant != ''">
+            AND spl.pr_requested_name = #{applicant}
+        </if>
+        <if test="purchaseOrgId != null and purchaseOrgId != ''">
+            AND sph.purchase_org_id = #{purchaseOrgId}
+        </if>
+        <if test="purchaseId != null and purchaseId != ''">
+            AND sph.purchase_agent_id = #{purchaseId}
+        </if>
+        <if test="planType != null and planType != ''">
+            AND sph.attribute_varchar23 = #{planType}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND sph.requested_by = #{createId}
+        </if>
+        <if test="poPlanLineIds != null and poPlanLineIds.size()>0">
+            AND sph.pr_status_code != 'NEW'
+            AND spl.pr_line_id in
+            <foreach collection="poPlanLineIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="standbyCreateId != null and standbyCreateId != ''">
+            UNION
+            <include refid="excelChanges"/>
+            WHERE sph.tenant_id = #{tenantId}
+            AND sph.lot_num = 'PO_PLAN'
+            <if test="poPlanNumber != null and poPlanNumber != ''">
+                <bind name="poPlanNumberLike" value="'%' + poPlanNumber + '%'"/>
+                AND sph.pr_num like #{poPlanNumberLike}
+            </if>
+            <if test="title != null and title != ''">
+                <bind name="titleLike" value="'%' + title + '%'"/>
+                AND sph.title like #{titleLike}
+            </if>
+            <if test="poSource != null and poSource != ''">
+                <bind name="poSourceLike" value="'%' + poSource + '%'"/>
+                AND sph.pr_source_platform like #{poSourceLike}
+            </if>
+            <if test="status != null and status != ''">
+                AND sph.pr_status_code = #{status}
+            </if>
+            <if test="departmentId != null and departmentId != ''">
+                AND sph.unit_id = #{departmentId}
+            </if>
+            <if test="companyId != null and companyId != ''">
+                AND sph.parent_unit_id = #{companyId}
+            </if>
+            <if test="materialClass != null and materialClass != ''">
+                AND sic.category_name = #{materialClass}
+            </if>
+            <if test="displayLineNum != null and displayLineNum != ''">
+                AND spl.display_line_num = #{displayLineNum}
+            </if>
+            <if test="materialCoding != null and materialCoding != ''">
+                AND spl.item_code = #{materialCoding}
+            </if>
+            <if test="applicant != null and applicant != ''">
+                AND spl.pr_requested_name = #{applicant}
+            </if>
+            <if test="purchaseOrgId != null and purchaseOrgId != ''">
+                AND sph.purchase_org_id = #{purchaseOrgId}
+            </if>
+            <if test="purchaseId != null and purchaseId != ''">
+                AND sph.purchase_agent_id = #{purchaseId}
+            </if>
+            <if test="planType != null and planType != ''">
+                AND sph.attribute_varchar23 = #{planType}
+            </if>
+            AND sph.requested_by = #{standbyCreateId}
+        </if>
+        GROUP BY poPlanLineId
+        ORDER BY establishDate DESC
+    </select>
+
+    <!--根据公司编码获取公司id和公司名称-->
+    <select id="getCompany" resultType="org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO">
+        SELECT
+        hc.company_id   provinceCompanyId,
+        hc.company_name provinceCompany,
+        hc.company_num planSharedProvince
+        FROM hpfm_company hc
+        WHERE hc.company_num = #{planSharedProvince}
+    </select>
+
+</mapper>
