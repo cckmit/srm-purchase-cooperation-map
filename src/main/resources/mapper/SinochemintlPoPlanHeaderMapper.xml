@@ -828,4 +828,27 @@
         WHERE hc.company_num = #{planSharedProvince}
     </select>
 
+    <!--根据公司id获取公司名称-->
+    <select id="selectCompanyById" resultType="java.lang.String">
+        SELECT company_name
+        FROM hpfm_company
+        WHERE company_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getEmployees" resultType="org.hzero.boot.message.entity.Receiver">
+        select iu.id userId,
+        iu.email email,
+        iu.phone phone,
+        iu.international_tel_code idd,
+        iu.organization_id targetUserTenantId
+        from iam_user iu
+        where iu.login_name in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>

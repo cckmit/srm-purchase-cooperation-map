@@ -15,6 +15,7 @@ import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeade
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlConstant;
 import org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanHeaderMapper;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -137,5 +138,15 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     @Override
     public SinochemintlPoPlanLineDTO getCompany(String planSharedProvince) {
         return sinochemintlPoPlanHeaderMapper.getCompany(planSharedProvince);
+    }
+
+    @Override
+    public List<String> getCompanies(ArrayList<Integer> integers) {
+        return sinochemintlPoPlanHeaderMapper.selectCompanyById(integers);
+    }
+
+    @Override
+    public List<Receiver> getLovEmployeeList(List<String> list) {
+        return sinochemintlPoPlanHeaderMapper.getEmployees(list);
     }
 }

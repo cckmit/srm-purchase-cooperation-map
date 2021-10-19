@@ -8,6 +8,7 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -156,4 +157,13 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
      * @return 公司id和公司名称
      */
     SinochemintlPoPlanLineDTO getCompany(String planSharedProvince);
+
+    /**
+     * 根据公司Id获取
+     * @param integers
+     * @return
+     */
+    List<String> selectCompanyById(ArrayList<Integer> integers);
+
+    List<Receiver> getEmployees(List<String> list);
 }
