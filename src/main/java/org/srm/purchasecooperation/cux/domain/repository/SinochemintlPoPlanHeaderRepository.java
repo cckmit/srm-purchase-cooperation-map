@@ -8,6 +8,7 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -157,4 +158,8 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
     List<SinochemintlPoPlanExcelDTO> batchExcelLine(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
 
     SinochemintlPoPlanLineDTO getCompany(String planSharedProvince);
+
+    List<String> getCompanies(ArrayList<Integer> integers);
+
+    List<Receiver> getLovEmployeeList(List<String> list);
 }
