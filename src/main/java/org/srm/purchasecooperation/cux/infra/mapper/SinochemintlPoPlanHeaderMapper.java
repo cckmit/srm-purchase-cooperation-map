@@ -8,6 +8,7 @@ import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -148,4 +149,21 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
     List<SinochemintlPoPlanExcelDTO> excelLine(List<String> list);
 
     List<SinochemintlPoPlanExcelDTO> batchExcelLine(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO);
+
+    /**
+     * 根据公司编码获取公司id和公司名称
+     *
+     * @param planSharedProvince 公司编码
+     * @return 公司id和公司名称
+     */
+    SinochemintlPoPlanLineDTO getCompany(String planSharedProvince);
+
+    /**
+     * 根据公司Id获取
+     * @param integers
+     * @return
+     */
+    List<String> selectCompanyById(ArrayList<Integer> integers);
+
+    List<Receiver> getEmployees(List<String> list);
 }
