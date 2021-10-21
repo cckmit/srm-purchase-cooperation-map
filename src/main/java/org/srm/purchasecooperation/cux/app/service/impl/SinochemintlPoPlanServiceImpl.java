@@ -998,13 +998,17 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         Set<String> set = new HashSet(list);
         //过滤掉自己
         set.removeAll(self);
-        for (String string : set) {
-            SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = sinochemintlPoPlanHeaderRepository.getCompany(string);
-            HashMap<String, Object> stringObjectHashMap = new HashMap<>();
-            stringObjectHashMap.put("companyId", sinochemintlPoPlanLine.getProvinceCompanyId());
-            stringObjectHashMap.put("companyName", sinochemintlPoPlanLine.getProvinceCompany());
-            stringObjectHashMap.put("companyNum", sinochemintlPoPlanLine.getPlanSharedProvince());
-            planSharedProvinceName.add(stringObjectHashMap);
+        //判空
+        boolean flag = (set.size() == 1 && set.contains("")) || (set.size() == 0);
+        if(!flag){
+            for (String string : set) {
+                SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = sinochemintlPoPlanHeaderRepository.getCompany(string);
+                HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+                stringObjectHashMap.put("companyId", sinochemintlPoPlanLine.getProvinceCompanyId());
+                stringObjectHashMap.put("companyName", sinochemintlPoPlanLine.getProvinceCompany());
+                stringObjectHashMap.put("companyNum", sinochemintlPoPlanLine.getPlanSharedProvince());
+                planSharedProvinceName.add(stringObjectHashMap);
+            }
         }
         SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = new SinochemintlPoPlanLineDTO();
         sinochemintlPoPlanLine.setPlanSharedProvinceName(planSharedProvinceName);
