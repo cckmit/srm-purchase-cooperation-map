@@ -174,6 +174,14 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 SinochemintlPoPlanLineDTO cnyCurrency = sinochemintlPoPlanLineRepository.getCnyCurrency(sinochemintlPoPlanHeaderDTO.getTenantId());
                 sinochemintlPoPlanHeaderDTO.setCurrencyName(cnyCurrency.getCurrencyName());
                 sinochemintlPoPlanHeaderDTO.setOriginalId(cnyCurrency.getCurrencyId());
+                //默认种子
+                List<LovValueDTO> lovValues = lovAdapter.queryLovValue(SinochemintlConstant.CodingCode.SINOCHEMINTL_PROJECT_TYPE, user.getTenantId());
+                for(LovValueDTO lovValueDTO : lovValues){
+                    String value = lovValueDTO.getValue();
+                    if(value.equals("01")){
+                        sinochemintlPoPlanHeaderDTO.setPlanType(lovValueDTO.getMeaning());
+                    }
+                }
                 //判断用户当前公司是否唯一
                 List<SinochemintlPoPlanLineDTO> defaultCompanyId = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(user.getUserId());
                 if (defaultCompanyId != null && defaultCompanyId.size() > 0) {
