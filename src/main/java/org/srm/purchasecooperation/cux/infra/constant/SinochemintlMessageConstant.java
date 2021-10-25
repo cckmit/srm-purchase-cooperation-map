@@ -14,10 +14,10 @@ public class SinochemintlMessageConstant {
     public static String Web_Message_Language_Chinese = "zh_CN";
     public static String Web_Message_Language_English = "en_US";
     /**
-     * Server_code（待更新）
+     * Server_code
      */
-    public static String Email_Server_Code = "TEST_JX";
-    public static String Sms_Server_Code = "SMS_TEST";
+    public static String Email_Server_Code = "MAP";
+    public static String Sms_Server_Code = "MAP_ALIYUN";
 
     /**
      * 消息模板参数
