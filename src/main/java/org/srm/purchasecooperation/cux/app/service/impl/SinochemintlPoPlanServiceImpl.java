@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.srm.boot.platform.message.MessageHelper;
+import org.srm.boot.platform.message.entity.SpfmMessageSender;
 import org.srm.purchasecooperation.cux.api.dto.MessageSenderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
@@ -67,6 +69,9 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
 
     @Autowired
     public LovAdapter lovAdapter;
+
+    @Autowired
+    public MessageHelper messageHelper;
 
     @Autowired
     public SinochemintlPoPlanServiceImpl(SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository, SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository, SinochemintlSendMessageService sinochemintlSendMessageService) {
@@ -174,6 +179,14 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 SinochemintlPoPlanLineDTO cnyCurrency = sinochemintlPoPlanLineRepository.getCnyCurrency(sinochemintlPoPlanHeaderDTO.getTenantId());
                 sinochemintlPoPlanHeaderDTO.setCurrencyName(cnyCurrency.getCurrencyName());
                 sinochemintlPoPlanHeaderDTO.setOriginalId(cnyCurrency.getCurrencyId());
+                //默认种子
+                List<LovValueDTO> lovValues = lovAdapter.queryLovValue(SinochemintlConstant.CodingCode.SINOCHEMINTL_PROJECT_TYPE, user.getTenantId());
+                for(LovValueDTO lovValueDTO : lovValues){
+                    String value = lovValueDTO.getValue();
+                    if(value.equals("01")){
+                        sinochemintlPoPlanHeaderDTO.setPlanType(lovValueDTO.getMeaning());
+                    }
+                }
                 //判断用户当前公司是否唯一
                 List<SinochemintlPoPlanLineDTO> defaultCompanyId = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(user.getUserId());
                 if (defaultCompanyId != null && defaultCompanyId.size() > 0) {
@@ -470,9 +483,11 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 try {
                     Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
                     paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
-                    sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
-                    sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
-                    sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                    List<String> type = new ArrayList<>();
+                    type.add(SinochemintlMessageConstant.MessageType.EMAIL);
+                    type.add(SinochemintlMessageConstant.MessageType.WEB);
+                    type.add(SinochemintlMessageConstant.MessageType.SMS);
+                    messageHelper.sendMessage(new SpfmMessageSender(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code,SinochemintlMessageConstant.Web_Message_Language_Chinese,type,receiverList,paramMap));
                 } catch (IllegalArgumentException e) {
                     logger.error("Message sending failure:{}", receiverList);
                 }
@@ -538,9 +553,11 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 try {
                     Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
                     paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
-                    sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
-                    sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
-                    sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                    List<String> type = new ArrayList<>();
+                    type.add(SinochemintlMessageConstant.MessageType.EMAIL);
+                    type.add(SinochemintlMessageConstant.MessageType.WEB);
+                    type.add(SinochemintlMessageConstant.MessageType.SMS);
+                    messageHelper.sendMessage(new SpfmMessageSender(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code,SinochemintlMessageConstant.Web_Message_Language_Chinese,type,receiverList,paramMap));
                 } catch (IllegalArgumentException e) {
                     logger.error("Message sending failure:{}", receiverList);
                 }
@@ -801,9 +818,12 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             try {
                 Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
                 paramMap.putAll(sinochemintlSendMessageService.getCommonParam(dto));
-                sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
-                sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
-                sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                List<String> type = new ArrayList<>();
+                type.add(SinochemintlMessageConstant.MessageType.EMAIL);
+                type.add(SinochemintlMessageConstant.MessageType.WEB);
+                type.add(SinochemintlMessageConstant.MessageType.SMS);
+                messageHelper.sendMessage(new SpfmMessageSender(organizationId, SinochemintlMessageConstant.Message_Input_Template_Code,SinochemintlMessageConstant.Web_Message_Language_Chinese,type,receiverList,paramMap));
+
             } catch (IllegalArgumentException e) {
                 logger.error("Message sending failure:{}", receiverList);
             }
@@ -960,9 +980,11 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             try {
                 Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
                 paramMap.putAll(sinochemintlSendMessageService.getCommonParam(poPlanHeader));
-                sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
-                sinochemintlSendMessageService.sendSms(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
-                sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                List<String> type = new ArrayList<>();
+                type.add(SinochemintlMessageConstant.MessageType.EMAIL);
+                type.add(SinochemintlMessageConstant.MessageType.WEB);
+                type.add(SinochemintlMessageConstant.MessageType.SMS);
+                messageHelper.sendMessage(new SpfmMessageSender(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code,SinochemintlMessageConstant.Web_Message_Language_Chinese,type,receiverList,paramMap));
             } catch (IllegalArgumentException e) {
                 logger.error("Message sending failure:{}", receiverList);
             }
