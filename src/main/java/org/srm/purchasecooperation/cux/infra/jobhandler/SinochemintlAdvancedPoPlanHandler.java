@@ -1,6 +1,7 @@
 package org.srm.purchasecooperation.cux.infra.jobhandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.choerodon.core.oauth.DetailsHelper;
 import org.hzero.boot.message.entity.Receiver;
 import org.hzero.boot.scheduler.infra.annotation.JobHandler;
 import org.hzero.boot.scheduler.infra.enums.ReturnT;
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.srm.boot.platform.message.MessageHelper;
+import org.srm.boot.platform.message.entity.SpfmMessageSender;
 import org.srm.purchasecooperation.cux.api.dto.MessageSenderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
@@ -49,6 +52,9 @@ public class SinochemintlAdvancedPoPlanHandler implements IJobHandler {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private MessageHelper messageHelper;
+
     @Override
     public ReturnT execute(Map<String, String> map, SchedulerTool tool) {
         //校验快到期采购计划
@@ -82,9 +88,11 @@ public class SinochemintlAdvancedPoPlanHandler implements IJobHandler {
                 try {
                     Map<String, String> paramMap = new HashMap<>(BaseConstants.Digital.SIXTEEN);
                     paramMap.putAll(sinochemintlSendMessageService.getCommonParam(sinochemintlPoPlanHeaderDTO));
-                    sinochemintlSendMessageService.sendEmail(new MessageSenderDTO(sinochemintlPoPlanHeaderDTO.getTenantId(), SinochemintlMessageConstant.MESSAGE_INFORM_ADVANCE_CODE, SinochemintlMessageConstant.Email_Server_Code, receiverList, paramMap, null));
-                    sinochemintlSendMessageService.sendSms(new MessageSenderDTO(sinochemintlPoPlanHeaderDTO.getTenantId(), SinochemintlMessageConstant.MESSAGE_INFORM_ADVANCE_CODE, SinochemintlMessageConstant.Sms_Server_Code, receiverList, paramMap, null));
-                    sinochemintlSendMessageService.sendWebMessage(new MessageSenderDTO(sinochemintlPoPlanHeaderDTO.getTenantId(), SinochemintlMessageConstant.MESSAGE_INFORM_ADVANCE_CODE, null, receiverList, paramMap, SinochemintlMessageConstant.Web_Message_Language_Chinese));
+                    List<String> type = new ArrayList<>();
+                    type.add(SinochemintlMessageConstant.MessageType.EMAIL);
+                    type.add(SinochemintlMessageConstant.MessageType.WEB);
+                    type.add(SinochemintlMessageConstant.MessageType.SMS);
+                    messageHelper.sendMessage(new SpfmMessageSender(sinochemintlPoPlanHeaderDTO.getTenantId(), SinochemintlMessageConstant.MESSAGE_INFORM_ADVANCE_CODE, SinochemintlMessageConstant.Web_Message_Language_Chinese,type,receiverList,paramMap));
                 } catch (IllegalArgumentException e) {
                     logger.error("Message sending failure:{}", receiverList);
                 }
