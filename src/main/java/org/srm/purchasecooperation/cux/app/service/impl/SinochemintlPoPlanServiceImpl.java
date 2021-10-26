@@ -557,7 +557,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                     type.add(SinochemintlMessageConstant.MessageType.EMAIL);
                     type.add(SinochemintlMessageConstant.MessageType.WEB);
                     type.add(SinochemintlMessageConstant.MessageType.SMS);
-                    messageHelper.sendMessage(new SpfmMessageSender(organizationId, SinochemintlMessageConstant.Message_Submit_Template_Code,SinochemintlMessageConstant.Web_Message_Language_Chinese,type,receiverList,paramMap));
+                    messageHelper.sendMessage(new SpfmMessageSender(organizationId, SinochemintlMessageConstant.Message_ARRIVAL_Template_Code,SinochemintlMessageConstant.Web_Message_Language_Chinese,type,receiverList,paramMap));
                 } catch (IllegalArgumentException e) {
                     logger.error("Message sending failure:{}", receiverList);
                 }
