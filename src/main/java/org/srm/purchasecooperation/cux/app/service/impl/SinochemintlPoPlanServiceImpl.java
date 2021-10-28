@@ -1009,7 +1009,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         List<Map<String, Object>> planSharedProvinceName = new ArrayList<>();;
         Set<String> self = new HashSet<>();
         for(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS){
-            self.add(sinochemintlPoPlanLineDTO.getPlanSharedProvince());
+            //self.add(sinochemintlPoPlanLineDTO.getPlanSharedProvince());
             for(LovValueDTO lovValueDTO : lovValues){
                 String meaning = lovValueDTO.getMeaning();
                 if(meaning.contains(sinochemintlPoPlanLineDTO.getPlanSharedProvince())){
@@ -1017,6 +1017,9 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 }
             }
         }
+        ArrayList<Integer> integers = new ArrayList<>();
+        integers.add(dto.getCompanyId().intValue());
+        self.addAll(sinochemintlPoPlanHeaderRepository.getCompanies(integers));
         //去重
         String[] province = provinses.toString().replaceAll(" ","").trim().split(",");
         List<String> list = Arrays.asList(province);
