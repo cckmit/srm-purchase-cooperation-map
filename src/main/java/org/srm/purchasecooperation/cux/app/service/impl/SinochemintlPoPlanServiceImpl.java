@@ -143,6 +143,9 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
                 for (SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS) {
                     poPlanLineIds.addAll(sinochemintlPoPlanLineRepository.verifyPlanSharedProvince(sinochemintlPoPlanLineDTO));
                 }
+                if (poPlanLineIds.size() == 0) {
+                    poPlanLineIds.add(0L);
+                }
             }
         } else {
             poPlanLineIds.add(0L);
