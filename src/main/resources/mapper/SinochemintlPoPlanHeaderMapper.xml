@@ -838,6 +838,16 @@
         </foreach>
     </select>
 
+    <!--根据公司id获取公司编号-->
+    <select id="selectCompanyNumById" resultType="java.lang.String">
+        SELECT company_num
+        FROM hpfm_company
+        WHERE company_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
     <select id="getEmployees" resultType="org.hzero.boot.message.entity.Receiver">
         select iu.id userId,
         iu.email email,
