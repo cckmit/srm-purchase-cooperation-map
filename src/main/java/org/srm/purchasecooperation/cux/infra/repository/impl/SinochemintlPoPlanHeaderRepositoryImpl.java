@@ -149,4 +149,9 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     public List<Receiver> getLovEmployeeList(List<String> list) {
         return sinochemintlPoPlanHeaderMapper.getEmployees(list);
     }
+
+    @Override
+    public List<String> getCompanyNumById(ArrayList<Integer> integers) {
+        return sinochemintlPoPlanHeaderMapper.selectCompanyNumById(integers);
+    }
 }

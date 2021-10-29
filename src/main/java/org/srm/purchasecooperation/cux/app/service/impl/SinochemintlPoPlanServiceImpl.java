@@ -1019,7 +1019,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         }
         ArrayList<Integer> integers = new ArrayList<>();
         integers.add(dto.getCompanyId().intValue());
-        self.addAll(sinochemintlPoPlanHeaderRepository.getCompanies(integers));
+        self.addAll(sinochemintlPoPlanHeaderRepository.getCompanyNumById(integers));
         //去重
         String[] province = provinses.toString().replaceAll(" ","").trim().split(",");
         List<String> list = Arrays.asList(province);

@@ -166,4 +166,6 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
     List<String> selectCompanyById(ArrayList<Integer> integers);
 
     List<Receiver> getEmployees(List<String> list);
+
+    List<String> selectCompanyNumById(ArrayList<Integer> integers);
 }
