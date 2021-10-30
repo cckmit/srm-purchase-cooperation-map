@@ -11,13 +11,12 @@ import org.springframework.stereotype.Component;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanExcelDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanHeaderDTO;
 import org.srm.purchasecooperation.cux.api.dto.SinochemintlPoPlanLineDTO;
+import org.srm.purchasecooperation.cux.app.service.impl.SinochemintlPoPlanServiceImpl;
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeaderRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlConstant;
 import org.srm.purchasecooperation.cux.infra.mapper.SinochemintlPoPlanHeaderMapper;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 采购计划头表 资源库实现
@@ -32,7 +31,11 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
 
     @Override
     public List<SinochemintlPoPlanHeaderDTO> list(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
-        return sinochemintlPoPlanHeaderMapper.list(sinochemintlPoPlanHeaderDTO);
+        List<SinochemintlPoPlanHeaderDTO> sinochemintlPoPlanHeaderDTOList = sinochemintlPoPlanHeaderMapper.maintain(sinochemintlPoPlanHeaderDTO);
+        for(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeader : sinochemintlPoPlanHeaderDTOList){
+            sinochemintlPoPlanHeader.setProvinseNames(this.getDefaultCompany());
+        }
+        return sinochemintlPoPlanHeaderDTOList;
     }
 
     @Override
@@ -67,7 +70,11 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
 
     @Override
     public List<SinochemintlPoPlanHeaderDTO> maintain(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
-        return sinochemintlPoPlanHeaderMapper.maintain(sinochemintlPoPlanHeaderDTO);
+        List<SinochemintlPoPlanHeaderDTO> sinochemintlPoPlanHeaderDTOList = sinochemintlPoPlanHeaderMapper.maintain(sinochemintlPoPlanHeaderDTO);
+        for(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeader : sinochemintlPoPlanHeaderDTOList){
+            sinochemintlPoPlanHeader.setProvinseNames(this.getDefaultCompany());
+        }
+        return sinochemintlPoPlanHeaderDTOList;
     }
 
     @Override
@@ -154,4 +161,39 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     public List<String> getCompanyNumById(ArrayList<Integer> integers) {
         return sinochemintlPoPlanHeaderMapper.selectCompanyNumById(integers);
     }
+    /**
+     * 获取共享省区
+     * @return 共享省区
+     */
+    public String getDefaultCompany() {
+        CustomUserDetails user = DetailsHelper.getUserDetails();
+        List<LovValueDTO> lovValues = lovAdapter.queryLovValue(SinochemintlConstant.CodingCode.SPUC_SINOCHEMINTL_PLAN_SHARED_PROVINCE, user.getTenantId());
+        List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = this.getDefaultCompanyId(user.getUserId());
+        StringBuffer provinses= new StringBuffer();
+        StringBuffer provinseNames= new StringBuffer();
+        if (!sinochemintlPoPlanLineDTOS.isEmpty()) {
+            String companyNum = sinochemintlPoPlanLineDTOS.get(0).getPlanSharedProvince();
+            for(LovValueDTO lovValueDTO : lovValues){
+                String meaning = lovValueDTO.getMeaning();
+                if(meaning.contains(companyNum)){
+                    provinses.append(meaning).append(",");
+                }
+            }
+        }
+        //去重
+        String[] province = provinses.toString().replaceAll(" ","").trim().split(",");
+        List<String> list = Arrays.asList(province);
+        Set<String> set = new HashSet(list);
+        boolean flag = (set.size() == 1 && set.contains("")) || (set.size() == 0);
+        if(!flag){
+            for (String string : set) {
+                SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = this.getCompany(string);
+                provinseNames.append(sinochemintlPoPlanLine.getProvinceCompany()).append(",");
+            }
+            return provinseNames.deleteCharAt(provinseNames.length() - 1).toString().replaceAll(" ","").trim();
+        } else {
+            return "";
+        }
+    }
+
 }
