@@ -31,7 +31,7 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
 
     @Override
     public List<SinochemintlPoPlanHeaderDTO> list(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
-        List<SinochemintlPoPlanHeaderDTO> sinochemintlPoPlanHeaderDTOList = sinochemintlPoPlanHeaderMapper.maintain(sinochemintlPoPlanHeaderDTO);
+        List<SinochemintlPoPlanHeaderDTO> sinochemintlPoPlanHeaderDTOList = sinochemintlPoPlanHeaderMapper.list(sinochemintlPoPlanHeaderDTO);
         for(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeader : sinochemintlPoPlanHeaderDTOList){
             sinochemintlPoPlanHeader.setProvinseNames(this.getDefaultCompany());
         }
