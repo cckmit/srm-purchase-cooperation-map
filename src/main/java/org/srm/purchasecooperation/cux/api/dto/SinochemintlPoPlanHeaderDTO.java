@@ -124,6 +124,18 @@ public class SinochemintlPoPlanHeaderDTO extends AuditDomain {
     @ApiModelProperty(value = "行表数据")
     private List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineList;
 
+    public String getProvinseNames() {
+        return provinseNames;
+    }
+
+    public void setProvinseNames(String provinseNames) {
+        this.provinseNames = provinseNames;
+    }
+
+    @Transient
+    @ApiModelProperty(value = "共享省区")
+    private String provinseNames;
+
     public List<SinochemintlPoPlanLineDTO> getSinochemintlPoPlanLineList() {
         return sinochemintlPoPlanLineList;
     }
