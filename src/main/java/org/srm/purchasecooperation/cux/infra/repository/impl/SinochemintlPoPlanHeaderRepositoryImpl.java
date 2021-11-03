@@ -33,7 +33,7 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     public List<SinochemintlPoPlanHeaderDTO> list(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
         List<SinochemintlPoPlanHeaderDTO> sinochemintlPoPlanHeaderDTOList = sinochemintlPoPlanHeaderMapper.list(sinochemintlPoPlanHeaderDTO);
         for(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeader : sinochemintlPoPlanHeaderDTOList){
-            sinochemintlPoPlanHeader.setProvinseNames(this.getDefaultCompany());
+            sinochemintlPoPlanHeader.setProvinseNames(this.getDefaultCompany(sinochemintlPoPlanHeader.getCreateId()));
         }
         return sinochemintlPoPlanHeaderDTOList;
     }
@@ -72,7 +72,7 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     public List<SinochemintlPoPlanHeaderDTO> maintain(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeaderDTO) {
         List<SinochemintlPoPlanHeaderDTO> sinochemintlPoPlanHeaderDTOList = sinochemintlPoPlanHeaderMapper.maintain(sinochemintlPoPlanHeaderDTO);
         for(SinochemintlPoPlanHeaderDTO sinochemintlPoPlanHeader : sinochemintlPoPlanHeaderDTOList){
-            sinochemintlPoPlanHeader.setProvinseNames(this.getDefaultCompany());
+            sinochemintlPoPlanHeader.setProvinseNames(this.getDefaultCompany(sinochemintlPoPlanHeader.getCreateId()));
         }
         return sinochemintlPoPlanHeaderDTOList;
     }
@@ -165,32 +165,32 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
      * 获取共享省区
      * @return 共享省区
      */
-    public String getDefaultCompany() {
+    public String getDefaultCompany(Long createId) {
         CustomUserDetails user = DetailsHelper.getUserDetails();
-        List<LovValueDTO> lovValues = lovAdapter.queryLovValue(SinochemintlConstant.CodingCode.SPUC_SINOCHEMINTL_PLAN_SHARED_PROVINCE, user.getTenantId());
-        List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = this.getDefaultCompanyId(user.getUserId());
+        List<LovValueDTO> lovValues = lovAdapter.queryLovValue(SinochemintlConstant.CodingCode.SPUC_SINOCHEMINTL_PLAN_SHARED_PROVINCE, user.getOrganizationId());
+        List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = this.getDefaultCompanyId(createId);;
         StringBuffer provinses= new StringBuffer();
         StringBuffer provinseNames= new StringBuffer();
-        if (!sinochemintlPoPlanLineDTOS.isEmpty()) {
-            String companyNum = sinochemintlPoPlanLineDTOS.get(0).getPlanSharedProvince();
+        for(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS){
             for(LovValueDTO lovValueDTO : lovValues){
                 String meaning = lovValueDTO.getMeaning();
-                if(meaning.contains(companyNum)){
+                if(meaning.contains(sinochemintlPoPlanLineDTO.getPlanSharedProvince())){
                     provinses.append(meaning).append(",");
                 }
             }
         }
         //去重
-        String[] province = provinses.toString().replaceAll(" ","").trim().split(",");
+        String[] province = provinses.toString().trim().split(",");
         List<String> list = Arrays.asList(province);
         Set<String> set = new HashSet(list);
+        //判空
         boolean flag = (set.size() == 1 && set.contains("")) || (set.size() == 0);
         if(!flag){
             for (String string : set) {
                 SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = this.getCompany(string);
                 provinseNames.append(sinochemintlPoPlanLine.getProvinceCompany()).append(",");
             }
-            return provinseNames.deleteCharAt(provinseNames.length() - 1).toString().replaceAll(" ","").trim();
+            return provinseNames.deleteCharAt(provinseNames.length() - 1).toString().trim();
         } else {
             return "";
         }
