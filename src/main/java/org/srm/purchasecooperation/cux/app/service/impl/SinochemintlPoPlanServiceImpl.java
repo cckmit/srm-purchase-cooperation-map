@@ -1009,7 +1009,6 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         List<Map<String, Object>> planSharedProvinceName = new ArrayList<>();;
         Set<String> self = new HashSet<>();
         for(SinochemintlPoPlanLineDTO sinochemintlPoPlanLineDTO : sinochemintlPoPlanLineDTOS){
-            //self.add(sinochemintlPoPlanLineDTO.getPlanSharedProvince());
             for(LovValueDTO lovValueDTO : lovValues){
                 String meaning = lovValueDTO.getMeaning();
                 if(meaning.contains(sinochemintlPoPlanLineDTO.getPlanSharedProvince())){
@@ -1040,6 +1039,10 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         }
         SinochemintlPoPlanLineDTO sinochemintlPoPlanLine = new SinochemintlPoPlanLineDTO();
         sinochemintlPoPlanLine.setPlanSharedProvinceName(planSharedProvinceName);
+        Long organizationId = dto.getTenantId();
+        long uomId = sinochemintlPoPlanHeaderRepository.selectUomId("MT", organizationId);
+        sinochemintlPoPlanLine.setUomId(uomId);
+        sinochemintlPoPlanLine.setUomCode(uomId);
         return sinochemintlPoPlanLine;
     }
 

@@ -161,6 +161,12 @@ public class SinochemintlPoPlanHeaderRepositoryImpl extends BaseRepositoryImpl<S
     public List<String> getCompanyNumById(ArrayList<Integer> integers) {
         return sinochemintlPoPlanHeaderMapper.selectCompanyNumById(integers);
     }
+
+    @Override
+    public Long selectUomId(String uomCode, Long tenantId) {
+        return sinochemintlPoPlanHeaderMapper.selectUomId(uomCode, tenantId);
+    }
+
     /**
      * 获取共享省区
      * @return 共享省区
