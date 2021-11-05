@@ -164,4 +164,6 @@ public interface SinochemintlPoPlanHeaderRepository extends BaseRepository<Sinoc
     List<Receiver> getLovEmployeeList(List<String> list);
 
     List<String> getCompanyNumById(ArrayList<Integer> integers);
+
+    Long selectUomId(String uomCode, Long tenantId);
 }
