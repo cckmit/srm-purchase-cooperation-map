@@ -168,4 +168,6 @@ public interface SinochemintlPoPlanHeaderMapper extends BaseMapper<SinochemintlP
     List<Receiver> getEmployees(List<String> list);
 
     List<String> selectCompanyNumById(ArrayList<Integer> integers);
+
+    Long selectUomId(@Param("uomCode") String uomCode, @Param("tenantId") Long tenantId);
 }
