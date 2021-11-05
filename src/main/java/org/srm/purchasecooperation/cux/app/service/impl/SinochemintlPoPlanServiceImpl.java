@@ -1042,7 +1042,8 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         Long organizationId = dto.getTenantId();
         long uomId = sinochemintlPoPlanHeaderRepository.selectUomId("MT", organizationId);
         sinochemintlPoPlanLine.setUomId(uomId);
-        sinochemintlPoPlanLine.setUomCode(uomId);
+        sinochemintlPoPlanLine.setUomCode("MT");
+        sinochemintlPoPlanLine.setUomName("吨");
         return sinochemintlPoPlanLine;
     }
 

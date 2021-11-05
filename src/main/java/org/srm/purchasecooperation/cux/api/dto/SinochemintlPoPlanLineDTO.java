@@ -81,12 +81,25 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     private BigDecimal requiredQuantity;
     @ApiModelProperty(value = "单位(SPRM.UOM)", required = true)
     private Long uomId;
+    @ApiModelProperty(value = "单位编码")
+    private String uomCode;
+    @ApiModelProperty(value = "单位名称")
+    private String uomName;
     @ApiModelProperty(value = "单位名称", required = true)
     private String unitName;
     @ApiModelProperty(value = "最终行金额", required = true)
     private BigDecimal totalPurchaseFinalPrice;
     @ApiModelProperty(value = "行金额", required = true)
     private BigDecimal totalPurchasePrice;
+
+    public String getUomName() {
+        return uomName;
+    }
+
+    public void setUomName(String uomName) {
+        this.uomName = uomName;
+    }
+
     @ApiModelProperty(value = "币种(SPFM.TENANT_CURRENCY)", required = true)
     private String currencyId;
     @ApiModelProperty(value = "币种名称", required = true)
@@ -678,12 +691,12 @@ public class SinochemintlPoPlanLineDTO extends AuditDomain {
     /**
      * @return 单位
      */
-    public Long getUomCode() {
-        return uomId;
+    public String getUomCode() {
+        return uomCode;
     }
 
-    public SinochemintlPoPlanLineDTO setUomCode(Long uomId) {
-        this.uomId = uomId;
+    public SinochemintlPoPlanLineDTO setUomCode(String uomCode) {
+        this.uomCode = uomCode;
         return this;
     }
 
