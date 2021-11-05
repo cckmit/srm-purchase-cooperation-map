@@ -861,4 +861,14 @@
         </foreach>
     </select>
 
+    <select id="selectUomId" resultType="java.lang.Long">
+    SELECT
+	uom_id
+    FROM
+	smdm_uom
+    WHERE
+	uom_code = #{uomCode}
+	AND tenant_id = #{tenantId};
+    </select>
+
 </mapper>
