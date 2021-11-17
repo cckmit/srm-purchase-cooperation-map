@@ -34,6 +34,7 @@ import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanHeade
 import org.srm.purchasecooperation.cux.domain.repository.SinochemintlPoPlanLineRepository;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlConstant;
 import org.srm.purchasecooperation.cux.infra.constant.SinochemintlMessageConstant;
+import org.srm.purchasecooperation.cux.infra.repository.impl.SinochemintlPoPlanHeaderRepositoryImpl;
 import org.srm.purchasecooperation.pr.api.dto.PrActionDTO;
 import org.srm.purchasecooperation.pr.domain.entity.PrAction;
 import org.srm.purchasecooperation.pr.domain.repository.PrActionRepository;
@@ -72,6 +73,9 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
 
     @Autowired
     public MessageHelper messageHelper;
+
+    @Autowired
+    public SinochemintlPoPlanHeaderRepositoryImpl sinochemintlPoPlanHeaderRepositoryImpl;
 
     @Autowired
     public SinochemintlPoPlanServiceImpl(SinochemintlPoPlanHeaderRepository sinochemintlPoPlanHeaderRepository, SinochemintlPoPlanLineRepository sinochemintlPoPlanLineRepository, SinochemintlSendMessageService sinochemintlSendMessageService) {
@@ -415,6 +419,12 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
             sinochemintlPoPlanLine.setStatus(SinochemintlConstant.StatusCode.STATUS_NEW);
         }
         List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(user.getUserId());
+        //非共享省区成员通过分享链接不能看订单信息
+        String provinces = sinochemintlPoPlanHeaderRepositoryImpl.getDefaultCompany(sinochemintlPoPlanHeaderDTO.getCreateId());
+        String companyName = sinochemintlPoPlanLineDTOS.get(0).getProvinceCompany();
+        if(!provinces.contains(companyName)){
+            throw new CommonException("仅有邀请拼单省区内的人员才可以拼单");
+        }
         HashSet<Long> poPlanLineIds = new HashSet<>();
         if (!sinochemintlPoPlanLineDTOS.isEmpty()) {
             if (!"1510".equals(sinochemintlPoPlanLineDTOS.get(0).getPlanSharedProvince())) {
