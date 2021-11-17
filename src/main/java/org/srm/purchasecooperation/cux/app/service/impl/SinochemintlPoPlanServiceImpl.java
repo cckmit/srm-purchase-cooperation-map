@@ -393,6 +393,14 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         if (sinochemintlPoPlanHeaderDTO == null) {
             throw new CommonException(SinochemintlConstant.ErrorCode.ERROR_PARAMETER_ERROR);
         }
+        //非共享省区成员通过分享链接不能看订单信息
+        CustomUserDetails user = DetailsHelper.getUserDetails();
+        List<SinochemintlPoPlanLineDTO> sinochemintlPoPlanLineDTOS = sinochemintlPoPlanHeaderRepository.getDefaultCompanyId(user.getUserId());
+        String provinces = sinochemintlPoPlanHeaderRepositoryImpl.getDefaultCompany(sinochemintlPoPlanHeaderDTO.getCreateId());
+        String companyName = sinochemintlPoPlanLineDTOS.get(0).getProvinceCompany();
+        if(!provinces.contains(companyName) && !"中化现代农业有限公司".equals(companyName)){
+            throw new CommonException("仅有邀请拼单省区内的人员才可以拼单");
+        }
         if (sinochemintlPoPlanHeaderDTO.getApplicationDate().equals(new Date(0))) {
             sinochemintlPoPlanHeaderDTO.setApplicationDate(null);
         }
@@ -422,7 +430,7 @@ public class SinochemintlPoPlanServiceImpl extends BaseAppService implements Sin
         //非共享省区成员通过分享链接不能看订单信息
         String provinces = sinochemintlPoPlanHeaderRepositoryImpl.getDefaultCompany(sinochemintlPoPlanHeaderDTO.getCreateId());
         String companyName = sinochemintlPoPlanLineDTOS.get(0).getProvinceCompany();
-        if(!provinces.contains(companyName)){
+        if(!provinces.contains(companyName) && !"中化现代农业有限公司".equals(companyName)){
             throw new CommonException("仅有邀请拼单省区内的人员才可以拼单");
         }
         HashSet<Long> poPlanLineIds = new HashSet<>();
